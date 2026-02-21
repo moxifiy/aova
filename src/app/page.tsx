@@ -157,8 +157,8 @@ function Navbar() {
 					<a href="#">About</a>
 				</li>
 			</ul>
-			<a href="#" className="nav-cta">
-				Start a project
+			<a href="/book-a-call" className="nav-cta">
+				Book a call
 			</a>
 		</nav>
 	);
@@ -169,82 +169,73 @@ function Navbar() {
    ================================================================ */
 function Hero() {
 	return (
-		<div style={{ maxWidth: 1300, margin: "0 auto" }}>
-			<section className="hero">
-				<Reveal immediate>
-					<div className="hero-eyebrow">
-						<span className="hero-eyebrow-tag">Est. 2019</span>
-						<span className="hero-eyebrow-line" />
-						<span className="hero-eyebrow-sub">
-							Premium Design Studio
-						</span>
-					</div>
-				</Reveal>
+		<section className="hero" id="hero">
+			{/* Ambient blobs */}
+			<div
+				className="hero-blob"
+				style={{
+					width: 500,
+					height: 500,
+					top: -100,
+					left: -150,
+					background:
+						"radial-gradient(circle, #f0e8d8 0%, transparent 70%)",
+				}}
+			/>
+			<div
+				className="hero-blob"
+				style={{
+					width: 400,
+					height: 400,
+					bottom: -50,
+					right: -100,
+					background:
+						"radial-gradient(circle, #dce8f0 0%, transparent 70%)",
+				}}
+			/>
 
-				<Reveal immediate delay={1}>
-					<h1 className="hero-headline">
-						We craft
-						<br />
-						<em>experiences</em>
-						<br />
-						that endure.
-					</h1>
-				</Reveal>
-
-				<Reveal immediate delay={2}>
-					<div className="hero-sub-row">
-						<p className="hero-desc">
-							Aova is a boutique design studio specialising in brand
-							identity, digital interfaces, and motion design for founders
-							who refuse to settle for ordinary.
-						</p>
-						<div className="hero-actions">
-							<a href="#work" className="btn-primary">
-								View work
-								<ArrowIcon />
-							</a>
-							<a href="#" className="btn-ghost">
-								Our process
-							</a>
-						</div>
-					</div>
-				</Reveal>
-
-				<Reveal immediate delay={3}>
-					<div className="hero-stats">
-						<div className="stat">
-							<span className="stat-num">
-								94<span style={{ color: "var(--accent)" }}>+</span>
-							</span>
-							<span className="stat-label">Projects shipped</span>
-						</div>
-						<div className="stat">
-							<span className="stat-num">
-								7<span style={{ color: "var(--accent)" }}>yr</span>
-							</span>
-							<span className="stat-label">In the field</span>
-						</div>
-						<div className="stat">
-							<span className="stat-num">
-								3<span style={{ color: "var(--accent)" }}>&times;</span>
-							</span>
-							<span className="stat-label">Awwwards winner</span>
-						</div>
-						<div className="stat">
-							<span className="stat-num">
-								100<span style={{ color: "var(--accent)" }}>%</span>
-							</span>
-							<span className="stat-label">Client retention</span>
-						</div>
-					</div>
-				</Reveal>
-
-				<div className="hero-scroll">
-					<div className="hero-scroll-line" />
-					<span className="hero-scroll-label">Scroll</span>
+			<Reveal immediate>
+				<div className="hero-badge">
+					<span className="hero-badge-dot" />
+					Design partner for startups
 				</div>
-			</section>
-		</div>
+			</Reveal>
+
+			<Reveal immediate delay={1}>
+				<h1 className="hero-headline">
+					Design studio committed to <em>elevating startups</em> with
+					intentional branding.
+				</h1>
+			</Reveal>
+
+			<Reveal immediate delay={2}>
+				<p className="hero-sub">
+					Modern web experiences crafted with precision, for founders who
+					care about how their brand looks and feels.
+				</p>
+			</Reveal>
+
+			<Reveal immediate delay={3}>
+				<a href="/book-a-call" className="hero-cta">
+					Reserve your spot
+					<span className="hero-cta-icon">
+						<svg viewBox="0 0 10 10" fill="none">
+							<path
+								d="M1 9L9 1M9 1H3M9 1V7"
+								stroke="currentColor"
+								strokeWidth="1.5"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							/>
+						</svg>
+					</span>
+				</a>
+			</Reveal>
+
+			<Reveal immediate delay={4}>
+				<p className="hero-avail">Booking for Q1 2026</p>
+			</Reveal>
+		</section>
 	);
 }
 
@@ -264,7 +255,6 @@ function Marquee() {
 	return (
 		<div className="marquee-wrap">
 			<div className="marquee-track">
-				{/* Duplicate for seamless loop */}
 				{[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
 					<span key={i} className="marquee-item">
 						{item}
@@ -285,7 +275,9 @@ function WorkSection() {
 				<div className="section-header">
 					<div>
 						<p className="section-tag">Selected Work</p>
-						<h2 className="section-title">Recent projects</h2>
+						<h2 className="section-title">
+							Recent <em>projects</em>
+						</h2>
 					</div>
 					<a href="#" className="section-link">
 						All work
@@ -315,15 +307,17 @@ function WorkSection() {
 						</div>
 						<div className="bento-content">
 							<div className="bento-tags">
-								<span className="bento-tag accent">Brand Identity</span>
+								<span className="bento-tag accent">
+									Brand Identity
+								</span>
 								<span className="bento-tag">2024</span>
 							</div>
 							<h3 className="bento-title bento-title-lg">
 								Lumara &mdash; Redefining Sustainable Luxury
 							</h3>
 							<p className="bento-desc">
-								Full brand overhaul, packaging, and digital presence for a
-								next-gen sustainable fashion label.
+								Full brand overhaul, packaging, and digital presence
+								for a next-gen sustainable fashion label.
 							</p>
 						</div>
 					</div>
@@ -340,10 +334,12 @@ function WorkSection() {
 								<span className="bento-tag accent">UI / UX</span>
 								<span className="bento-tag">SaaS</span>
 							</div>
-							<h3 className="bento-title">Orion Analytics Dashboard</h3>
+							<h3 className="bento-title">
+								Orion Analytics Dashboard
+							</h3>
 							<p className="bento-desc">
-								A zero-friction data platform for Series-B fintech startup
-								Orion.
+								A zero-friction data platform for Series-B fintech
+								startup Orion.
 							</p>
 						</div>
 					</div>
@@ -421,7 +417,9 @@ function WorkSection() {
 									className="bento-tags"
 									style={{ marginBottom: 6 }}
 								>
-									<span className="bento-tag accent">Web Dev</span>
+									<span className="bento-tag accent">
+										Web Dev
+									</span>
 									<span className="bento-tag">E-Commerce</span>
 									<span className="bento-tag">2023</span>
 								</div>
@@ -540,7 +538,9 @@ function FaqSection() {
 				<div className="section-header">
 					<div>
 						<p className="section-tag">FAQ</p>
-						<h2 className="section-title">Common questions</h2>
+						<h2 className="section-title">
+							Common <em>questions</em>
+						</h2>
 					</div>
 				</div>
 			</Reveal>
@@ -554,14 +554,14 @@ function FaqSection() {
 								Everything you need to know before we begin.
 							</p>
 							<p className="faq-intro-text">
-								We keep our process transparent and straightforward. If
-								you have a question not answered here, we&apos;d love to
-								hear from you.
+								We keep our process transparent and
+								straightforward. If you have a question not answered
+								here, we&apos;d love to hear from you.
 							</p>
 						</div>
 						<div>
 							<a
-								href="#"
+								href="/book-a-call"
 								className="btn-primary"
 								style={{ width: "fit-content" }}
 							>
