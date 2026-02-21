@@ -1,88 +1,644 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect, useRef, useCallback, type ReactNode } from "react";
+
+/* ================================================================
+   ICONS
+   ================================================================ */
+function ArrowIcon({ size = 14 }: { size?: number }) {
 	return (
-		<div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-			<main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-				<Image
-					className="dark:invert"
-					src="/next.svg"
-					alt="Next.js logo"
-					width={180}
-					height={38}
-					priority
-				/>
-				<ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-					<li className="mb-2 tracking-[-.01em]">
-						Get started by editing{" "}
-						<code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-							src/app/page.tsx
-						</code>
-						.
-					</li>
-					<li className="tracking-[-.01em]">
-						Save and see your changes instantly.
-					</li>
-				</ol>
+		<svg width={size} height={size} viewBox="0 0 14 14" fill="none">
+			<path
+				d="M2 12L12 2M12 2H5M12 2V9"
+				stroke="currentColor"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+		</svg>
+	);
+}
 
-				<div className="flex gap-4 items-center flex-col sm:flex-row">
-					<a
-						className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-						href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						Read our docs
+function PlusIcon() {
+	return (
+		<svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+			<path
+				d="M5 1V9M1 5H9"
+				stroke="currentColor"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+			/>
+		</svg>
+	);
+}
+
+/* ================================================================
+   SCROLL REVEAL
+   ================================================================ */
+function Reveal({
+	children,
+	delay = 0,
+	className = "",
+	immediate = false,
+}: {
+	children: ReactNode;
+	delay?: number;
+	className?: string;
+	immediate?: boolean;
+}) {
+	const ref = useRef<HTMLDivElement>(null);
+	const [visible, setVisible] = useState(false);
+
+	useEffect(() => {
+		if (immediate) {
+			const t = setTimeout(() => setVisible(true), 100);
+			return () => clearTimeout(t);
+		}
+
+		const el = ref.current;
+		if (!el) return;
+
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting) {
+					setVisible(true);
+					observer.unobserve(el);
+				}
+			},
+			{ threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+		);
+
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, [immediate]);
+
+	const delayClass = delay > 0 ? `reveal-delay-${delay}` : "";
+
+	return (
+		<div
+			ref={ref}
+			className={`reveal ${visible ? "visible" : ""} ${delayClass} ${className}`}
+		>
+			{children}
+		</div>
+	);
+}
+
+/* ================================================================
+   CUSTOM CURSOR
+   ================================================================ */
+function CustomCursor() {
+	const dotRef = useRef<HTMLDivElement>(null);
+	const ringRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		let mx = 0,
+			my = 0,
+			rx = 0,
+			ry = 0;
+
+		const onMouseMove = (e: MouseEvent) => {
+			mx = e.clientX;
+			my = e.clientY;
+		};
+
+		let raf: number;
+		const animate = () => {
+			if (dotRef.current) {
+				dotRef.current.style.left = mx + "px";
+				dotRef.current.style.top = my + "px";
+			}
+			rx += (mx - rx) * 0.12;
+			ry += (my - ry) * 0.12;
+			if (ringRef.current) {
+				ringRef.current.style.left = rx + "px";
+				ringRef.current.style.top = ry + "px";
+			}
+			raf = requestAnimationFrame(animate);
+		};
+
+		document.addEventListener("mousemove", onMouseMove);
+		raf = requestAnimationFrame(animate);
+
+		return () => {
+			document.removeEventListener("mousemove", onMouseMove);
+			cancelAnimationFrame(raf);
+		};
+	}, []);
+
+	return (
+		<div className="cursor">
+			<div className="cursor-ring" ref={ringRef} />
+			<div className="cursor-dot" ref={dotRef} />
+		</div>
+	);
+}
+
+/* ================================================================
+   NAVBAR
+   ================================================================ */
+function Navbar() {
+	return (
+		<nav className="site-nav">
+			<a href="#" className="nav-logo">
+				Aova<span>.</span>
+			</a>
+			<ul className="nav-links">
+				<li>
+					<a href="#work">Work</a>
+				</li>
+				<li>
+					<a href="#process">Process</a>
+				</li>
+				<li>
+					<a href="#faq">FAQ</a>
+				</li>
+				<li>
+					<a href="#">About</a>
+				</li>
+			</ul>
+			<a href="#" className="nav-cta">
+				Start a project
+			</a>
+		</nav>
+	);
+}
+
+/* ================================================================
+   HERO
+   ================================================================ */
+function Hero() {
+	return (
+		<div style={{ maxWidth: 1300, margin: "0 auto" }}>
+			<section className="hero">
+				<Reveal immediate>
+					<div className="hero-eyebrow">
+						<span className="hero-eyebrow-tag">Est. 2019</span>
+						<span className="hero-eyebrow-line" />
+						<span className="hero-eyebrow-sub">
+							Premium Design Studio
+						</span>
+					</div>
+				</Reveal>
+
+				<Reveal immediate delay={1}>
+					<h1 className="hero-headline">
+						We craft
+						<br />
+						<em>experiences</em>
+						<br />
+						that endure.
+					</h1>
+				</Reveal>
+
+				<Reveal immediate delay={2}>
+					<div className="hero-sub-row">
+						<p className="hero-desc">
+							Aova is a boutique design studio specialising in brand
+							identity, digital interfaces, and motion design for founders
+							who refuse to settle for ordinary.
+						</p>
+						<div className="hero-actions">
+							<a href="#work" className="btn-primary">
+								View work
+								<ArrowIcon />
+							</a>
+							<a href="#" className="btn-ghost">
+								Our process
+							</a>
+						</div>
+					</div>
+				</Reveal>
+
+				<Reveal immediate delay={3}>
+					<div className="hero-stats">
+						<div className="stat">
+							<span className="stat-num">
+								94<span style={{ color: "var(--accent)" }}>+</span>
+							</span>
+							<span className="stat-label">Projects shipped</span>
+						</div>
+						<div className="stat">
+							<span className="stat-num">
+								7<span style={{ color: "var(--accent)" }}>yr</span>
+							</span>
+							<span className="stat-label">In the field</span>
+						</div>
+						<div className="stat">
+							<span className="stat-num">
+								3<span style={{ color: "var(--accent)" }}>&times;</span>
+							</span>
+							<span className="stat-label">Awwwards winner</span>
+						</div>
+						<div className="stat">
+							<span className="stat-num">
+								100<span style={{ color: "var(--accent)" }}>%</span>
+							</span>
+							<span className="stat-label">Client retention</span>
+						</div>
+					</div>
+				</Reveal>
+
+				<div className="hero-scroll">
+					<div className="hero-scroll-line" />
+					<span className="hero-scroll-label">Scroll</span>
+				</div>
+			</section>
+		</div>
+	);
+}
+
+/* ================================================================
+   MARQUEE
+   ================================================================ */
+const MARQUEE_ITEMS = [
+	"Brand Identity",
+	"UI/UX Design",
+	"Motion & Animation",
+	"Design Systems",
+	"Web Development",
+	"Art Direction",
+];
+
+function Marquee() {
+	return (
+		<div className="marquee-wrap">
+			<div className="marquee-track">
+				{/* Duplicate for seamless loop */}
+				{[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+					<span key={i} className="marquee-item">
+						{item}
+					</span>
+				))}
+			</div>
+		</div>
+	);
+}
+
+/* ================================================================
+   WORK / BENTO GRID
+   ================================================================ */
+function WorkSection() {
+	return (
+		<section className="work" id="work">
+			<Reveal>
+				<div className="section-header">
+					<div>
+						<p className="section-tag">Selected Work</p>
+						<h2 className="section-title">Recent projects</h2>
+					</div>
+					<a href="#" className="section-link">
+						All work
+						<ArrowIcon />
 					</a>
 				</div>
-			</main>
-			<footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="/file.svg"
-						alt="File icon"
-						width={16}
-						height={16}
-					/>
-					Learn
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="/window.svg"
-						alt="Window icon"
-						width={16}
-						height={16}
-					/>
-					Examples
-				</a>
-				<a
-					className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-					href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Image
-						aria-hidden
-						src="/globe.svg"
-						alt="Globe icon"
-						width={16}
-						height={16}
-					/>
-					Go to nextjs.org →
-				</a>
-			</footer>
+			</Reveal>
+
+			<Reveal delay={1}>
+				<div className="bento">
+					{/* Item 1 — large */}
+					<div className="bento-item bento-item-large">
+						<div className="bento-img vis-1" />
+						<div className="bento-grid-lines" />
+						<div
+							className="geo-circle"
+							style={{
+								width: 300,
+								height: 300,
+								top: -80,
+								right: -80,
+							}}
+						/>
+						<div className="bento-overlay" />
+						<div className="bento-top">
+							<span className="bento-index">01 / 05</span>
+						</div>
+						<div className="bento-content">
+							<div className="bento-tags">
+								<span className="bento-tag accent">Brand Identity</span>
+								<span className="bento-tag">2024</span>
+							</div>
+							<h3 className="bento-title bento-title-lg">
+								Lumara &mdash; Redefining Sustainable Luxury
+							</h3>
+							<p className="bento-desc">
+								Full brand overhaul, packaging, and digital presence for a
+								next-gen sustainable fashion label.
+							</p>
+						</div>
+					</div>
+
+					{/* Item 2 — tall */}
+					<div className="bento-item bento-item-tall">
+						<div className="bento-img vis-2" />
+						<div className="bento-overlay" />
+						<div className="bento-top">
+							<span className="bento-index">02 / 05</span>
+						</div>
+						<div className="bento-content">
+							<div className="bento-tags">
+								<span className="bento-tag accent">UI / UX</span>
+								<span className="bento-tag">SaaS</span>
+							</div>
+							<h3 className="bento-title">Orion Analytics Dashboard</h3>
+							<p className="bento-desc">
+								A zero-friction data platform for Series-B fintech startup
+								Orion.
+							</p>
+						</div>
+					</div>
+
+					{/* Item 3 — wide */}
+					<div className="bento-item bento-item-wide">
+						<div className="bento-img vis-3" />
+						<div className="bento-overlay" />
+						<div className="bento-top">
+							<span className="bento-index">03 / 05</span>
+						</div>
+						<div
+							className="bento-content"
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "flex-end",
+							}}
+						>
+							<div>
+								<div className="bento-tags">
+									<span className="bento-tag accent">Motion</span>
+									<span className="bento-tag">Branding</span>
+								</div>
+								<h3 className="bento-title">
+									Halo &mdash; Brand in Motion
+								</h3>
+							</div>
+							<div className="bento-arrow">
+								<ArrowIcon size={12} />
+							</div>
+						</div>
+					</div>
+
+					{/* Item 4 — small */}
+					<div className="bento-item bento-item-small">
+						<div className="bento-img vis-4" />
+						<div className="bento-overlay" />
+						<div className="bento-top">
+							<span className="bento-index">04 / 05</span>
+						</div>
+						<div className="bento-content">
+							<div className="bento-tags">
+								<span className="bento-tag accent">System</span>
+							</div>
+							<h3 className="bento-title">Quanta Design System</h3>
+						</div>
+					</div>
+
+					{/* Item 5 — full width */}
+					<div
+						className="bento-item bento-item-full"
+						style={{
+							flexDirection: "row",
+							alignItems: "center",
+							justifyContent: "space-between",
+							minHeight: 120,
+						}}
+					>
+						<div
+							style={{
+								display: "flex",
+								alignItems: "center",
+								gap: 48,
+							}}
+						>
+							<span
+								className="bento-index"
+								style={{ color: "var(--muted)" }}
+							>
+								05 / 05
+							</span>
+							<div>
+								<div
+									className="bento-tags"
+									style={{ marginBottom: 6 }}
+								>
+									<span className="bento-tag accent">Web Dev</span>
+									<span className="bento-tag">E-Commerce</span>
+									<span className="bento-tag">2023</span>
+								</div>
+								<h3
+									className="bento-title"
+									style={{ fontSize: 18 }}
+								>
+									Bloom &mdash; Shopify Flagship Store
+								</h3>
+							</div>
+						</div>
+						<div
+							style={{
+								display: "flex",
+								alignItems: "center",
+								gap: 20,
+							}}
+						>
+							<span
+								style={{
+									fontFamily: "var(--font-mono-stack)",
+									fontSize: 10,
+									color: "var(--muted)",
+								}}
+							>
+								Delivered 3&times; conversion lift
+							</span>
+							<div className="bento-arrow">
+								<ArrowIcon size={12} />
+							</div>
+						</div>
+					</div>
+				</div>
+			</Reveal>
+		</section>
+	);
+}
+
+/* ================================================================
+   FAQ
+   ================================================================ */
+const FAQS = [
+	{
+		q: "What types of projects do you take on?",
+		a: "We work across brand identity, UI/UX design, design systems, motion graphics, and web development. We're selective — we take on fewer projects so we can give each one our full attention and craft.",
+	},
+	{
+		q: "How long does a typical project take?",
+		a: "Brand identity projects typically take 6–10 weeks. Web and product design engagements run 8–16 weeks. We always agree on a clear timeline before starting, and we stick to it.",
+	},
+	{
+		q: "What does the process look like?",
+		a: "We follow a four-phase approach: Discovery → Strategy → Design → Delivery. You'll be involved at key decision points throughout, with regular check-ins and shared Figma files so you always know where things stand.",
+	},
+	{
+		q: "What is your pricing structure?",
+		a: "We work on a project-fee basis, not hourly. This means you know the full cost upfront with no surprises. Projects typically start from $12,000 for brand identity, and $24,000 for full product design engagements.",
+	},
+	{
+		q: "Do you offer ongoing retainers?",
+		a: "Yes — we offer monthly retainers for ongoing design support. These are reserved for existing clients and cover design iterations, new feature work, and asset creation. Slots are limited.",
+	},
+];
+
+function FaqItem({
+	q,
+	a,
+	isOpen,
+	onToggle,
+}: {
+	q: string;
+	a: string;
+	isOpen: boolean;
+	onToggle: () => void;
+}) {
+	const innerRef = useRef<HTMLParagraphElement>(null);
+	const [height, setHeight] = useState(0);
+
+	useEffect(() => {
+		if (innerRef.current) {
+			setHeight(innerRef.current.scrollHeight);
+		}
+	}, [a]);
+
+	return (
+		<div className={`faq-item ${isOpen ? "open" : ""}`}>
+			<button className="faq-trigger" onClick={onToggle}>
+				<span className="faq-trigger-text">{q}</span>
+				<span className="faq-icon">
+					<PlusIcon />
+				</span>
+			</button>
+			<div
+				className="faq-answer"
+				style={{ maxHeight: isOpen ? height : 0 }}
+			>
+				<p ref={innerRef} className="faq-answer-inner">
+					{a}
+				</p>
+			</div>
 		</div>
+	);
+}
+
+function FaqSection() {
+	const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+	const toggle = useCallback(
+		(i: number) => setOpenIndex((prev) => (prev === i ? null : i)),
+		[]
+	);
+
+	return (
+		<section className="faq" id="faq">
+			<Reveal>
+				<div className="section-header">
+					<div>
+						<p className="section-tag">FAQ</p>
+						<h2 className="section-title">Common questions</h2>
+					</div>
+				</div>
+			</Reveal>
+
+			<Reveal delay={1}>
+				<div className="faq-grid">
+					{/* Left intro panel */}
+					<div className="faq-intro">
+						<div>
+							<p className="faq-intro-title">
+								Everything you need to know before we begin.
+							</p>
+							<p className="faq-intro-text">
+								We keep our process transparent and straightforward. If
+								you have a question not answered here, we&apos;d love to
+								hear from you.
+							</p>
+						</div>
+						<div>
+							<a
+								href="#"
+								className="btn-primary"
+								style={{ width: "fit-content" }}
+							>
+								Book a call
+								<ArrowIcon />
+							</a>
+							<div className="faq-badge">
+								<span className="faq-badge-dot" />
+								Available for projects
+							</div>
+						</div>
+					</div>
+
+					{/* Right accordion */}
+					<div className="faq-list">
+						{FAQS.map((faq, i) => (
+							<FaqItem
+								key={i}
+								q={faq.q}
+								a={faq.a}
+								isOpen={openIndex === i}
+								onToggle={() => toggle(i)}
+							/>
+						))}
+					</div>
+				</div>
+			</Reveal>
+		</section>
+	);
+}
+
+/* ================================================================
+   FOOTER
+   ================================================================ */
+function Footer() {
+	return (
+		<>
+			<div
+				style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px" }}
+			>
+				<div style={{ borderTop: "1px solid var(--border)" }} />
+			</div>
+			<footer className="site-footer">
+				<div className="footer-logo">
+					Aova<span>.</span>
+				</div>
+				<span className="footer-copy">
+					&copy; {new Date().getFullYear()} Aova Studio. All rights
+					reserved.
+				</span>
+				<ul className="footer-links">
+					{["Twitter", "Instagram", "LinkedIn", "Dribbble"].map(
+						(link) => (
+							<li key={link}>
+								<a href="#">{link}</a>
+							</li>
+						)
+					)}
+				</ul>
+			</footer>
+		</>
+	);
+}
+
+/* ================================================================
+   PAGE
+   ================================================================ */
+export default function Home() {
+	return (
+		<>
+			<CustomCursor />
+			<Navbar />
+			<Hero />
+			<Marquee />
+			<WorkSection />
+			<FaqSection />
+			<Footer />
+		</>
 	);
 }
