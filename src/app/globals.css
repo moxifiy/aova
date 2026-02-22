@@ -13,8 +13,6 @@
 	--accent: #FF3366;
 	--accent-blue: #3366FF;
 	--accent-green: #00CC66;
-	--font-head: var(--font-instrument), serif;
-	--font-body: var(--font-outfit), sans-serif;
 
 	--shadow-btn: rgba(0, 0, 0, 0.2);
 	--shadow-btn-hover: rgba(0, 0, 0, 0.1);
@@ -47,6 +45,9 @@ html {
 }
 
 body {
+	--font-head: var(--font-instrument), serif;
+	--font-body: var(--font-outfit), sans-serif;
+
 	background: var(--bg);
 	color: var(--text);
 	font-family: var(--font-body);
