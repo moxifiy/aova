@@ -1,28 +1,23 @@
 import type { Metadata } from "next";
-import { DM_Sans, JetBrains_Mono, DM_Serif_Display } from "next/font/google";
+import { Instrument_Serif, Outfit } from "next/font/google";
 import "./globals.css";
 
-const dmSans = DM_Sans({
-	variable: "--font-dm-sans",
-	subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-	variable: "--font-jetbrains",
-	subsets: ["latin"],
-});
-
-const dmSerifDisplay = DM_Serif_Display({
-	variable: "--font-dm-serif",
+const instrumentSerif = Instrument_Serif({
+	variable: "--font-instrument",
 	subsets: ["latin"],
 	weight: "400",
 	style: ["normal", "italic"],
 });
 
+const outfit = Outfit({
+	variable: "--font-outfit",
+	subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
 	title: "Aova — Design & Motion Studio",
 	description:
-		"Boutique design studio specialising in brand identity, digital interfaces, and motion design for founders who refuse to settle for ordinary.",
+		"Design studio for brands & creators. Branding, websites, ads, thumbnails, video editing, motion design, and growth strategy.",
 };
 
 export default function RootLayout({
@@ -33,7 +28,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${dmSans.variable} ${jetbrainsMono.variable} ${dmSerifDisplay.variable} antialiased`}
+				className={`${instrumentSerif.variable} ${outfit.variable} antialiased`}
 			>
 				{children}
 			</body>

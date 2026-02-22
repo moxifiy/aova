@@ -186,7 +186,7 @@ export default function BookACall() {
 					reserved.
 				</span>
 				<ul className="footer-links">
-					{["Twitter", "Instagram", "LinkedIn", "Dribbble"].map(
+					{["Twitter", "Instagram", "LinkedIn"].map(
 						(link) => (
 							<li key={link}>
 								<a href="#">{link}</a>
