@@ -55,6 +55,23 @@ function CustomCursor() {
 }
 
 /* ================================================================
+   AOVA LOGO
+   ================================================================ */
+function AovaLogo({ size = 24 }: { size?: number }) {
+	return (
+		<svg
+			viewBox="0 0 171.27 171.27"
+			fill="currentColor"
+			width={size}
+			height={size}
+			aria-label="Aova"
+		>
+			<path d="M171.27,0v91c0,44.33-35.94,80.27-80.27,80.27h-31.96v-59.04h59.04v-59.04h-59.04v59.04H0v-31.96C0,35.94,35.94,0,80.27,0h91Z" />
+		</svg>
+	);
+}
+
+/* ================================================================
    PAGE
    ================================================================ */
 export default function BookACall() {
@@ -110,7 +127,7 @@ export default function BookACall() {
 			{/* Nav */}
 			<nav className="site-nav">
 				<Link href="/" className="nav-logo">
-					Aova<span>.</span>
+					<AovaLogo size={22} />
 				</Link>
 				<ul className="nav-links">
 					<li>
@@ -162,7 +179,7 @@ export default function BookACall() {
 			</div>
 			<footer className="site-footer">
 				<div className="footer-logo">
-					Aova<span>.</span>
+					<AovaLogo size={20} />
 				</div>
 				<span className="footer-copy">
 					&copy; {new Date().getFullYear()} Aova Studio. All rights

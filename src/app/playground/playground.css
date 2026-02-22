@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════
+   PLAYGROUND DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+.playground-root {
+	--bg: #F9F9F8;
+	/* Soft off-white */
+	--surface: #FFFFFF;
+	--border: rgba(0, 0, 0, 0.08);
+	--border-hover: rgba(0, 0, 0, 0.2);
+	--text: #111111;
+	--muted: #666666;
+	--accent: #FF3366;
+	/* Vibrant Designjoy-style pink/red */
+	--accent-blue: #3366FF;
+	--accent-green: #00CC66;
+	--font-head: var(--font-instrument), serif;
+	--font-body: var(--font-inter), sans-serif;
+
+	background: var(--bg);
+	color: var(--text);
+	font-family: var(--font-body);
+	min-height: 100vh;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Base styles scoped to playground */
+.playground-root h1,
+.playground-root h2,
+.playground-root h3,
+.playground-root h4,
+.playground-root .font-serif {
+	font-family: var(--font-head);
+	font-weight: 400;
+}
+
+.playground-root a {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* Selection */
+.playground-root ::selection {
+	background: var(--accent);
+	color: white;
+}
+
+/* Custom Cursor */
+@media (pointer: fine) {
+	.playground-root {
+		cursor: none;
+	}
+
+	.pg-cursor-dot {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 12px;
+		height: 12px;
+		background: var(--accent);
+		border-radius: 50%;
+		pointer-events: none;
+		transform: translate(-50%, -50%);
+		z-index: 9999;
+		/* Removed transition to avoid delayed feeling; JS sets transform directly */
+		mix-blend-mode: difference;
+	}
+}
+
+/* ═══════════════════════════════════════════
+   PATTERNS & TEXTURES
+   ═══════════════════════════════════════════ */
+.bg-dots {
+	background-image: radial-gradient(var(--border-hover) 1.5px, transparent 1.5px);
+	background-size: 24px 24px;
+}
+
+/* ═══════════════════════════════════════════
+   BENTO GRID UTILS
+   ═══════════════════════════════════════════ */
+.bento-card {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 24px;
+	padding: 40px;
+	transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+	position: relative;
+	overflow: hidden;
+}
+
+.bento-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+	border-color: var(--border-hover);
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════ */
+.pg-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 18px 32px;
+	border-radius: 100px;
+	font-family: var(--font-body);
+	font-weight: 500;
+	font-size: 15px;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	cursor: none;
+	/* Rely on custom cursor */
+}
+
+.pg-btn-primary {
+	background: var(--text);
+	color: var(--surface);
+	border: 1px solid var(--text);
+}
+
+.pg-btn-primary:hover {
+	background: transparent;
+	color: var(--text);
+}
+
+.pg-btn-accent {
+	background: var(--accent);
+	color: #fff;
+	border: 1px solid var(--accent);
+}
+
+.pg-btn-accent:hover {
+	background: transparent;
+	color: var(--accent);
+}
+
+/* ═══════════════════════════════════════════
+   MARQUEE
+   ═══════════════════════════════════════════ */
+.pg-marquee-wrap {
+	display: flex;
+	overflow: hidden;
+	gap: 2rem;
+	padding: 2rem 0;
+	background: var(--text);
+	color: var(--bg);
+}
+
+.pg-marquee-track {
+	display: flex;
+	gap: 4rem;
+	animation: scroll 20s linear infinite;
+	white-space: nowrap;
+}
+
+.pg-marquee-item {
+	font-family: var(--font-head);
+	font-size: 3rem;
+	font-style: italic;
+	display: flex;
+	align-items: center;
+	gap: 4rem;
+}
+
+.pg-marquee-item::after {
+	content: "✦";
+	font-style: normal;
+	font-size: 1.5rem;
+	color: var(--accent);
+}
+
+@keyframes scroll {
+	0% {
+		transform: translateX(0);
+	}
+
+	100% {
+		transform: translateX(calc(-50% - 1rem));
+	}
+}

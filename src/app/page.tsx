@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
+import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern";
 
 /* ================================================================
    ICONS
@@ -28,6 +30,39 @@ function PlusIcon() {
 				strokeWidth="1.5"
 				strokeLinecap="round"
 			/>
+		</svg>
+	);
+}
+
+function ChevronLeft() {
+	return (
+		<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+			<path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+		</svg>
+	);
+}
+
+function ChevronRight() {
+	return (
+		<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+			<path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+		</svg>
+	);
+}
+
+/* ================================================================
+   AOVA LOGO (inline SVG from AOVA1G.svg)
+   ================================================================ */
+function AovaLogo({ size = 24 }: { size?: number }) {
+	return (
+		<svg
+			viewBox="0 0 171.27 171.27"
+			fill="currentColor"
+			width={size}
+			height={size}
+			aria-label="Aova"
+		>
+			<path d="M171.27,0v91c0,44.33-35.94,80.27-80.27,80.27h-31.96v-59.04h59.04v-59.04h-59.04v59.04H0v-31.96C0,35.94,35.94,0,80.27,0h91Z" />
 		</svg>
 	);
 }
@@ -141,21 +176,13 @@ function Navbar() {
 	return (
 		<nav className="site-nav">
 			<a href="#" className="nav-logo">
-				Aova<span>.</span>
+				<AovaLogo size={22} />
 			</a>
 			<ul className="nav-links">
-				<li>
-					<a href="#work">Work</a>
-				</li>
-				<li>
-					<a href="#process">Process</a>
-				</li>
-				<li>
-					<a href="#faq">FAQ</a>
-				</li>
-				<li>
-					<a href="#">About</a>
-				</li>
+				<li><a href="#process">Process</a></li>
+				<li><a href="#work">Work</a></li>
+				<li><a href="#services">Services</a></li>
+				<li><a href="#faq">FAQ</a></li>
 			</ul>
 			<a href="/book-a-call" className="nav-cta">
 				Book a call
@@ -170,6 +197,20 @@ function Navbar() {
 function Hero() {
 	return (
 		<section className="hero" id="hero">
+			{/* Animated grid pattern — spans full width */}
+			<div className="hero-grid-wrap">
+				<AnimatedGridPattern
+					numSquares={30}
+					maxOpacity={0.08}
+					duration={3}
+					repeatDelay={1}
+					className={cn(
+						"text-[#E8FF47]",
+						"fill-[#E8FF47]/5 stroke-[#333]",
+					)}
+				/>
+			</div>
+
 			{/* Ambient blobs */}
 			<div
 				className="hero-blob"
@@ -194,47 +235,49 @@ function Hero() {
 				}}
 			/>
 
-			<Reveal immediate>
-				<div className="hero-badge">
-					<span className="hero-badge-dot" />
-					Design partner for startups
-				</div>
-			</Reveal>
+			<div className="hero-inner">
+				<Reveal immediate>
+					<div className="hero-badge">
+						<span className="hero-badge-dot" />
+						Design partner for startups
+					</div>
+				</Reveal>
 
-			<Reveal immediate delay={1}>
-				<h1 className="hero-headline">
-					Design studio committed to <em>elevating startups</em> with
-					intentional branding.
-				</h1>
-			</Reveal>
+				<Reveal immediate delay={1}>
+					<h1 className="hero-headline">
+						Design studio committed to <em>elevating startups</em> with
+						intentional branding.
+					</h1>
+				</Reveal>
 
-			<Reveal immediate delay={2}>
-				<p className="hero-sub">
-					Modern web experiences crafted with precision, for founders who
-					care about how their brand looks and feels.
-				</p>
-			</Reveal>
+				<Reveal immediate delay={2}>
+					<p className="hero-sub">
+						Modern web experiences crafted with precision, for founders who
+						care about how their brand looks and feels.
+					</p>
+				</Reveal>
 
-			<Reveal immediate delay={3}>
-				<a href="/book-a-call" className="hero-cta">
-					Reserve your spot
-					<span className="hero-cta-icon">
-						<svg viewBox="0 0 10 10" fill="none">
-							<path
-								d="M1 9L9 1M9 1H3M9 1V7"
-								stroke="currentColor"
-								strokeWidth="1.5"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							/>
-						</svg>
-					</span>
-				</a>
-			</Reveal>
+				<Reveal immediate delay={3}>
+					<a href="/book-a-call" className="hero-cta">
+						Reserve your spot
+						<span className="hero-cta-icon">
+							<svg viewBox="0 0 10 10" fill="none">
+								<path
+									d="M1 9L9 1M9 1H3M9 1V7"
+									stroke="currentColor"
+									strokeWidth="1.5"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								/>
+							</svg>
+						</span>
+					</a>
+				</Reveal>
 
-			<Reveal immediate delay={4}>
-				<p className="hero-avail">Booking for Q1 2026</p>
-			</Reveal>
+				<Reveal immediate delay={4}>
+					<p className="hero-avail">Booking for Q1 2026</p>
+				</Reveal>
+			</div>
 		</section>
 	);
 }
@@ -266,8 +309,132 @@ function Marquee() {
 }
 
 /* ================================================================
-   WORK / BENTO GRID
+   PROCESS
    ================================================================ */
+const PROCESS_STEPS = [
+	{
+		num: "01",
+		title: "Discovery",
+		desc: "We start by understanding your brand, your audience, and your goals. Deep research and strategic thinking before a single pixel is placed.",
+	},
+	{
+		num: "02",
+		title: "Design",
+		desc: "Iterative design process with regular check-ins. We craft every detail with intention — from typography to micro-interactions.",
+	},
+	{
+		num: "03",
+		title: "Delivery",
+		desc: "Pixel-perfect handoff with production-ready assets, design systems, and documentation. We stay involved through launch and beyond.",
+	},
+];
+
+function ProcessSection() {
+	return (
+		<section className="process" id="process">
+			<Reveal>
+				<div className="section-header-center">
+					<p className="section-tag">How we work</p>
+					<h2 className="section-title">
+						A proven <em>process</em>
+					</h2>
+				</div>
+			</Reveal>
+
+			<div className="process-grid">
+				{PROCESS_STEPS.map((step, i) => (
+					<Reveal key={step.num} delay={i + 1}>
+						<div className="process-card">
+							<span className="process-num">{step.num}</span>
+							<h3 className="process-card-title">{step.title}</h3>
+							<p className="process-card-desc">{step.desc}</p>
+						</div>
+					</Reveal>
+				))}
+			</div>
+		</section>
+	);
+}
+
+/* ================================================================
+   WORK / PROJECT GALLERIES
+   ================================================================ */
+const PROJECTS = [
+	{
+		title: "Lumara — Redefining Sustainable Luxury",
+		tags: ["Brand Identity", "2024"],
+		desc: "Full brand overhaul, packaging, and digital presence for a next-gen sustainable fashion label.",
+		images: ["vis-1", "vis-2", "vis-3"],
+	},
+	{
+		title: "Orion Analytics Dashboard",
+		tags: ["UI / UX", "SaaS"],
+		desc: "A zero-friction data platform for Series-B fintech startup Orion.",
+		images: ["vis-2", "vis-4", "vis-1"],
+	},
+	{
+		title: "Halo — Brand in Motion",
+		tags: ["Motion", "Branding"],
+		desc: "Dynamic brand identity system with animated assets for digital-first wellness brand Halo.",
+		images: ["vis-3", "vis-1", "vis-5"],
+	},
+];
+
+function ProjectCard({
+	project,
+	index,
+}: {
+	project: (typeof PROJECTS)[0];
+	index: number;
+}) {
+	const [current, setCurrent] = useState(0);
+	const total = project.images.length;
+
+	const prev = () => setCurrent((c) => (c - 1 + total) % total);
+	const next = () => setCurrent((c) => (c + 1) % total);
+
+	return (
+		<Reveal delay={index + 1}>
+			<div className="project-card">
+				<div className="project-slider">
+					<div
+						className="project-slides"
+						style={{ transform: `translateX(-${current * 100}%)` }}
+					>
+						{project.images.map((img, i) => (
+							<div key={i} className={`project-slide ${img}`} />
+						))}
+					</div>
+
+					<div className="project-slider-controls">
+						<button className="slider-btn" onClick={prev} aria-label="Previous slide">
+							<ChevronLeft />
+						</button>
+						<span className="slider-counter">
+							{String(current + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+						</span>
+						<button className="slider-btn" onClick={next} aria-label="Next slide">
+							<ChevronRight />
+						</button>
+					</div>
+				</div>
+
+				<div className="project-info">
+					<div className="project-tags">
+						{project.tags.map((tag) => (
+							<span key={tag} className="project-tag">
+								{tag}
+							</span>
+						))}
+					</div>
+					<h3 className="project-title">{project.title}</h3>
+					<p className="project-desc">{project.desc}</p>
+				</div>
+			</div>
+		</Reveal>
+	);
+}
+
 function WorkSection() {
 	return (
 		<section className="work" id="work">
@@ -286,172 +453,138 @@ function WorkSection() {
 				</div>
 			</Reveal>
 
-			<Reveal delay={1}>
-				<div className="bento">
-					{/* Item 1 — large */}
-					<div className="bento-item bento-item-large">
-						<div className="bento-img vis-1" />
-						<div className="bento-grid-lines" />
-						<div
-							className="geo-circle"
-							style={{
-								width: 300,
-								height: 300,
-								top: -80,
-								right: -80,
-							}}
-						/>
-						<div className="bento-overlay" />
-						<div className="bento-top">
-							<span className="bento-index">01 / 05</span>
-						</div>
-						<div className="bento-content">
-							<div className="bento-tags">
-								<span className="bento-tag accent">
-									Brand Identity
-								</span>
-								<span className="bento-tag">2024</span>
-							</div>
-							<h3 className="bento-title bento-title-lg">
-								Lumara &mdash; Redefining Sustainable Luxury
-							</h3>
-							<p className="bento-desc">
-								Full brand overhaul, packaging, and digital presence
-								for a next-gen sustainable fashion label.
-							</p>
-						</div>
-					</div>
+			<div className="projects-grid">
+				{PROJECTS.map((project, i) => (
+					<ProjectCard key={project.title} project={project} index={i} />
+				))}
+			</div>
+		</section>
+	);
+}
 
-					{/* Item 2 — tall */}
-					<div className="bento-item bento-item-tall">
-						<div className="bento-img vis-2" />
-						<div className="bento-overlay" />
-						<div className="bento-top">
-							<span className="bento-index">02 / 05</span>
-						</div>
-						<div className="bento-content">
-							<div className="bento-tags">
-								<span className="bento-tag accent">UI / UX</span>
-								<span className="bento-tag">SaaS</span>
-							</div>
-							<h3 className="bento-title">
-								Orion Analytics Dashboard
-							</h3>
-							<p className="bento-desc">
-								A zero-friction data platform for Series-B fintech
-								startup Orion.
-							</p>
-						</div>
-					</div>
+/* ================================================================
+   SERVICES
+   ================================================================ */
+const SERVICES = [
+	{
+		title: "Brand Identity",
+		desc: "Logo, visual language, brand guidelines, and strategic positioning.",
+	},
+	{
+		title: "UI / UX Design",
+		desc: "User research, wireframes, prototyping, and high-fidelity design.",
+	},
+	{
+		title: "Web Development",
+		desc: "Custom websites built with modern frameworks, optimized for performance.",
+	},
+	{
+		title: "Ads",
+		desc: "Scroll-stopping graphic and motion ads for social, display, and video campaigns.",
+	},
+	{
+		title: "Motion & Animation",
+		desc: "Micro-interactions, transitions, and animated brand assets.",
+	},
+];
 
-					{/* Item 3 — wide */}
-					<div className="bento-item bento-item-wide">
-						<div className="bento-img vis-3" />
-						<div className="bento-overlay" />
-						<div className="bento-top">
-							<span className="bento-index">03 / 05</span>
-						</div>
-						<div
-							className="bento-content"
-							style={{
-								display: "flex",
-								justifyContent: "space-between",
-								alignItems: "flex-end",
-							}}
-						>
-							<div>
-								<div className="bento-tags">
-									<span className="bento-tag accent">Motion</span>
-									<span className="bento-tag">Branding</span>
-								</div>
-								<h3 className="bento-title">
-									Halo &mdash; Brand in Motion
-								</h3>
-							</div>
-							<div className="bento-arrow">
-								<ArrowIcon size={12} />
-							</div>
-						</div>
+function ServicesSection() {
+	return (
+		<section className="services" id="services">
+			<div className="services-inner">
+				<Reveal>
+					<div className="section-header-center">
+						<p className="section-tag">What we do</p>
+						<h2 className="section-title">
+							Our <em>services</em>
+						</h2>
 					</div>
+				</Reveal>
 
-					{/* Item 4 — small */}
-					<div className="bento-item bento-item-small">
-						<div className="bento-img vis-4" />
-						<div className="bento-overlay" />
-						<div className="bento-top">
-							<span className="bento-index">04 / 05</span>
-						</div>
-						<div className="bento-content">
-							<div className="bento-tags">
-								<span className="bento-tag accent">System</span>
-							</div>
-							<h3 className="bento-title">Quanta Design System</h3>
-						</div>
-					</div>
-
-					{/* Item 5 — full width */}
-					<div
-						className="bento-item bento-item-full"
-						style={{
-							flexDirection: "row",
-							alignItems: "center",
-							justifyContent: "space-between",
-							minHeight: 120,
-						}}
-					>
-						<div
-							style={{
-								display: "flex",
-								alignItems: "center",
-								gap: 48,
-							}}
-						>
-							<span
-								className="bento-index"
-								style={{ color: "var(--muted)" }}
-							>
-								05 / 05
-							</span>
-							<div>
-								<div
-									className="bento-tags"
-									style={{ marginBottom: 6 }}
-								>
-									<span className="bento-tag accent">
-										Web Dev
+				<div className="services-list">
+					{SERVICES.map((service, i) => (
+						<Reveal key={service.title} delay={i + 1}>
+							<div className="service-item">
+								<div className="service-left">
+									<span className="service-num">
+										{String(i + 1).padStart(2, "0")}
 									</span>
-									<span className="bento-tag">E-Commerce</span>
-									<span className="bento-tag">2023</span>
+									<h3 className="service-title">{service.title}</h3>
 								</div>
-								<h3
-									className="bento-title"
-									style={{ fontSize: 18 }}
-								>
-									Bloom &mdash; Shopify Flagship Store
-								</h3>
+								<p className="service-desc">{service.desc}</p>
+								<div className="service-arrow">
+									<ArrowIcon size={12} />
+								</div>
 							</div>
-						</div>
+						</Reveal>
+					))}
+				</div>
+			</div>
+		</section>
+	);
+}
+
+/* ================================================================
+   TESTIMONIALS
+   ================================================================ */
+const TESTIMONIALS = [
+	{
+		quote: "Aova transformed our entire brand presence. The attention to detail and strategic thinking behind every design decision was exceptional.",
+		name: "Sarah Chen",
+		role: "CEO, Lumara",
+		featured: true,
+	},
+	{
+		quote: "Working with Aova felt like having an in-house design team that truly understands startup culture and speed.",
+		name: "Marcus Rivera",
+		role: "Founder, Orion",
+		featured: false,
+	},
+	{
+		quote: "The design system they built for us has been transformative. Our development velocity doubled overnight.",
+		name: "Aya Tanaka",
+		role: "CTO, Quanta",
+		featured: false,
+	},
+	{
+		quote: "They don't just make things look good — they make them work. Every interaction, every transition, every detail is considered.",
+		name: "David Park",
+		role: "Head of Product, Halo",
+		featured: false,
+	},
+];
+
+function TestimonialsSection() {
+	return (
+		<section className="testimonials" id="testimonials">
+			<Reveal>
+				<div className="section-header-center">
+					<p className="section-tag">Testimonials</p>
+					<h2 className="section-title">
+						Client <em>words</em>
+					</h2>
+				</div>
+			</Reveal>
+
+			<Reveal delay={1}>
+				<div className="testimonials-grid">
+					{TESTIMONIALS.map((t, i) => (
 						<div
-							style={{
-								display: "flex",
-								alignItems: "center",
-								gap: 20,
-							}}
+							key={i}
+							className={`testimonial-card ${t.featured ? "testimonial-featured" : ""}`}
 						>
-							<span
-								style={{
-									fontFamily: "var(--font-mono-stack)",
-									fontSize: 10,
-									color: "var(--muted)",
-								}}
-							>
-								Delivered 3&times; conversion lift
-							</span>
-							<div className="bento-arrow">
-								<ArrowIcon size={12} />
+							<p className="testimonial-quote">&ldquo;{t.quote}&rdquo;</p>
+							<div className="testimonial-author">
+								<div className="testimonial-avatar">
+									{t.name.charAt(0)}
+								</div>
+								<div>
+									<p className="testimonial-name">{t.name}</p>
+									<p className="testimonial-role">{t.role}</p>
+								</div>
 							</div>
 						</div>
-					</div>
+					))}
 				</div>
 			</Reveal>
 		</section>
@@ -472,7 +605,7 @@ const FAQS = [
 	},
 	{
 		q: "What does the process look like?",
-		a: "We follow a four-phase approach: Discovery → Strategy → Design → Delivery. You'll be involved at key decision points throughout, with regular check-ins and shared Figma files so you always know where things stand.",
+		a: "We follow a three-phase approach: Discovery → Design → Delivery. You'll be involved at key decision points throughout, with regular check-ins and shared Figma files so you always know where things stand.",
 	},
 	{
 		q: "What is your pricing structure?",
@@ -535,60 +668,120 @@ function FaqSection() {
 	return (
 		<section className="faq" id="faq">
 			<Reveal>
-				<div className="section-header">
-					<div>
-						<p className="section-tag">FAQ</p>
-						<h2 className="section-title">
-							Common <em>questions</em>
-						</h2>
-					</div>
+				<div className="section-header-center">
+					<p className="section-tag">FAQ</p>
+					<h2 className="section-title">
+						Common <em>questions</em>
+					</h2>
 				</div>
 			</Reveal>
 
 			<Reveal delay={1}>
-				<div className="faq-grid">
-					{/* Left intro panel */}
-					<div className="faq-intro">
-						<div>
-							<p className="faq-intro-title">
-								Everything you need to know before we begin.
-							</p>
-							<p className="faq-intro-text">
-								We keep our process transparent and
-								straightforward. If you have a question not answered
-								here, we&apos;d love to hear from you.
-							</p>
+				<div className="faq-list-centered">
+					{FAQS.map((faq, i) => (
+						<FaqItem
+							key={i}
+							q={faq.q}
+							a={faq.a}
+							isOpen={openIndex === i}
+							onToggle={() => toggle(i)}
+						/>
+					))}
+				</div>
+			</Reveal>
+		</section>
+	);
+}
+
+/* ================================================================
+   CTA
+   ================================================================ */
+function CtaSection() {
+	return (
+		<section className="cta-section">
+			<Reveal>
+				<div className="cta-inner">
+					<h2 className="cta-headline">
+						Start your new project with <em>Aova</em> today.
+					</h2>
+					<a href="/book-a-call" className="hero-cta">
+						Book a call
+						<span className="hero-cta-icon">
+							<svg viewBox="0 0 10 10" fill="none">
+								<path
+									d="M1 9L9 1M9 1H3M9 1V7"
+									stroke="currentColor"
+									strokeWidth="1.5"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								/>
+							</svg>
+						</span>
+					</a>
+				</div>
+			</Reveal>
+		</section>
+	);
+}
+
+/* ================================================================
+   FOUNDER
+   ================================================================ */
+function FounderSection() {
+	return (
+		<section className="founders" id="team">
+			<Reveal>
+				<div className="section-header-center">
+					<p className="section-tag">The team</p>
+					<h2 className="section-title">
+						Meet the <em>founders</em>
+					</h2>
+				</div>
+			</Reveal>
+
+			<div className="founders-grid">
+				<Reveal delay={1}>
+					<div className="founder-card">
+						<div className="founder-avatar">
+							<span className="founder-initial">N</span>
 						</div>
-						<div>
-							<a
-								href="/book-a-call"
-								className="btn-primary"
-								style={{ width: "fit-content" }}
-							>
-								Book a call
-								<ArrowIcon />
-							</a>
-							<div className="faq-badge">
-								<span className="faq-badge-dot" />
-								Available for projects
+						<div className="founder-info">
+							<p className="founder-label">Co-founder</p>
+							<h3 className="founder-name">Noir&eacute;</h3>
+							<p className="founder-bio">
+								Graphic designer specializing in brand identity and UI/UX.
+								Noir&eacute; crafts visual systems that feel intentional — from
+								logos and brand guidelines to full product interfaces.
+							</p>
+							<div className="founder-links">
+								<a href="#" className="founder-link">Twitter <ArrowIcon size={10} /></a>
+								<a href="#" className="founder-link">LinkedIn <ArrowIcon size={10} /></a>
 							</div>
 						</div>
 					</div>
+				</Reveal>
 
-					{/* Right accordion */}
-					<div className="faq-list">
-						{FAQS.map((faq, i) => (
-							<FaqItem
-								key={i}
-								q={faq.q}
-								a={faq.a}
-								isOpen={openIndex === i}
-								onToggle={() => toggle(i)}
-							/>
-						))}
+				<Reveal delay={2}>
+					<div className="founder-card">
+						<div className="founder-avatar">
+							<span className="founder-initial">K</span>
+						</div>
+						<div className="founder-info">
+							<p className="founder-label">Co-founder</p>
+							<h3 className="founder-name">Kudy</h3>
+							<p className="founder-bio">
+								Motion designer bringing brands to life through animation.
+								Kudy creates micro-interactions, animated ads, and dynamic
+								brand assets that captivate and convert.
+							</p>
+							<div className="founder-links">
+								<a href="#" className="founder-link">Twitter <ArrowIcon size={10} /></a>
+								<a href="#" className="founder-link">LinkedIn <ArrowIcon size={10} /></a>
+							</div>
+						</div>
 					</div>
-				</div>
-			</Reveal>
+				</Reveal>
+			</div>
 		</section>
 	);
 }
@@ -598,31 +791,48 @@ function FaqSection() {
    ================================================================ */
 function Footer() {
 	return (
-		<>
-			<div
-				style={{ maxWidth: 1200, margin: "0 auto", padding: "0 48px" }}
-			>
-				<div style={{ borderTop: "1px solid var(--border)" }} />
-			</div>
-			<footer className="site-footer">
-				<div className="footer-logo">
-					Aova<span>.</span>
+		<footer className="site-footer">
+			<div className="footer-inner">
+				<div className="footer-col footer-col-brand">
+					<div className="footer-logo-mark">
+						<AovaLogo size={28} />
+					</div>
+					<p className="footer-tagline">
+						Premium design studio for startups who care about craft.
+					</p>
 				</div>
+
+				<div className="footer-col">
+					<p className="footer-col-title">Navigation</p>
+					<ul className="footer-nav">
+						<li><a href="#process">Process</a></li>
+						<li><a href="#work">Work</a></li>
+						<li><a href="#services">Services</a></li>
+						<li><a href="#faq">FAQ</a></li>
+						<li><a href="/book-a-call">Book a Call</a></li>
+					</ul>
+				</div>
+
+				<div className="footer-col">
+					<p className="footer-col-title">Connect</p>
+					<ul className="footer-nav">
+						<li><a href="#">Twitter</a></li>
+						<li><a href="#">Instagram</a></li>
+						<li><a href="#">LinkedIn</a></li>
+					</ul>
+				</div>
+			</div>
+
+			<div className="footer-bottom">
 				<span className="footer-copy">
 					&copy; {new Date().getFullYear()} Aova Studio. All rights
 					reserved.
 				</span>
-				<ul className="footer-links">
-					{["Twitter", "Instagram", "LinkedIn", "Dribbble"].map(
-						(link) => (
-							<li key={link}>
-								<a href="#">{link}</a>
-							</li>
-						)
-					)}
-				</ul>
-			</footer>
-		</>
+				<span className="footer-copy">
+					Crafted with intention.
+				</span>
+			</div>
+		</footer>
 	);
 }
 
@@ -636,8 +846,13 @@ export default function Home() {
 			<Navbar />
 			<Hero />
 			<Marquee />
+			<ProcessSection />
 			<WorkSection />
+			<ServicesSection />
+			<TestimonialsSection />
 			<FaqSection />
+			<CtaSection />
+			<FounderSection />
 			<Footer />
 		</>
 	);
