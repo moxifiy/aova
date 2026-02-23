@@ -6,6 +6,7 @@ import { getCalApi } from "@calcom/embed-react";
 import dynamic from "next/dynamic";
 
 const HeroLogo3D = dynamic<{ isDark: boolean }>(() => import("@/components/HeroLogo3D"), { ssr: false });
+import Folder from '@/components/Folder';
 
 function CustomCursor() {
     const dotRef = useRef<HTMLDivElement>(null);
@@ -29,16 +30,45 @@ function CustomCursor() {
     );
 }
 
+const NAV_HEIGHT = 80;
+
+function scrollToId(id: string) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const targetTop = el.getBoundingClientRect().top + window.scrollY - NAV_HEIGHT;
+    const start = window.scrollY;
+    const distance = targetTop - start;
+    const duration = 400;
+    let startTime: number | null = null;
+
+    const step = (time: number) => {
+        if (!startTime) startTime = time;
+        const progress = Math.min((time - startTime) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        window.scrollTo(0, start + distance * ease);
+        if (progress < 1) requestAnimationFrame(step);
+    };
+
+    requestAnimationFrame(step);
+}
+
 function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => void }) {
-    const scrollToSection = (e: React.MouseEvent, id: string) => {
-        e.preventDefault();
-        const section = document.getElementById(id);
-        if (section) {
-            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            section.classList.add('ring-4', 'ring-[#FF3366]', 'ring-offset-8', 'ring-offset-[var(--bg)]', 'rounded-[40px]', 'transition-all', 'duration-500');
-            setTimeout(() => {
-                section.classList.remove('ring-4', 'ring-[#FF3366]', 'ring-offset-8', 'ring-offset-[var(--bg)]');
-            }, 1000);
+    const [isAtTop, setIsAtTop] = useState(true);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsAtTop(window.scrollY < 100);
+        };
+        handleScroll();
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const handleArrowClick = () => {
+        if (isAtTop) {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
@@ -49,31 +79,73 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center px-8 py-3 bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] rounded-full shadow-lg"
         >
-            <div className="flex items-center gap-12 text-sm font-semibold uppercase tracking-widest text-[var(--muted)]">
-                <button onClick={(e) => scrollToSection(e, 'process')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Process</button>
-                <button onClick={(e) => scrollToSection(e, 'work')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Work</button>
-                <button onClick={(e) => scrollToSection(e, 'services')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Services</button>
+            <div className="flex items-center gap-8 md:gap-12 text-sm font-semibold uppercase tracking-widest text-[var(--muted)]">
 
-                <div className="w-[2px] h-4 bg-[var(--border)] mx-[-16px]"></div>
+                {/* Dynamic Left Arrow */}
+                <button
+                    onClick={handleArrowClick}
+                    className="hover:text-[var(--text)] transition-all flex items-center justify-center -ml-2 w-8 h-8 rounded-full hover:bg-[var(--border)]"
+                    aria-label={isAtTop ? "Scroll to Bottom" : "Scroll to Top"}
+                >
+                    <motion.svg
+                        animate={{ rotate: isAtTop ? 0 : 180 }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    >
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <polyline points="19 12 12 19 5 12"></polyline>
+                    </motion.svg>
+                </button>
 
-                <button onClick={toggleDark} className="hover:text-[var(--text)] hover:scale-110 transition-all cursor-none" aria-label="Toggle Theme">
-                    {isDark ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="4.22" x2="19.78" y2="5.64"></line></svg>
-                    ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                    )}
+                <div className="w-[1px] h-4 bg-[var(--border)] mx-[-16px]"></div>
+
+                <button onClick={() => scrollToId('process')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Process</button>
+                <button onClick={() => scrollToId('work')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Work</button>
+                <button onClick={() => scrollToId('services')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Services</button>
+
+                <div className="w-[1px] h-4 bg-[var(--border)] mx-[-16px]"></div>
+
+                {/* Pill Theme Switch */}
+                <button
+                    onClick={toggleDark}
+                    className="relative w-11 h-6 bg-[var(--border)] rounded-full overflow-hidden hover:bg-[var(--border-hover)] transition-colors flex items-center -mr-2"
+                    aria-label="Toggle Theme"
+                >
+                    <motion.div
+                        initial={false}
+                        animate={{ x: isDark ? 22 : 2 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        className="w-5 h-5 bg-[var(--text)] rounded-full shadow-sm flex items-center justify-center text-[var(--surface)]"
+                    >
+                        {isDark ? (
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                        ) : (
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="4.22" x2="19.78" y2="5.64"></line></svg>
+                        )}
+                    </motion.div>
                 </button>
             </div>
         </motion.nav>
     );
 }
 
+const triggerBookingSpark = (e: React.MouseEvent) => {
+    e.preventDefault();
+    scrollToId('faq');
+    const widget = document.getElementById('booking-widget');
+    if (widget) {
+        widget.classList.remove('animate-spark-flash');
+        void widget.offsetWidth;
+        widget.classList.add('animate-spark-flash');
+    }
+};
+
 function Hero({ isDark }: { isDark: boolean }) {
     const { scrollYProgress } = useScroll();
     const y = useTransform(scrollYProgress, [0, 1], [0, 300]);
 
     return (
-        <section className="relative min-h-[100svh] flex flex-col items-center justify-center pt-32 pb-20 px-6 overflow-hidden">
+        <section className="relative min-h-[100svh] flex flex-col items-start justify-center pt-32 pb-20 px-8 md:px-16 lg:px-24 overflow-hidden">
             {/* Decorative ambient gradients */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-[#FF3366]/10 to-[#3366FF]/10 rounded-full blur-[100px] -z-10 animate-pulse pointer-events-none" />
 
@@ -86,23 +158,38 @@ function Hero({ isDark }: { isDark: boolean }) {
 
             <motion.div
                 style={{ y }}
-                className="text-center max-w-4xl mx-auto z-10"
+                className="pg-inner text-left z-10"
             >
+                {/* Badge */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] text-xs font-semibold uppercase tracking-widest mb-8 shadow-sm"
+                >
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF3366] inline-block"></span>
+                    Design &amp; Motion Studio
+                </motion.div>
+
+                {/* Headline: bold sans + italic serif accents */}
                 <motion.h1
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                    className="text-6xl md:text-8xl lg:text-[100px] leading-[0.9] tracking-[-0.03em] mb-8 font-serif text-[var(--text)]"
+                    className="text-6xl md:text-8xl lg:text-[96px] leading-[0.92] tracking-[-0.03em] mb-8 text-[var(--text)]"
                 >
-                    Design studio for<br />
-                    <span className="italic text-[#FF3366]">brands</span> & <span className="italic text-[#3366FF]">creators</span>.
+                    <span className="font-black">Design studio for</span><br />
+                    <span className="font-serif italic text-[#FF3366]">brands</span>
+                    <span className="font-black"> &amp; </span>
+                    <span className="font-serif italic text-[#3366FF]">creators</span>
+                    <span className="font-black">.</span>
                 </motion.h1>
 
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-lg md:text-xl text-[var(--muted)] max-w-2xl mx-auto mb-12"
+                    className="text-base md:text-lg text-[var(--muted)] max-w-lg mb-10 leading-relaxed"
                 >
                     Brands get the full creative suite. Creators get the content engine. Elevating your digital presence with intention.
                 </motion.p>
@@ -111,9 +198,10 @@ function Hero({ isDark }: { isDark: boolean }) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
+                    className="flex items-center gap-4"
                 >
-                    <motion.a
-                        href="#faq"
+                    <motion.button
+                        onClick={triggerBookingSpark}
                         whileHover={{
                             scale: 1.05,
                             rotateX: 12,
@@ -123,17 +211,17 @@ function Hero({ isDark }: { isDark: boolean }) {
                         }}
                         whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
                         style={{ transformStyle: "preserve-3d", perspective: 1000 }}
-                        className="pg-btn pg-btn-primary text-lg group shadow-xl transition-shadow duration-300"
+                        className="pg-btn pg-btn-primary text-base group shadow-xl transition-shadow duration-300"
                     >
                         <span style={{ transform: "translateZ(20px)" }} className="flex items-center gap-2">
                             Reserve your spot
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
                         </span>
-                    </motion.a>
-                    <p className="mt-6 text-xs font-medium text-[var(--muted)] opacity-80 uppercase tracking-widest">Booking for Q1 2026</p>
+                    </motion.button>
+                    <p className="text-xs font-medium text-[var(--muted)] opacity-80 uppercase tracking-widest">Booking for Q1 2026</p>
                 </motion.div>
             </motion.div>
         </section>
@@ -326,8 +414,8 @@ function InteractiveServices() {
    ================================================================ */
 function TrustedBy() {
     return (
-        <section className="py-32 px-6 relative z-20">
-            <div className="max-w-6xl mx-auto">
+        <section className="py-32 relative z-20">
+            <div className="pg-inner">
                 <div className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-[32px] p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-16 relative overflow-hidden shadow-sm">
                     {/* Abstract decorative background hint */}
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-[var(--border)] to-transparent rounded-full blur-3xl opacity-40 pointer-events-none -mr-32 -mt-24"></div>
@@ -368,8 +456,8 @@ function TrustedBy() {
    ================================================================ */
 function WorkSection() {
     return (
-        <section id="work" className="py-32 px-6">
-            <div className="max-w-6xl mx-auto space-y-16">
+        <section id="work" className="py-32">
+            <div className="pg-inner space-y-16">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <h2 className="text-5xl md:text-7xl">Selected Work</h2>
                     <p className="text-[var(--muted)] max-w-sm text-sm">
@@ -423,8 +511,8 @@ function WorkSection() {
                 </div>
 
                 <div className="flex justify-center pt-8">
-                    <motion.a
-                        href="#faq"
+                    <motion.button
+                        onClick={() => scrollToId('faq')}
                         whileHover={{
                             scale: 1.05,
                             rotateX: 12,
@@ -440,7 +528,7 @@ function WorkSection() {
                             View Complete Archive
                             <span className="group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
                         </span>
-                    </motion.a>
+                    </motion.button>
                 </div>
             </div>
         </section>
@@ -508,11 +596,11 @@ const BUYING_STEPS = [
 
 function BuyingProcess() {
     return (
-        <section className="relative py-32 px-6 border-t border-[var(--border)] overflow-hidden" id="process">
+        <section className="relative py-32 border-t border-[var(--border)] overflow-hidden" id="process">
             {/* Decorative background block */}
             <div className="absolute top-1/2 left-0 -translate-y-1/2 w-72 h-72 bg-dots opacity-[0.08] -rotate-12 pointer-events-none -z-10" />
 
-            <div className="max-w-7xl mx-auto">
+            <div className="pg-inner">
                 <div className="text-center mb-20">
                     <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">How it <span className="italic text-[#00CC66]">Works</span></h2>
                     <p className="text-[var(--muted)] text-lg max-w-xl mx-auto">We keep things simple, transparent, and completely focused on your success.</p>
@@ -588,6 +676,47 @@ function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boo
 
 function FaqSection() {
     const [openIndex, setOpenIndex] = useState<number | null>(0);
+    const [folderOpen, setFolderOpen] = useState(false);
+    const [selectedMember, setSelectedMember] = useState<number | null>(null);
+
+    const teamMembers = [
+        {
+            name: 'Sarah', role: 'Creative Director', avatar: 'sarah_aova',
+            quote: '"Great design starts with a really good question."',
+            bio: 'Sarah leads the creative vision at AOVA, shaping the studio\'s aesthetic language across brand, digital, and motion work. With 10 years in the industry, she believes in restraint, intentionality, and work that resonates long after first glance.',
+            skills: ['Brand Identity', 'Art Direction', 'Typography', 'Creative Strategy'],
+            location: 'Amsterdam, NL',
+        },
+        {
+            name: 'Marcus', role: 'Lead Engineer', avatar: 'marcus_aova',
+            quote: '"Code is design. Every function has a form."',
+            bio: 'Marcus builds the technical backbone of every AOVA project — from pixel-perfect web experiences to interactive 3D environments. He champions performance, accessibility, and code that reads as cleanly as the designs it serves.',
+            skills: ['React / Next.js', 'WebGL / Three.js', 'TypeScript', 'DevOps'],
+            location: 'Berlin, DE',
+        },
+        {
+            name: 'Elena', role: 'Design Lead', avatar: 'elena_aova',
+            quote: '"Systems thinking is just empathy at scale."',
+            bio: 'Elena architects design systems and product interfaces that feel effortless by design. She bridges strategy and craft, ensuring every component, interaction, and pixel is considered as part of a larger whole.',
+            skills: ['UI / UX', 'Design Systems', 'Figma', 'Interaction Design'],
+            location: 'Barcelona, ES',
+        },
+        {
+            name: 'David', role: 'Motion Designer', avatar: 'david_aova',
+            quote: '"Animation is the punctuation of digital experience."',
+            bio: 'David creates the motion layer that gives AOVA\'s work its signature energy. From micro-interactions to full motion identities, he makes interfaces feel alive without overwhelming the underlying message.',
+            skills: ['After Effects', 'CSS Animation', 'Lottie', 'Framer'],
+            location: 'London, UK',
+        },
+        {
+            name: 'Amina', role: 'Brand Strategist', avatar: 'amina_aova',
+            quote: '"Your brand is what people say when you leave the room."',
+            bio: 'Amina brings clarity to complex positioning challenges, helping clients articulate who they are and why it matters. She leads workshops, naming projects, and brand narrative work that grounds everything AOVA creates.',
+            skills: ['Brand Strategy', 'Positioning', 'Copywriting', 'Research'],
+            location: 'Nairobi, KE',
+        },
+    ];
+
     const [copied, setCopied] = useState(false);
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
@@ -630,106 +759,237 @@ function FaqSection() {
     }, []);
 
     return (
-        <section className="py-32 px-6" id="faq">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+        <>
+            {/* Team Member Deck Modal */}
+            <AnimatePresence>
+                {selectedMember !== null && (
+                    <motion.div
+                        key="member-modal-backdrop"
+                        className="fixed inset-0 z-[1000] flex items-center justify-center overflow-hidden"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        onClick={() => setSelectedMember(null)}
+                    >
+                        {/* Backdrop */}
+                        <div className="absolute inset-0 bg-black/75 backdrop-blur-md" />
 
-                {/* Left Column Component: FAQ */}
-                <div className="lg:col-span-7">
-                    <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-16">
-                        Common <span className="italic text-[#00CC66]">Questions</span>
-                    </h2>
-                    <div>
-                        {FAQS.map((faq, i) => (
-                            <FaqItem
-                                key={i}
-                                q={faq.q}
-                                a={faq.a}
-                                isOpen={openIndex === i}
-                                onToggle={() => setOpenIndex(prev => prev === i ? null : i)}
-                            />
-                        ))}
+                        {/* Card deck */}
+                        <div className="relative z-10" style={{ width: 380, height: 560 }} onClick={e => e.stopPropagation()}>
+                            {teamMembers.map((member, idx) => {
+                                const total = teamMembers.length;
+                                let d = ((idx - (selectedMember ?? 0)) % total + total) % total;
+                                if (d > total / 2) d = d - total;
+                                const absD = Math.abs(d);
+                                return (
+                                    <motion.div
+                                        key={idx}
+                                        className="absolute inset-0 bg-white rounded-[32px] shadow-2xl overflow-hidden"
+                                        animate={{ x: d * 165, scale: 1 - absD * 0.11, opacity: absD === 0 ? 1 : Math.max(0.45, 0.78 - absD * 0.18), zIndex: 10 - absD, rotate: d * -2.5, y: absD * 12 }}
+                                        transition={{ type: 'spring', stiffness: 340, damping: 32 }}
+                                        style={{ cursor: absD > 0 ? 'pointer' : 'default' }}
+                                        onClick={() => { if (absD > 0) setSelectedMember(idx); }}
+                                    >
+                                        <div className="relative bg-[#FF3366] px-6 pt-8 pb-16 flex flex-col items-center text-center">
+                                            {absD === 0 && (
+                                                <button onClick={e => { e.stopPropagation(); setSelectedMember(null); }} className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center transition-colors">
+                                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="white" strokeWidth="2" strokeLinecap="round" /></svg>
+                                                </button>
+                                            )}
+                                            <img src={`https://i.pravatar.cc/200?u=${member.avatar}`} alt={member.name} className={`rounded-full border-4 border-white shadow-xl object-cover mb-3 ${absD === 0 ? 'w-20 h-20' : 'w-14 h-14'}`} />
+                                            <h2 className={`font-serif font-bold text-white leading-tight ${absD === 0 ? 'text-2xl' : 'text-lg'}`}>{member.name}</h2>
+                                            <p className="text-white/70 text-xs font-semibold uppercase tracking-widest mt-0.5">{member.role}</p>
+                                            {absD === 0 && <p className="text-white/50 text-[11px] mt-1 flex items-center gap-1"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" /><circle cx="12" cy="9" r="2.5" /></svg>{member.location}</p>}
+                                        </div>
+                                        {absD === 0 && (
+                                            <div className="px-6 py-5 -mt-8 relative">
+                                                <div className="bg-white rounded-2xl p-5 shadow-lg border border-black/5 mb-4">
+                                                    <p className="font-serif italic text-[#FF3366] text-base leading-snug">{member.quote}</p>
+                                                </div>
+                                                <p className="text-gray-600 text-sm leading-relaxed mb-4">{member.bio}</p>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {member.skills.map(skill => <span key={skill} className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold tracking-wide border border-gray-200">{skill}</span>)}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Dot indicators */}
+                        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                            {teamMembers.map((_, idx) => (
+                                <button key={idx} onClick={e => { e.stopPropagation(); setSelectedMember(idx); }} className={`rounded-full transition-all duration-300 ${idx === selectedMember ? 'w-6 h-2 bg-white' : 'w-2 h-2 bg-white/40 hover:bg-white/70'}`} />
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+
+            </AnimatePresence>
+
+            <section className="py-32 overflow-visible" id="faq">
+                <div className="pg-inner grid grid-cols-1 lg:grid-cols-12 gap-16 items-start overflow-visible">
+
+                    {/* Left Column Component: FAQ */}
+                    <div className="lg:col-span-7">
+                        <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-16">
+                            Common <span className="italic text-[#00CC66]">Questions</span>
+                        </h2>
+                        <div>
+                            {FAQS.map((faq, i) => (
+                                <FaqItem
+                                    key={i}
+                                    q={faq.q}
+                                    a={faq.a}
+                                    isOpen={openIndex === i}
+                                    onToggle={() => setOpenIndex(prev => prev === i ? null : i)}
+                                />
+                            ))}
+                        </div>
+
+
                     </div>
-                </div>
 
-                {/* Right Column Component: Sticky Booking Widget */}
-                <div className="lg:col-span-5 relative">
-                    <div className="sticky top-32 w-full pt-8 lg:pt-0">
-                        <motion.div
-                            id="booking-widget"
-                            onMouseMove={handleMouseMove}
-                            onMouseLeave={handleMouseLeave}
-                            whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.3)" }}
-                            transition={{ duration: 0.3 }}
-                            className="w-full rounded-[40px] p-8 md:p-12 overflow-hidden relative border border-[#222222] bg-[#0A0A0A] group"
-                            style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: 1000 }}
-                        >
-                            {/* Inner grain overlay */}
-                            <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+                    {/* Right Column Component: Sticky Booking Widget */}
+                    <div className="lg:col-span-5 relative overflow-visible">
+                        <div className="sticky top-32 w-full overflow-visible">
 
-                            {/* Pink Spotlight Hover Glow */}
+                            {/* TEAM Folder ─ top of sticky column */}
+                            <div className="relative flex justify-center overflow-visible" style={{ paddingTop: '110px', marginTop: '-110px' }}>
+                                {/* Annotation: positioned so right edge clears folder's left edge */}
+                                <div
+                                    className={`absolute top-1/2 translate-y-4 flex flex-col items-end gap-1 rotate-[-10deg] pointer-events-none transition-opacity duration-300 ${folderOpen ? 'opacity-0' : 'opacity-100'
+                                        }`}
+                                    style={{ zIndex: 1, right: 'calc(50% + 180px)' }}
+                                >
+                                    <span className="font-serif italic text-3xl text-[#FF3366] whitespace-nowrap leading-tight">Get to know us!</span>
+                                    {/* Arrow sweeps from bottom-left (below text) curving right → toward folder */}
+                                    <svg width="88" height="56" viewBox="0 0 110 70" fill="none" xmlns="http://www.w3.org/2000/svg" className="self-end mr-2">
+                                        <path d="M8 8 Q20 65 100 55" stroke="#FF3366" strokeWidth="4" fill="none" strokeDasharray="6,5" strokeLinecap="round" />
+                                        <path d="M88 44 L100 55 L86 60" stroke="#FF3366" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </div>
+
+                                {/* Folder – z-index: 2 ensures it stacks above annotation (z:1) */}
+                                <div style={{ position: 'relative', zIndex: 2 }}>
+                                    <Folder
+                                        size={1.8}
+                                        color="#FF3366"
+                                        onOpenChange={setFolderOpen}
+                                        onCardClick={i => setSelectedMember(i)}
+                                        items={[
+                                            <div key="t1" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
+                                                <img src="https://i.pravatar.cc/150?u=sarah_aova" alt="Sarah" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
+                                                <h4 className="font-serif text-[13px] font-bold text-black leading-tight">Sarah</h4>
+                                                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Creative Dir.</p>
+                                            </div>,
+                                            <div key="t2" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
+                                                <img src="https://i.pravatar.cc/150?u=marcus_aova" alt="Marcus" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
+                                                <h4 className="font-serif text-[13px] font-bold text-black leading-tight">Marcus</h4>
+                                                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Engineer</p>
+                                            </div>,
+                                            <div key="t3" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
+                                                <img src="https://i.pravatar.cc/150?u=elena_aova" alt="Elena" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
+                                                <h4 className="font-serif text-[13px] font-bold text-black leading-tight">Elena</h4>
+                                                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Design Lead</p>
+                                            </div>,
+                                            <div key="t4" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
+                                                <img src="https://i.pravatar.cc/150?u=david_aova" alt="David" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
+                                                <h4 className="font-serif text-[13px] font-bold text-black leading-tight">David</h4>
+                                                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Motion</p>
+                                            </div>,
+                                            <div key="t5" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
+                                                <img src="https://i.pravatar.cc/150?u=amina_aova" alt="Amina" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
+                                                <h4 className="font-serif text-[13px] font-bold text-black leading-tight">Amina</h4>
+                                                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Strategy</p>
+                                            </div>
+                                        ]}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Booking Widget ─ below the folder */}
                             <motion.div
-                                className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
-                                style={{
-                                    background: useMotionTemplate`
+                                id="booking-widget"
+                                onMouseMove={handleMouseMove}
+                                onMouseLeave={handleMouseLeave}
+                                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.3)" }}
+                                transition={{ duration: 0.3 }}
+                                className="w-full rounded-[40px] p-8 md:p-12 overflow-hidden relative border border-[#222222] bg-[#0A0A0A] group mt-8"
+                                style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: 1000 }}
+                            >
+                                {/* Inner grain overlay */}
+                                <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+
+                                {/* Pink Spotlight Hover Glow */}
+                                <motion.div
+                                    className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+                                    style={{
+                                        background: useMotionTemplate`
                                         radial-gradient(
                                             600px circle at ${mouseX}px ${mouseY}px,
                                             rgba(255, 51, 102, 0.15),
                                             transparent 80%
                                         )
                                     `,
-                                }}
-                            />
-
-                            <div className="relative z-10 flex flex-col h-full items-center text-center" style={{ transform: "translateZ(30px)" }}>
-
-                                <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/50 text-xs font-semibold uppercase tracking-widest mb-8">Currently accepting clients</span>
-
-                                <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-10 w-full text-[#FF3366]">
-                                    Book a 15-min intro call
-                                </h3>
-
-                                <motion.button
-                                    data-cal-namespace=""
-                                    data-cal-link="rick/get-rick-rolled"
-                                    data-cal-config='{"layout":"month_view"}'
-                                    whileHover={{
-                                        scale: 1.05,
-                                        rotateX: 12,
-                                        rotateY: -8,
-                                        y: -5,
-                                        boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)"
                                     }}
-                                    whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
-                                    style={{ transformStyle: "preserve-3d", perspective: 1000 }}
-                                    className="w-full bg-white text-black font-semibold text-lg py-5 rounded-2xl shadow-xl transition-shadow duration-300 mb-8"
-                                >
-                                    <span style={{ transform: "translateZ(20px)" }} className="block">
-                                        Book a call
-                                    </span>
-                                </motion.button>
+                                />
 
-                                {/* Footer Email Note */}
-                                <button onClick={handleCopy} className="group/email flex flex-col items-center justify-center w-full bg-[#FFFFFF]/5 rounded-[24px] py-8 transition-all duration-300 hover:bg-[#FFFFFF]/10 hover:shadow-lg border border-transparent hover:border-[#FF3366]/30">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`mb-4 transition-colors duration-300 ${copied ? 'text-[#00CC66]' : 'text-white/50 group-hover/email:text-[#FF3366]'}`}>
-                                        {copied ? (
-                                            <path d="M20 6L9 17l-5-5"></path>
-                                        ) : (
-                                            <>
-                                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                                <polyline points="22,6 12,13 2,6"></polyline>
-                                            </>
-                                        )}
-                                    </svg>
-                                    <span className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-2 transition-colors">{copied ? 'Copied to clipboard' : 'Prefer to email?'}</span>
-                                    <span className="text-lg md:text-xl font-serif text-white group-hover/email:text-[#FF3366] transition-colors">aovastudio@gmail.com</span>
-                                </button>
-                            </div>
-                        </motion.div>
+                                <div className="relative z-10 flex flex-col h-full items-center text-center" style={{ transform: "translateZ(30px)" }}>
+
+                                    <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/50 text-xs font-semibold uppercase tracking-widest mb-8">Currently accepting clients</span>
+
+                                    <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-10 w-full text-[#FF3366]">
+                                        Book a 15-min intro call
+                                    </h3>
+
+                                    <motion.button
+                                        data-cal-namespace=""
+                                        data-cal-link="rick/get-rick-rolled"
+                                        data-cal-config='{"layout":"month_view"}'
+                                        whileHover={{
+                                            scale: 1.05,
+                                            rotateX: 12,
+                                            rotateY: -8,
+                                            y: -5,
+                                            boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)"
+                                        }}
+                                        whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
+                                        style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                                        className="w-full bg-white text-black font-semibold text-lg py-5 rounded-2xl shadow-xl transition-shadow duration-300 mb-8"
+                                    >
+                                        <span style={{ transform: "translateZ(20px)" }} className="block">
+                                            Book a call
+                                        </span>
+                                    </motion.button>
+
+                                    {/* Footer Email Note */}
+                                    <button onClick={handleCopy} className="group/email flex flex-col items-center justify-center w-full bg-[#FFFFFF]/5 rounded-[24px] py-8 transition-all duration-300 hover:bg-[#FFFFFF]/10 hover:shadow-lg border border-transparent hover:border-[#FF3366]/30">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`mb-4 transition-colors duration-300 ${copied ? 'text-[#00CC66]' : 'text-white/50 group-hover/email:text-[#FF3366]'}`}>
+                                            {copied ? (
+                                                <path d="M20 6L9 17l-5-5"></path>
+                                            ) : (
+                                                <>
+                                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                                </>
+                                            )}
+                                        </svg>
+                                        <span className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-2 transition-colors">{copied ? 'Copied to clipboard' : 'Prefer to email?'}</span>
+                                        <span className="text-lg md:text-xl font-serif text-white group-hover/email:text-[#FF3366] transition-colors">aovastudio@gmail.com</span>
+                                    </button>
+                                </div>
+                            </motion.div>
+
+                        </div>
                     </div>
+
                 </div>
 
-            </div>
-        </section>
+            </section>
+        </>
     );
 }
 
@@ -739,22 +999,10 @@ function FaqSection() {
 function Footer() {
     const [isHovered, setIsHovered] = useState(false);
 
-    const scrollToFaq = (e: React.MouseEvent) => {
-        e.preventDefault();
-        const widget = document.getElementById('booking-widget');
-        if (widget) {
-            widget.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            widget.classList.add('ring-4', 'ring-[#FF3366]', 'ring-offset-8', 'ring-offset-[var(--bg)]');
-            setTimeout(() => {
-                widget.classList.remove('ring-4', 'ring-[#FF3366]', 'ring-offset-8', 'ring-offset-[var(--bg)]');
-            }, 1000);
-        }
-    };
-
     return (
-        <footer className="relative bg-[#111111] text-white py-20 px-6 rounded-t-[40px] md:rounded-t-[80px] mt-20 overflow-hidden">
+        <footer className="relative bg-[#111111] text-white py-20 rounded-t-[40px] md:rounded-t-[80px] mt-20 overflow-hidden">
             <div className="absolute inset-0 bg-dots opacity-[0.05] pointer-events-none -z-10 mix-blend-overlay" />
-            <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
+            <div className="pg-inner flex flex-col items-center text-center">
                 <h2 className="text-6xl md:text-[120px] leading-none font-serif tracking-tight mb-12 text-[#FF3366] flex justify-center items-baseline cursor-default">
                     <div
                         onMouseEnter={() => setIsHovered(true)}
@@ -786,7 +1034,7 @@ function Footer() {
                     </div>
                 </h2>
                 <motion.button
-                    onClick={scrollToFaq}
+                    onClick={triggerBookingSpark}
                     whileHover={{
                         scale: 1.05,
                         rotateX: 12,

@@ -41,7 +41,7 @@ body.dark {
    BASE
    ═══════════════════════════════════════════ */
 html {
-	scroll-behavior: smooth;
+	scroll-behavior: auto;
 }
 
 *,
@@ -60,6 +60,38 @@ body {
 	min-height: 100vh;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════════════════════════════════
+   GRID LINES — designjoy style
+   ═══════════════════════════════════════════ */
+.pg-grid-lines {
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+	display: flex;
+	justify-content: center;
+}
+
+.pg-grid-lines__inner {
+	width: 100%;
+	max-width: 1200px;
+	border-left: 1px solid var(--border);
+	border-right: 1px solid var(--border);
+	opacity: 0.5;
+}
+
+/* Sections that should sit inside the grid lines use this class */
+.pg-inner {
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 48px;
+	padding-right: 48px;
+	width: 100%;
+	position: relative;
+	z-index: 1;
 }
 
 h1,
@@ -505,4 +537,32 @@ body.dark ::-webkit-scrollbar-thumb:hover {
 		padding: 32px 24px;
 		text-align: center;
 	}
+}
+
+/* ═══════════════════════════════════════════
+   CUSTOM ANIMATIONS
+   ═══════════════════════════════════════════ */
+@keyframes sparkFlash {
+	0% {
+		box-shadow: 0 0 0px rgba(255, 51, 102, 0);
+		border-color: rgba(255, 51, 102, 0.2);
+		filter: brightness(1) saturate(1);
+	}
+
+	15%,
+	40% {
+		box-shadow: 0 0 120px rgba(255, 51, 102, 1), inset 0 0 40px rgba(255, 255, 255, 0.4);
+		border-color: rgba(255, 255, 255, 1);
+		filter: brightness(1.3) saturate(1.2);
+	}
+
+	100% {
+		box-shadow: 0 0 0px rgba(255, 51, 102, 0);
+		border-color: #222222;
+		filter: brightness(1) saturate(1);
+	}
+}
+
+.animate-spark-flash {
+	animation: sparkFlash 4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }

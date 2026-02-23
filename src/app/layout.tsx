@@ -30,6 +30,10 @@ export default function RootLayout({
 			<body
 				className={`${instrumentSerif.variable} ${outfit.variable} antialiased`}
 			>
+				{/* Fixed 2-line grid — designjoy style */}
+				<div className="pg-grid-lines" aria-hidden="true">
+					<div className="pg-grid-lines__inner" />
+				</div>
 				{children}
 			</body>
 		</html>
