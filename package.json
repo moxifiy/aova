@@ -12,6 +12,7 @@
 		"publish": true
 	},
 	"dependencies": {
+		"@calcom/embed-react": "^1.5.3",
 		"@opennextjs/cloudflare": "1.14.0",
 		"@react-three/drei": "^10.7.7",
 		"@react-three/fiber": "^9.5.0",

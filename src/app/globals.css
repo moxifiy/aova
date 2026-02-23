@@ -8,7 +8,7 @@
 	--surface: #FFFFFF;
 	--border: rgba(0, 0, 0, 0.08);
 	--border-hover: rgba(0, 0, 0, 0.2);
-	--text: #111111;
+	--text: #000000;
 	--muted: #666666;
 	--accent: #FF3366;
 	--accent-blue: #3366FF;
@@ -42,6 +42,12 @@ body.dark {
    ═══════════════════════════════════════════ */
 html {
 	scroll-behavior: smooth;
+}
+
+*,
+*::before,
+*::after {
+	cursor: none !important;
 }
 
 body {
@@ -180,7 +186,7 @@ a:not(.pg-btn) {
 	overflow: hidden;
 	gap: 2rem;
 	padding: 2rem 0;
-	background: var(--marquee-bg);
+	background-color: var(--marquee-bg);
 	color: var(--marquee-text);
 }
 
@@ -385,10 +391,12 @@ body.dark nav.site-nav {
 }
 
 @keyframes blink {
+
 	0%,
 	100% {
 		opacity: 1;
 	}
+
 	50% {
 		opacity: 0.2;
 	}

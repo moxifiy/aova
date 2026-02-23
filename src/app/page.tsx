@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useMotionTemplate, useSpring } from "framer-motion";
+import { getCalApi } from "@calcom/embed-react";
 import dynamic from "next/dynamic";
 
 const HeroLogo3D = dynamic<{ isDark: boolean }>(() => import("@/components/HeroLogo3D"), { ssr: false });
@@ -29,6 +30,18 @@ function CustomCursor() {
 }
 
 function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => void }) {
+    const scrollToSection = (e: React.MouseEvent, id: string) => {
+        e.preventDefault();
+        const section = document.getElementById(id);
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            section.classList.add('ring-4', 'ring-[#FF3366]', 'ring-offset-8', 'ring-offset-[var(--bg)]', 'rounded-[40px]', 'transition-all', 'duration-500');
+            setTimeout(() => {
+                section.classList.remove('ring-4', 'ring-[#FF3366]', 'ring-offset-8', 'ring-offset-[var(--bg)]');
+            }, 1000);
+        }
+    };
+
     return (
         <motion.nav
             initial={{ y: -20, opacity: 0 }}
@@ -37,9 +50,9 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
             className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center px-8 py-3 bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] rounded-full shadow-lg"
         >
             <div className="flex items-center gap-12 text-sm font-semibold uppercase tracking-widest text-[var(--muted)]">
-                <a href="#process" className="hover:text-[var(--text)] hover:scale-105 transition-all">Process</a>
-                <a href="#work" className="hover:text-[var(--text)] hover:scale-105 transition-all">Work</a>
-                <a href="#services" className="hover:text-[var(--text)] hover:scale-105 transition-all">Services</a>
+                <button onClick={(e) => scrollToSection(e, 'process')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Process</button>
+                <button onClick={(e) => scrollToSection(e, 'work')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Work</button>
+                <button onClick={(e) => scrollToSection(e, 'services')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Services</button>
 
                 <div className="w-[2px] h-4 bg-[var(--border)] mx-[-16px]"></div>
 
@@ -61,13 +74,6 @@ function Hero({ isDark }: { isDark: boolean }) {
 
     return (
         <section className="relative min-h-[100svh] flex flex-col items-center justify-center pt-32 pb-20 px-6 overflow-hidden">
-            {/* Dot Pattern Background fading out at edges */}
-            <div className="absolute inset-0 bg-dots [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_10%,transparent_100%)] opacity-60 pointer-events-none -z-20" />
-
-            {/* Extra decorative dot blocks for abstract feel */}
-            <div className="absolute top-[15%] left-[5%] w-64 h-64 bg-dots opacity-[0.15] -rotate-6 pointer-events-none -z-15" />
-            <div className="absolute bottom-[20%] right-[5%] w-96 h-48 bg-dots opacity-[0.15] rotate-12 pointer-events-none -z-15" />
-
             {/* Decorative ambient gradients */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-[#FF3366]/10 to-[#3366FF]/10 rounded-full blur-[100px] -z-10 animate-pulse pointer-events-none" />
 
@@ -106,14 +112,28 @@ function Hero({ isDark }: { isDark: boolean }) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
                 >
-                    <a href="/book-a-call" className="pg-btn pg-btn-primary text-lg">
-                        Reserve your spot
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </a>
-                    <p className="mt-4 text-xs font-medium text-[var(--muted)] opacity-80 uppercase tracking-widest">Booking for Q1 2026</p>
+                    <motion.a
+                        href="#faq"
+                        whileHover={{
+                            scale: 1.05,
+                            rotateX: 12,
+                            rotateY: -8,
+                            y: -5,
+                            boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)"
+                        }}
+                        whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
+                        style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                        className="pg-btn pg-btn-primary text-lg group shadow-xl transition-shadow duration-300"
+                    >
+                        <span style={{ transform: "translateZ(20px)" }} className="flex items-center gap-2">
+                            Reserve your spot
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </span>
+                    </motion.a>
+                    <p className="mt-6 text-xs font-medium text-[var(--muted)] opacity-80 uppercase tracking-widest">Booking for Q1 2026</p>
                 </motion.div>
             </motion.div>
         </section>
@@ -121,19 +141,46 @@ function Hero({ isDark }: { isDark: boolean }) {
 }
 
 const MARQUEE_ITEMS = [
-    "Branding", "Websites", "Ads", "Thumbnails", "Video Editing", "Motion Design", "Growth Strategy",
-    "Branding", "Websites", "Ads", "Thumbnails", "Video Editing", "Motion Design", "Growth Strategy"
+    "Connecting selected creatives to selective brands.",
+    "Where the right creators find the right canvas.",
+    "Igniting brand potential with top-tier creative minds.",
+    "Bespoke matchmaking for the creative industry.",
 ];
 
 function Marquee() {
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setIndex((prev) => (prev + 1) % MARQUEE_ITEMS.length);
+        }, 11000); // 11 seconds delay
+        return () => clearInterval(interval);
+    }, []);
+
     return (
-        <div className="pg-marquee-wrap">
-            <div className="pg-marquee-track">
-                {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
-                    <span key={i} className="pg-marquee-item">
-                        {item}
-                    </span>
-                ))}
+        <div className="pg-marquee-wrap flex items-center justify-center relative h-32 px-6">
+            <div className="font-serif italic text-2xl md:text-3xl flex items-center justify-center gap-4 md:gap-8 overflow-hidden max-w-7xl mx-auto w-full">
+                {/* Left Star (Static) */}
+                <span className="text-[var(--accent)] text-lg shrink-0">✦</span>
+
+                {/* Dynamic Text Container */}
+                <div className="relative flex-1 flex items-center justify-center h-16 md:h-20">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                            className="absolute text-center w-full"
+                        >
+                            {MARQUEE_ITEMS[index]}
+                        </motion.div>
+                    </AnimatePresence>
+                </div>
+
+                {/* Right Star (Static) */}
+                <span className="text-[var(--accent)] text-lg shrink-0">✦</span>
             </div>
         </div>
     );
@@ -141,20 +188,20 @@ function Marquee() {
 
 const SERVICES_DATA = {
     creator: {
-        theme: "text-[#FF9933]",
-        accent: "bg-[#FF9933]",
-        hoverAccent: "hover:bg-[#FF9933]/10",
-        tabLabel: "For Creators",
+        theme: "text-[#FF3366]",
+        accent: "bg-[#FF3366]",
+        hoverAccent: "hover:bg-[#FF3366]/10",
+        tabLabel: "I'm a creator",
         hero: {
             title: "Content that grows. Channels that last.",
             desc: "AOVA handles the full creative pipeline for creators — from zero-retention editing to algorithmic growth strategy. You focus on the camera, we build the engine.",
-            color: "bg-[#FF9933]/10 border-[#FF9933]/20",
+            color: "bg-[#FF3366]/5 border-[#FF3366]/20",
             proof: (
                 <div className="mt-8 flex -space-x-4 opacity-100">
                     <div className="w-16 h-16 rounded-full border-2 border-white bg-[url('https://i.pravatar.cc/100?img=4')] bg-cover relative z-30 shadow-md"></div>
                     <div className="w-16 h-16 rounded-full border-2 border-white bg-[url('https://i.pravatar.cc/100?img=5')] bg-cover relative z-20 shadow-md"></div>
                     <div className="w-16 h-16 rounded-full border-2 border-white bg-[url('https://i.pravatar.cc/100?img=6')] bg-cover relative z-10 shadow-md"></div>
-                    <div className="w-16 h-16 rounded-full border-2 border-white bg-[#FF9933] text-white flex items-center justify-center text-xs font-bold shadow-md">+10M</div>
+                    <div className="w-16 h-16 rounded-full border-2 border-white bg-[#FF3366] text-white flex items-center justify-center text-xs font-bold shadow-md">+10M</div>
                 </div>
             )
         },
@@ -169,7 +216,7 @@ const SERVICES_DATA = {
         theme: "text-[#3366FF]",
         accent: "bg-[#3366FF]",
         hoverAccent: "hover:bg-[#3366FF]/10",
-        tabLabel: "For Brands",
+        tabLabel: "I own a brand",
         hero: {
             title: "Design that converts. Presence that compounds.",
             desc: "AOVA builds brand infrastructure — not just visuals. We engineer systems that capture attention, drive action, and scale effortlessly as your business grows.",
@@ -197,25 +244,27 @@ const SERVICES_DATA = {
 type AudienceType = 'creator' | 'brand';
 
 function InteractiveServices() {
-    const [audience, setAudience] = useState<AudienceType>('creator');
-    const data = SERVICES_DATA[audience];
+    const [audience, setAudience] = useState<AudienceType | null>(null);
+    const data = audience ? SERVICES_DATA[audience] : null;
 
     return (
         <section className="relative py-32 px-6" id="services">
             <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
             <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-16">
+                <div className="text-center mb-8">
                     <h2 className="text-4xl md:text-6xl font-serif tracking-tight mb-8">Who are we building for?</h2>
+                </div>
 
-                    {/* Interactive Selector */}
-                    <div className="inline-flex flex-col md:flex-row p-2 bg-[var(--border)] rounded-[32px] md:rounded-full gap-2 relative z-10 w-full md:w-auto">
+                {/* Sticky Interactive Selector */}
+                <div className="sticky top-24 z-50 flex justify-center mb-16 pointer-events-none">
+                    <div className="inline-flex flex-col md:flex-row p-2 bg-[var(--surface)]/70 backdrop-blur-xl rounded-[32px] md:rounded-full gap-2 relative border border-[var(--border)] shadow-2xl shadow-black/5 pointer-events-auto">
                         {(['creator', 'brand'] as AudienceType[]).map((type) => (
                             <button
                                 key={type}
-                                onClick={() => setAudience(type)}
-                                className={`px-8 py-4 rounded-full text-lg md:text-xl font-serif transition-all duration-300 w-full md:w-auto ${audience === type
-                                    ? `${SERVICES_DATA[type].accent} text-white shadow-md scale-105`
-                                    : 'hover:bg-[var(--border)] text-[var(--muted)] hover:text-[var(--text)]'
+                                onClick={() => setAudience(prev => prev === type ? null : type)}
+                                className={`px-8 py-4 rounded-full text-lg md:text-xl font-serif transition-all duration-500 w-full md:w-auto relative ${audience === type
+                                    ? `text-white scale-105 border border-white/20 ${type === 'creator' ? 'bg-[#FF3366] shadow-[inset_0_3px_12px_rgba(255,255,255,0.4),inset_0_-3px_8px_rgba(0,0,0,0.1),0_12px_30px_rgba(255,51,102,0.3)]' : 'bg-[#3366FF] shadow-[inset_0_3px_12px_rgba(255,255,255,0.4),inset_0_-3px_8px_rgba(0,0,0,0.1),0_12px_30px_rgba(51,102,255,0.3)]'}`
+                                    : 'hover:bg-[var(--border)] text-[var(--muted)] hover:text-[var(--text)] border border-transparent'
                                     }`}
                             >
                                 {SERVICES_DATA[type].tabLabel}
@@ -225,45 +274,47 @@ function InteractiveServices() {
                 </div>
 
                 <AnimatePresence mode="wait">
-                    <motion.div
-                        key={audience}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
-                        className="mt-16"
-                    >
-                        {/* Massive Hero Card (Full Width) */}
-                        <div className={`w-full p-8 md:p-16 rounded-[40px] border-2 transition-colors duration-500 overflow-hidden relative mb-6 ${data.hero.color}`}>
-                            <div className="max-w-3xl relative z-10">
-                                <h4 className={`text-4xl md:text-6xl font-serif mb-6 leading-tight ${data.theme}`}>{data.hero.title}</h4>
-                                <p className="text-xl md:text-2xl text-[var(--text)] opacity-80 font-medium leading-relaxed mb-8">{data.hero.desc}</p>
-                                {data.hero.proof}
+                    {audience && data && (
+                        <motion.div
+                            key={audience}
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            className="mt-16"
+                        >
+                            {/* Massive Hero Card (Full Width) */}
+                            <div className={`w-full p-8 md:p-16 rounded-[40px] border-2 transition-colors duration-500 overflow-hidden relative mb-6 ${data.hero.color}`}>
+                                <div className="max-w-3xl relative z-10">
+                                    <h4 className={`text-4xl md:text-6xl font-serif mb-6 leading-tight ${data.theme}`}>{data.hero.title}</h4>
+                                    <p className="text-xl md:text-2xl text-[var(--text)] opacity-80 font-medium leading-relaxed mb-8">{data.hero.desc}</p>
+                                    {data.hero.proof}
+                                </div>
+                                {/* Abstract large background shape matching accent */}
+                                <div className={`absolute -right-20 -bottom-20 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none ${data.accent} opacity-10`} />
                             </div>
-                            {/* Abstract large background shape matching accent */}
-                            <div className={`absolute -right-20 -bottom-20 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none ${data.accent} opacity-10`} />
-                        </div>
 
-                        {/* 2x2 Grid for Secondary Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {data.cards.map((card, i) => (
-                                <div key={i} className={`p-8 md:p-12 rounded-[32px] border-2 border-[var(--border)] bg-[var(--surface)] shadow-[0_4px_0_0_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group`}>
-                                    <div>
-                                        <div className="text-3xl mb-6 bg-[var(--border)] w-16 h-16 flex items-center justify-center rounded-2xl">{card.icon}</div>
-                                        <h4 className="text-2xl md:text-3xl font-serif mb-4 flex items-center gap-3">
-                                            {card.title}
-                                        </h4>
-                                        <p className="text-lg text-[var(--muted)] font-medium leading-relaxed">{card.desc}</p>
-                                    </div>
-                                    <div className="mt-12 flex justify-end">
-                                        <div className={`w-12 h-12 rounded-full border-2 border-[var(--border)] flex items-center justify-center text-[var(--muted)] transition-colors duration-300 ${data.hoverAccent} group-hover:text-[var(--text)] group-hover:border-[var(--border-hover)]`}>
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            {/* 2x2 Grid for Secondary Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {data.cards.map((card, i) => (
+                                    <div key={i} className={`p-8 md:p-12 rounded-[32px] border-2 border-[var(--border)] bg-[var(--surface)] shadow-[0_4px_0_0_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group`}>
+                                        <div>
+                                            <div className="text-3xl mb-6 bg-[var(--border)] w-16 h-16 flex items-center justify-center rounded-2xl">{card.icon}</div>
+                                            <h4 className="text-2xl md:text-3xl font-serif mb-4 flex items-center gap-3">
+                                                {card.title}
+                                            </h4>
+                                            <p className="text-lg text-[var(--muted)] font-medium leading-relaxed">{card.desc}</p>
+                                        </div>
+                                        <div className="mt-12 flex justify-end">
+                                            <div className={`w-12 h-12 rounded-full border-2 border-[var(--border)] flex items-center justify-center text-[var(--muted)] transition-colors duration-300 ${data.hoverAccent} group-hover:text-[var(--text)] group-hover:border-[var(--border-hover)]`}>
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
                 </AnimatePresence>
             </div>
         </section>
@@ -337,8 +388,8 @@ function WorkSection() {
                         />
                         <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:bg-transparent"></div>
                         <div className="absolute bottom-6 left-6 flex items-center gap-2 z-10">
-                            <span className="px-4 py-2 bg-white text-black text-xs font-semibold rounded-full shadow-md">O.R.C.A Systems</span>
-                            <span className="px-4 py-2 bg-white text-black text-xs font-semibold rounded-full shadow-md">Brand Identity</span>
+                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">O.R.C.A Systems</span>
+                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">Brand Identity</span>
                         </div>
                     </div>
 
@@ -351,8 +402,8 @@ function WorkSection() {
                         />
                         <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:bg-transparent"></div>
                         <div className="absolute bottom-6 left-6 flex items-center gap-2 z-10">
-                            <span className="px-4 py-2 bg-white text-black text-xs font-semibold rounded-full shadow-md">Vela Creative</span>
-                            <span className="px-4 py-2 bg-white text-black text-xs font-semibold rounded-full shadow-md">Web Design</span>
+                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">Vela Creative</span>
+                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">Web Design</span>
                         </div>
                     </div>
 
@@ -365,17 +416,31 @@ function WorkSection() {
                         />
                         <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:bg-transparent"></div>
                         <div className="absolute bottom-6 left-6 flex items-center gap-2 z-10">
-                            <span className="px-4 py-2 bg-white text-black text-xs font-semibold rounded-full shadow-md">Neo Banking App</span>
-                            <span className="px-4 py-2 bg-white text-black text-xs font-semibold rounded-full shadow-md">Product UX</span>
+                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">Neo Banking App</span>
+                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">Product UX</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="flex justify-center pt-8">
-                    <a href="/book-a-call" className="pg-btn pg-btn-primary group">
-                        View Complete Archive
-                        <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
-                    </a>
+                    <motion.a
+                        href="#faq"
+                        whileHover={{
+                            scale: 1.05,
+                            rotateX: 12,
+                            rotateY: -8,
+                            y: -5,
+                            boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)"
+                        }}
+                        whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
+                        style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                        className="pg-btn pg-btn-primary group shadow-xl transition-shadow duration-300"
+                    >
+                        <span style={{ transform: "translateZ(20px)" }} className="flex items-center gap-2">
+                            View Complete Archive
+                            <span className="group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
+                        </span>
+                    </motion.a>
                 </div>
             </div>
         </section>
@@ -396,7 +461,7 @@ function Testimonials() {
     return (
         <section className="pt-16 pb-32 overflow-hidden bg-transparent text-[var(--text)] relative mt-0" id="testimonials">
             <div className="max-w-7xl mx-auto mb-16 px-6 relative z-10">
-                <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">Client <span className="italic text-[#FF3366]">Love</span></h2>
+                <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">Aova <span className="italic text-[#FF3366]">Love</span></h2>
                 <p className="text-[var(--muted)] text-lg max-w-xl">Don&apos;t just take our word for it. Trusted by industry leaders constantly moving the needle.</p>
             </div>
 
@@ -435,10 +500,10 @@ function Testimonials() {
    BUYING PROCESS
    ================================================================ */
 const BUYING_STEPS = [
-    { num: "01", title: "Discovery Call", desc: "A 30-minute chat to understand your brand, content goals, and technical requirements." },
+    { num: "01", title: "Discovery Call", desc: "A 15-minute chat to understand your brand, content goals, and technical requirements." },
     { num: "02", title: "Strategy Proposal", desc: "We map out the execution plan, architecture, timeline, and exact cost. No hidden fees." },
     { num: "03", title: "Execution Sprint", desc: "We craft the design or content systematically, seeking your feedback at key milestones." },
-    { num: "04", title: "Handoff & Growth", desc: "You receive clean code, final assets, and a growth roadmap ready for deployment." }
+    { num: "04", title: "Handoff", desc: "You receive clean code, final assets, and a growth roadmap ready for deployment." }
 ];
 
 function BuyingProcess() {
@@ -523,21 +588,146 @@ function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boo
 
 function FaqSection() {
     const [openIndex, setOpenIndex] = useState<number | null>(0);
+    const [copied, setCopied] = useState(false);
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+    const x = useMotionValue(0.5);
+    const y = useMotionValue(0.5);
+
+    const springConfig = { damping: 20, stiffness: 100 };
+    const springX = useSpring(x, springConfig);
+    const springY = useSpring(y, springConfig);
+    const rotateX = useTransform(springY, [0, 1], [30, -30]);
+    const rotateY = useTransform(springX, [0, 1], [-30, 30]);
+
+    const handleMouseMove = ({ currentTarget, clientX, clientY }: React.MouseEvent) => {
+        const { left, top, width, height } = currentTarget.getBoundingClientRect();
+        const localX = clientX - left;
+        const localY = clientY - top;
+        mouseX.set(localX);
+        mouseY.set(localY);
+        x.set(localX / width);
+        y.set(localY / height);
+    };
+
+    const handleMouseLeave = () => {
+        x.set(0.5);
+        y.set(0.5);
+    };
+
+    const handleCopy = (e: React.MouseEvent) => {
+        e.preventDefault();
+        navigator.clipboard.writeText("aovastudio@gmail.com");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    useEffect(() => {
+        (async function () {
+            const cal = await getCalApi();
+            cal("ui", { "styles": { "branding": { "brandColor": "#FF3366" } }, "hideEventTypeDetails": false, "layout": "month_view" });
+        })();
+    }, []);
+
     return (
-        <section className="py-32 px-6 max-w-4xl mx-auto" id="faq">
-            <div className="text-center mb-16">
-                <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">Common <span className="italic text-[#00CC66]">Questions</span></h2>
-            </div>
-            <div>
-                {FAQS.map((faq, i) => (
-                    <FaqItem
-                        key={i}
-                        q={faq.q}
-                        a={faq.a}
-                        isOpen={openIndex === i}
-                        onToggle={() => setOpenIndex(prev => prev === i ? null : i)}
-                    />
-                ))}
+        <section className="py-32 px-6" id="faq">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+
+                {/* Left Column Component: FAQ */}
+                <div className="lg:col-span-7">
+                    <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-16">
+                        Common <span className="italic text-[#00CC66]">Questions</span>
+                    </h2>
+                    <div>
+                        {FAQS.map((faq, i) => (
+                            <FaqItem
+                                key={i}
+                                q={faq.q}
+                                a={faq.a}
+                                isOpen={openIndex === i}
+                                onToggle={() => setOpenIndex(prev => prev === i ? null : i)}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Right Column Component: Sticky Booking Widget */}
+                <div className="lg:col-span-5 relative">
+                    <div className="sticky top-32 w-full pt-8 lg:pt-0">
+                        <motion.div
+                            id="booking-widget"
+                            onMouseMove={handleMouseMove}
+                            onMouseLeave={handleMouseLeave}
+                            whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.3)" }}
+                            transition={{ duration: 0.3 }}
+                            className="w-full rounded-[40px] p-8 md:p-12 overflow-hidden relative border border-[#222222] bg-[#0A0A0A] group"
+                            style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: 1000 }}
+                        >
+                            {/* Inner grain overlay */}
+                            <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+
+                            {/* Pink Spotlight Hover Glow */}
+                            <motion.div
+                                className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+                                style={{
+                                    background: useMotionTemplate`
+                                        radial-gradient(
+                                            600px circle at ${mouseX}px ${mouseY}px,
+                                            rgba(255, 51, 102, 0.15),
+                                            transparent 80%
+                                        )
+                                    `,
+                                }}
+                            />
+
+                            <div className="relative z-10 flex flex-col h-full items-center text-center" style={{ transform: "translateZ(30px)" }}>
+
+                                <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/50 text-xs font-semibold uppercase tracking-widest mb-8">Currently accepting clients</span>
+
+                                <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-10 w-full text-[#FF3366]">
+                                    Book a 15-min intro call
+                                </h3>
+
+                                <motion.button
+                                    data-cal-namespace=""
+                                    data-cal-link="rick/get-rick-rolled"
+                                    data-cal-config='{"layout":"month_view"}'
+                                    whileHover={{
+                                        scale: 1.05,
+                                        rotateX: 12,
+                                        rotateY: -8,
+                                        y: -5,
+                                        boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)"
+                                    }}
+                                    whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
+                                    style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                                    className="w-full bg-white text-black font-semibold text-lg py-5 rounded-2xl shadow-xl transition-shadow duration-300 mb-8"
+                                >
+                                    <span style={{ transform: "translateZ(20px)" }} className="block">
+                                        Book a call
+                                    </span>
+                                </motion.button>
+
+                                {/* Footer Email Note */}
+                                <button onClick={handleCopy} className="group/email flex flex-col items-center justify-center w-full bg-[#FFFFFF]/5 rounded-[24px] py-8 transition-all duration-300 hover:bg-[#FFFFFF]/10 hover:shadow-lg border border-transparent hover:border-[#FF3366]/30">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`mb-4 transition-colors duration-300 ${copied ? 'text-[#00CC66]' : 'text-white/50 group-hover/email:text-[#FF3366]'}`}>
+                                        {copied ? (
+                                            <path d="M20 6L9 17l-5-5"></path>
+                                        ) : (
+                                            <>
+                                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                                <polyline points="22,6 12,13 2,6"></polyline>
+                                            </>
+                                        )}
+                                    </svg>
+                                    <span className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-2 transition-colors">{copied ? 'Copied to clipboard' : 'Prefer to email?'}</span>
+                                    <span className="text-lg md:text-xl font-serif text-white group-hover/email:text-[#FF3366] transition-colors">aovastudio@gmail.com</span>
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+
             </div>
         </section>
     );
@@ -547,16 +737,71 @@ function FaqSection() {
    FOOTER
    ================================================================ */
 function Footer() {
+    const [isHovered, setIsHovered] = useState(false);
+
+    const scrollToFaq = (e: React.MouseEvent) => {
+        e.preventDefault();
+        const widget = document.getElementById('booking-widget');
+        if (widget) {
+            widget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            widget.classList.add('ring-4', 'ring-[#FF3366]', 'ring-offset-8', 'ring-offset-[var(--bg)]');
+            setTimeout(() => {
+                widget.classList.remove('ring-4', 'ring-[#FF3366]', 'ring-offset-8', 'ring-offset-[var(--bg)]');
+            }, 1000);
+        }
+    };
+
     return (
         <footer className="relative bg-[#111111] text-white py-20 px-6 rounded-t-[40px] md:rounded-t-[80px] mt-20 overflow-hidden">
             <div className="absolute inset-0 bg-dots opacity-[0.05] pointer-events-none -z-10 mix-blend-overlay" />
             <div className="max-w-7xl mx-auto flex flex-col items-center text-center">
-                <h2 className="text-6xl md:text-[120px] leading-none font-serif tracking-[-0.04em] mb-12">
-                    Let&apos;s talk.
+                <h2 className="text-6xl md:text-[120px] leading-none font-serif tracking-tight mb-12 text-[#FF3366] flex justify-center items-baseline cursor-default">
+                    <div
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                        className="inline-flex items-baseline"
+                    >
+                        Let&apos;s t
+                        <span className="inline-block relative">
+                            a
+                            <motion.span
+                                initial={{ width: 0 }}
+                                animate={{ width: isHovered ? "auto" : 0 }}
+                                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                className="overflow-hidden inline-flex whitespace-nowrap align-bottom absolute left-full top-0 h-full"
+                            >
+                                aaaaaa
+                            </motion.span>
+                        </span>
+                        {/* Ghost text for layout spacing */}
+                        <motion.span
+                            initial={{ width: 0 }}
+                            animate={{ width: isHovered ? "auto" : 0 }}
+                            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                            className="overflow-hidden inline-flex whitespace-nowrap align-bottom opacity-0 pointer-events-none"
+                        >
+                            aaaaaa
+                        </motion.span>
+                        lk{isHovered ? '!' : '.'}
+                    </div>
                 </h2>
-                <a href="/book-a-call" className="pg-btn bg-white text-black hover:bg-[#FF3366] hover:text-white hover:border-[#FF3366] !text-lg !px-8 !py-4 mb-32">
-                    Start a project
-                </a>
+                <motion.button
+                    onClick={scrollToFaq}
+                    whileHover={{
+                        scale: 1.05,
+                        rotateX: 12,
+                        rotateY: -8,
+                        y: -5,
+                        boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)"
+                    }}
+                    whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
+                    style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                    className="pg-btn bg-white text-black hover:bg-[#FF3366] hover:text-white hover:border-[#FF3366] !text-lg !px-8 !py-4 mb-32 shadow-xl transition-colors duration-300"
+                >
+                    <span style={{ transform: "translateZ(20px)" }}>
+                        Start a project
+                    </span>
+                </motion.button>
 
                 <div className="w-full flex flex-col md:flex-row items-center justify-between border-t border-white/10 pt-10 pb-4 gap-8">
                     {/* AOVASTUDIO.svg Logo (Left) */}
@@ -600,9 +845,8 @@ export default function HomePage() {
             <Navbar isDark={isDark} toggleDark={() => setIsDark(!isDark)} />
             <Hero isDark={isDark} />
             <Marquee />
-            <InteractiveServices />
-
             <WorkSection />
+            <InteractiveServices />
             <TrustedBy />
             <Testimonials />
 
