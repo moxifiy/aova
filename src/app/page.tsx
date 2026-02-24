@@ -235,6 +235,9 @@ const MARQUEE_ITEMS = [
     "Bespoke matchmaking for the creative industry.",
 ];
 
+
+
+
 function Marquee() {
     const [index, setIndex] = useState(0);
 
