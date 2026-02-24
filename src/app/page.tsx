@@ -14,7 +14,7 @@ function CustomCursor() {
     useEffect(() => {
         const onMouseMove = (e: MouseEvent) => {
             if (dotRef.current) {
-                dotRef.current.style.transform = `translate(calc(${e.clientX}px - 2px), calc(${e.clientY}px - 2px))`;
+                dotRef.current.style.transform = `translate3d(${e.clientX - 2}px, ${e.clientY - 2}px, 0)`;
             }
         };
         window.addEventListener("mousemove", onMouseMove);
@@ -23,7 +23,7 @@ function CustomCursor() {
 
     return (
         <div className="pg-cursor-dot" ref={dotRef}>
-            <svg viewBox="0 0 171.27 171.27" fill="currentColor" className="w-5 h-5 -rotate-90 origin-center transition-transform duration-100 ease-out">
+            <svg viewBox="0 0 171.27 171.27" fill="currentColor" className="w-5 h-5 -rotate-90 origin-center">
                 <path d="M171.27,0v91c0,44.33-35.94,80.27-80.27,80.27h-31.96v-59.04h59.04v-59.04h-59.04v59.04H0v-31.96C0,35.94,35.94,0,80.27,0h91Z" />
             </svg>
         </div>
@@ -52,79 +52,151 @@ function scrollToId(id: string) {
     requestAnimationFrame(step);
 }
 
+const NAV_LINKS = [
+    { label: 'Work', id: 'work' },
+    { label: 'Services', id: 'services' },
+    { label: 'Process', id: 'process' },
+];
+
+const NAV_EASE = [0.16, 1, 0.3, 1] as const;
+
+function NavThemeIcon({ isDark }: { isDark: boolean }) {
+    return (
+        <AnimatePresence mode="wait" initial={false}>
+            {isDark ? (
+                <motion.svg key="moon" initial={{ opacity: 0, rotate: -45 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 45 }} transition={{ duration: 0.18 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </motion.svg>
+            ) : (
+                <motion.svg key="sun" initial={{ opacity: 0, rotate: -45 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 45 }} transition={{ duration: 0.18 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="4.22" x2="19.78" y2="5.64" />
+                </motion.svg>
+            )}
+        </AnimatePresence>
+    );
+}
+
 function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => void }) {
     const [isAtTop, setIsAtTop] = useState(true);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setIsAtTop(window.scrollY < 100);
-        };
+        const handleScroll = () => setIsAtTop(window.scrollY < 80);
         handleScroll();
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const handleArrowClick = () => {
-        if (isAtTop) {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    };
+    const pillBg  = isDark ? 'rgba(20,20,20,0.92)'   : 'rgba(255,255,255,0.92)';
+    const pillBdr = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
+    const pillStyle = { backgroundColor: pillBg, borderColor: pillBdr, borderWidth: 1, borderStyle: 'solid' as const };
+
+    const btnCls  = "px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-widest text-[var(--muted)] hover:text-[var(--text)] hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-all duration-150";
+    const iconCls = "w-8 h-8 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-colors duration-150";
+    const bookCls = "px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-[var(--text)] text-[var(--surface)] hover:opacity-80 transition-opacity duration-150";
+    const divCls  = "w-px h-4 mx-0.5 bg-black/[0.08] dark:bg-white/[0.1]";
 
     return (
         <motion.nav
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center px-8 py-3 bg-[var(--surface)]/90 backdrop-blur-md border border-[var(--border)] rounded-full shadow-lg"
+            transition={{ duration: 0.8, ease: NAV_EASE }}
+            className="fixed top-6 inset-x-0 z-50 pointer-events-none"
         >
-            <div className="flex items-center gap-8 md:gap-12 text-sm font-semibold uppercase tracking-widest text-[var(--muted)]">
-
-                {/* Dynamic Left Arrow */}
-                <button
-                    onClick={handleArrowClick}
-                    className="hover:text-[var(--text)] transition-all flex items-center justify-center -ml-2 w-8 h-8 rounded-full hover:bg-[var(--border)]"
-                    aria-label={isAtTop ? "Scroll to Bottom" : "Scroll to Top"}
-                >
-                    <motion.svg
-                        animate={{ rotate: isAtTop ? 0 : 180 }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                    >
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <polyline points="19 12 12 19 5 12"></polyline>
-                    </motion.svg>
-                </button>
-
-                <div className="w-[1px] h-4 bg-[var(--border)] mx-[-16px]"></div>
-
-                <button onClick={() => scrollToId('process')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Process</button>
-                <button onClick={() => scrollToId('work')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Work</button>
-                <button onClick={() => scrollToId('services')} className="hover:text-[var(--text)] hover:scale-105 transition-all">Services</button>
-
-                <div className="w-[1px] h-4 bg-[var(--border)] mx-[-16px]"></div>
-
-                {/* Pill Theme Switch */}
-                <button
-                    onClick={toggleDark}
-                    className="relative w-11 h-6 bg-[var(--border)] rounded-full overflow-hidden hover:bg-[var(--border-hover)] transition-colors flex items-center -mr-2"
-                    aria-label="Toggle Theme"
-                >
+            <AnimatePresence mode="sync">
+                {isAtTop ? (
+                    /* ── SPLIT STATE (at top) ── */
                     <motion.div
-                        initial={false}
-                        animate={{ x: isDark ? 22 : 2 }}
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                        className="w-5 h-5 bg-[var(--text)] rounded-full shadow-sm flex items-center justify-center text-[var(--surface)]"
+                        key="split"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex items-center justify-between px-6 md:px-10"
                     >
-                        {isDark ? (
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                        ) : (
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="4.22" x2="19.78" y2="5.64"></line></svg>
-                        )}
+                        {/* Left pill — arrow (scroll to bottom) */}
+                        <motion.div
+                            initial={{ x: -24, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: -24, opacity: 0 }}
+                            transition={{ duration: 0.5, ease: NAV_EASE }}
+                            style={pillStyle}
+                            className="flex items-center pointer-events-auto rounded-full backdrop-blur-xl p-1.5 shadow-lg"
+                        >
+                            <button
+                                onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
+                                className={iconCls}
+                                aria-label="Scroll to bottom"
+                            >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
+                                </svg>
+                            </button>
+                        </motion.div>
+
+                        {/* Center pill — nav links */}
+                        <motion.div
+                            initial={{ y: -16, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: -16, opacity: 0 }}
+                            transition={{ duration: 0.5, ease: NAV_EASE, delay: 0.04 }}
+                            style={pillStyle}
+                            className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg"
+                        >
+                            {NAV_LINKS.map(({ label, id }) => (
+                                <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{label}</button>
+                            ))}
+                        </motion.div>
+
+                        {/* Right pill — book + theme */}
+                        <motion.div
+                            initial={{ x: 24, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: 24, opacity: 0 }}
+                            transition={{ duration: 0.5, ease: NAV_EASE, delay: 0.07 }}
+                            style={pillStyle}
+                            className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg"
+                        >
+                            <button onClick={() => scrollToId('faq')} className={bookCls}>Book</button>
+                            <div className={divCls} />
+                            <button onClick={toggleDark} className={iconCls} aria-label="Toggle theme">
+                                <NavThemeIcon isDark={isDark} />
+                            </button>
+                        </motion.div>
                     </motion.div>
-                </button>
-            </div>
+                ) : (
+                    /* ── MERGED STATE (scrolled) ── */
+                    <motion.div
+                        key="merged"
+                        initial={{ opacity: 0, y: -12, scale: 0.94 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -12, scale: 0.94 }}
+                        transition={{ duration: 0.5, ease: NAV_EASE }}
+                        className="flex justify-center"
+                    >
+                        <div style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-xl">
+                            <button
+                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                className={iconCls}
+                                aria-label="Scroll to top"
+                            >
+                                <svg style={{ transform: 'rotate(180deg)' }} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
+                                </svg>
+                            </button>
+                            <div className={divCls} />
+                            {NAV_LINKS.map(({ label, id }) => (
+                                <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{label}</button>
+                            ))}
+                            <div className={divCls} />
+                            <button onClick={() => scrollToId('faq')} className={bookCls}>Book</button>
+                            <div className={divCls} />
+                            <button onClick={toggleDark} className={iconCls} aria-label="Toggle theme">
+                                <NavThemeIcon isDark={isDark} />
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.nav>
     );
 }
@@ -457,10 +529,21 @@ function TrustedBy() {
 /* ================================================================
    PROJECTS
    ================================================================ */
+const workProjects = [
+    { num: "01", name: "O.R.C.A Systems", category: "Brand Identity", image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" },
+    { num: "02", name: "Vela Creative", category: "Web Design", image: "https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=2664&auto=format&fit=crop" },
+    { num: "03", name: "Neo Banking App", category: "Product UX", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2672&auto=format&fit=crop" },
+];
+
+const workProjectsRow2 = [
+    { num: "04", name: "Solara Wellness", category: "Brand Identity", image: "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?q=80&w=2574&auto=format&fit=crop" },
+    { num: "05", name: "Forma Studio", category: "Motion Design", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2764&auto=format&fit=crop" },
+];
+
 function WorkSection() {
     return (
         <section id="work" className="py-32">
-            <div className="pg-inner space-y-16">
+            <div className="pg-inner space-y-12">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <h2 className="text-5xl md:text-7xl">Selected Work</h2>
                     <p className="text-[var(--muted)] max-w-sm text-sm">
@@ -468,49 +551,58 @@ function WorkSection() {
                     </p>
                 </div>
 
-                {/* Asymmetric Bento Portfolio */}
+                {/* Card grids — gap-4 between all rows and columns */}
+                <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {workProjects.map((p) => (
+                        <div key={p.num} className="group relative h-[480px] overflow-hidden rounded-2xl bg-[var(--border)] cursor-pointer">
+                            <img
+                                src={p.image}
+                                alt={p.name}
+                                className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                            />
+                            {/* Category tag — top left */}
+                            <div className="absolute top-4 left-4 z-20">
+                                <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
+                                    {p.category}
+                                </span>
+                            </div>
+                            {/* Index — top right */}
+                            <span className="absolute top-4 right-4 z-20 text-white/40 text-xs font-mono">{p.num}</span>
+                            {/* Bottom gradient + title */}
+                            <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent z-10 pointer-events-none" />
+                            <div className="absolute bottom-5 left-5 z-20">
+                                <h3 className="text-white text-xl font-serif leading-tight">{p.name}</h3>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* 2-column card grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Featured / Full Width */}
-                    <div className="group relative w-full h-[500px] md:h-[600px] md:col-span-2 overflow-hidden rounded-[32px] bg-[var(--border)] cursor-pointer">
-                        <img
-                            src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"
-                            alt="Featured Project"
-                            className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:bg-transparent"></div>
-                        <div className="absolute bottom-6 left-6 flex items-center gap-2 z-10">
-                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">O.R.C.A Systems</span>
-                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">Brand Identity</span>
+                    {workProjectsRow2.map((p) => (
+                        <div key={p.num} className="group relative h-[360px] overflow-hidden rounded-2xl bg-[var(--border)] cursor-pointer">
+                            <img
+                                src={p.image}
+                                alt={p.name}
+                                className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                            />
+                            {/* Category tag — top left */}
+                            <div className="absolute top-4 left-4 z-20">
+                                <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
+                                    {p.category}
+                                </span>
+                            </div>
+                            {/* Index — top right */}
+                            <span className="absolute top-4 right-4 z-20 text-white/40 text-xs font-mono">{p.num}</span>
+                            {/* Bottom gradient + title */}
+                            <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent z-10 pointer-events-none" />
+                            <div className="absolute bottom-5 left-5 z-20">
+                                <h3 className="text-white text-xl font-serif leading-tight">{p.name}</h3>
+                            </div>
                         </div>
-                    </div>
-
-                    {/* Half Width Left */}
-                    <div className="group relative w-full h-[400px] md:h-[500px] overflow-hidden rounded-[32px] bg-[var(--border)] cursor-pointer">
-                        <img
-                            src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=2664&auto=format&fit=crop"
-                            alt="Project Two"
-                            className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:bg-transparent"></div>
-                        <div className="absolute bottom-6 left-6 flex items-center gap-2 z-10">
-                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">Vela Creative</span>
-                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">Web Design</span>
-                        </div>
-                    </div>
-
-                    {/* Half Width Right */}
-                    <div className="group relative w-full h-[400px] md:h-[500px] overflow-hidden rounded-[32px] bg-[var(--border)] cursor-pointer">
-                        <img
-                            src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2672&auto=format&fit=crop"
-                            alt="Project Three"
-                            className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:bg-transparent"></div>
-                        <div className="absolute bottom-6 left-6 flex items-center gap-2 z-10">
-                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">Neo Banking App</span>
-                            <span className="px-4 py-2 bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-xs font-semibold rounded-full shadow-md">Product UX</span>
-                        </div>
-                    </div>
+                    ))}
+                </div>
                 </div>
 
                 <div className="flex justify-center pt-8">

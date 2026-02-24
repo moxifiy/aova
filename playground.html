@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aova \u2014 Design & Motion Studio</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #0a0a0a;
+        --surface: #141414;
+        --surface-hover: #1a1a1a;
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+        --border: rgba(255, 255, 255, 0.08);
+        --accent-1: #ff3366;
+        --accent-2: #3366ff;
+        --accent-3: #00cc66;
+
+        --font-sans: "Outfit", sans-serif;
+        --font-serif: "Instrument Serif", serif;
+
+        --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+      }
+
+      /* Lenis Setup */
+      html.lenis {
+        height: auto;
+      }
+      .lenis.lenis-smooth {
+        scroll-behavior: auto;
+      }
+      .lenis.lenis-smooth [data-lenis-prevent] {
+        overscroll-behavior: contain;
+      }
+      .lenis.lenis-stopped {
+        overflow: hidden;
+      }
+      .lenis.lenis-scrolling iframe {
+        pointer-events: none;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+        cursor: none; /* Custom cursor */
+      }
+
+      body.loading {
+        overflow: hidden;
+      }
+
+      /* Custom Cursor */
+      .cursor-dot,
+      .cursor-outline {
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        z-index: 9999;
+        pointer-events: none;
+        mix-blend-mode: difference;
+      }
+      .cursor-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--text);
+        transition: transform 0.1s;
+      }
+      .cursor-outline {
+        width: 40px;
+        height: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        transition:
+          width 0.3s var(--ease-out-expo),
+          height 0.3s var(--ease-out-expo),
+          background-color 0.3s;
+      }
+      body:hover .cursor-outline.hovered {
+        width: 80px;
+        height: 80px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: transparent;
+        backdrop-filter: blur(4px);
+      }
+
+      /* Typography */
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-weight: 500;
+        line-height: 1;
+      }
+      .font-serif {
+        font-family: var(--font-serif);
+        font-weight: 400;
+      }
+      .italic {
+        font-style: italic;
+      }
+
+      .char {
+        transform: translateY(110%);
+        transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+      .word {
+        overflow: hidden;
+        padding-bottom: 0.1em;
+        margin-bottom: -0.1em;
+      }
+
+      /* Loader */
+      .loader {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      .loader-text {
+        font-family: var(--font-sans);
+        font-size: 2rem;
+        font-weight: 900;
+        letter-spacing: 0.2em;
+        color: var(--text);
+        overflow: hidden;
+      }
+      .loader-progress {
+        margin-top: 2rem;
+        width: 200px;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.1);
+        position: relative;
+      }
+      .loader-bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        background: var(--text);
+        width: 0%;
+      }
+
+      /* Nav */
+      nav {
+        position: fixed;
+        top: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        background: rgba(20, 20, 20, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        padding: 0.5rem;
+        border-radius: 100px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.5s var(--ease-out-expo);
+      }
+      .nav-link {
+        text-decoration: none;
+        color: var(--text);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 0.75rem 1.5rem;
+        border-radius: 100px;
+        transition:
+          background 0.3s,
+          color 0.3s;
+        cursor: pointer;
+      }
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .nav-cta {
+        background: var(--text);
+        color: var(--bg);
+        font-weight: 700;
+      }
+      .nav-cta:hover {
+        background: var(--muted);
+      }
+
+      /* Common Container */
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 5vw;
+      }
+
+      /* Hero */
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        z-index: 10;
+      }
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 3rem;
+        width: max-content;
+        overflow: hidden;
+      }
+      .hero-badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent-1);
+      }
+      .hero-title {
+        font-size: clamp(3rem, 8vw, 7rem);
+        line-height: 0.95;
+        letter-spacing: -0.02em;
+        margin-bottom: 2rem;
+        font-weight: 900;
+      }
+      .hero-title .italic {
+        font-size: 1.1em;
+        line-height: 0.8;
+        padding-right: 0.1em;
+      }
+      .hero-desc {
+        font-size: clamp(1rem, 2vw, 1.25rem);
+        color: var(--muted);
+        max-width: 30ch;
+        line-height: 1.5;
+        margin-bottom: 3rem;
+      }
+      .magnetic-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem 2.5rem;
+        border-radius: 100px;
+        background: var(--text);
+        color: var(--bg);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .magnetic-btn span {
+        position: relative;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .btn-bg {
+        position: absolute;
+        background: var(--accent-1);
+        width: 150%;
+        height: 150%;
+        border-radius: 50%;
+        top: 100%;
+        left: 50%;
+        transform: translate(-50%, 0);
+        transition: transform 0.5s var(--ease-out-expo);
+        z-index: 1;
+      }
+      .magnetic-btn:hover .btn-bg {
+        transform: translate(-50%, -50%);
+      }
+      .magnetic-btn:hover {
+        color: white;
+      }
+
+      /* Marquee */
+      .marquee {
+        padding: 4rem 0;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        overflow: hidden;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+      }
+      .marquee-inner {
+        display: flex;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-family: var(--font-serif);
+        font-style: italic;
+        color: var(--muted);
+      }
+      .marquee-part {
+        padding: 0 2rem;
+      }
+
+      /* Services */
+      .services {
+        padding: 10rem 0;
+      }
+      .sec-title {
+        font-size: clamp(2.5rem, 5vw, 5rem);
+        margin-bottom: 5rem;
+        font-weight: 500;
+        letter-spacing: -0.03em;
+      }
+      .services-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      @media (min-width: 1024px) {
+        .services-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .service-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 2rem;
+        padding: 4rem 3rem;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.5s var(--ease-out-expo),
+          background 0.5s;
+      }
+      .service-card:hover {
+        background: var(--surface-hover);
+        transform: translateY(-10px);
+      }
+      .service-icon {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+        background: rgba(255, 255, 255, 0.05);
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1.5rem;
+      }
+      .service-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        font-family: var(--font-serif);
+        font-style: italic;
+      }
+      .service-desc {
+        color: var(--muted);
+        font-size: 1.1rem;
+        line-height: 1.6;
+      }
+
+      /* Work */
+      .work {
+        padding: 10rem 0;
+      }
+      .work-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      @media (min-width: 768px) {
+        .work-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .work-grid .work-item:nth-child(3n + 1) {
+          grid-column: 1 / -1;
+          height: 70vh;
+        }
+      }
+      .work-item {
+        position: relative;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        height: 50vh;
+        min-height: 400px;
+        cursor: pointer;
+      }
+      .work-img-wrap {
+        position: absolute;
+        inset: -5%;
+        width: 110%;
+        height: 110%;
+      }
+      .work-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(20%);
+        transition:
+          filter 0.8s,
+          transform 0.8s var(--ease-out-expo);
+      }
+      .work-item:hover .work-img {
+        filter: grayscale(0%);
+        transform: scale(1.05);
+      }
+      .work-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.8) 0%,
+          transparent 50%
+        );
+        pointer-events: none;
+      }
+      .work-content {
+        position: absolute;
+        bottom: 3rem;
+        left: 3rem;
+        z-index: 2;
+      }
+      .work-category {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        margin-bottom: 1rem;
+        display: inline-block;
+      }
+      .work-title {
+        font-size: clamp(2rem, 3.5vw, 4rem);
+        font-family: var(--font-serif);
+        font-style: italic;
+        transform: translateY(20px);
+        opacity: 0;
+        transition:
+          transform 0.5s var(--ease-out-expo),
+          opacity 0.5s;
+      }
+      .work-item:hover .work-title {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      /* Process */
+      .process {
+        padding: 10rem 0;
+        background: var(--text);
+        color: var(--bg);
+        border-radius: 3rem 3rem 0 0;
+      }
+      .process .sec-title {
+        color: var(--bg);
+      }
+      .process-list {
+        position: relative;
+        padding-left: 2rem;
+      }
+      .process-line {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: rgba(0, 0, 0, 0.1);
+      }
+      .process-line-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: var(--accent-2);
+        height: 0%;
+      }
+      .process-item {
+        position: relative;
+        padding-bottom: 5rem;
+        opacity: 0.5;
+        transition: opacity 0.5s;
+      }
+      .process-item.active {
+        opacity: 1;
+      }
+      .process-num {
+        position: absolute;
+        left: -2rem;
+        top: 0;
+        transform: translateX(-50%);
+        background: var(--bg);
+        color: var(--text);
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+        z-index: 2;
+      }
+      .process-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+      .process-desc {
+        font-size: 1.25rem;
+        max-width: 50ch;
+        color: rgba(0, 0, 0, 0.6);
+      }
+
+      /* Footer */
+      footer {
+        background: var(--bg);
+        padding: 10rem 0 4rem;
+        text-align: center;
+      }
+      .footer-cta {
+        font-size: clamp(4rem, 10vw, 15rem);
+        font-family: var(--font-sans);
+        font-weight: 900;
+        line-height: 0.8;
+        letter-spacing: -0.05em;
+        margin-bottom: 4rem;
+        color: var(--text);
+        text-decoration: none;
+        display: inline-block;
+        transition: color 0.3s;
+      }
+      .footer-cta:hover {
+        color: var(--accent-1);
+      }
+      .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--border);
+        padding-top: 2rem;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      /* Ambient Orbs */
+      .ambient-orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(120px);
+        z-index: -1;
+        opacity: 0.4;
+        pointer-events: none;
+      }
+      .orb-1 {
+        width: 40vw;
+        height: 40vw;
+        background: rgba(255, 51, 102, 0.15);
+        top: -10vw;
+        left: -10vw;
+      }
+      .orb-2 {
+        width: 50vw;
+        height: 50vw;
+        background: rgba(51, 102, 255, 0.1);
+        bottom: -20vw;
+        right: -10vw;
+      }
+    </style>
+  </head>
+  <body class="loading">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Loader -->
+    <div class="loader">
+      <div class="loader-text overflow-hidden">
+        <div class="loader-text-inner">AOVA</div>
+      </div>
+      <div class="loader-progress"><div class="loader-bar"></div></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="nav-container">
+      <a href="#work" class="nav-link" data-hover="Link">Work</a>
+      <a href="#services" class="nav-link" data-hover="Link">Services</a>
+      <a href="#process" class="nav-link" data-hover="Link">Process</a>
+      <a href="#contact" class="nav-link nav-cta magnetic">Book</a>
+    </nav>
+
+    <main>
+      <!-- Hero Section -->
+      <section class="hero container">
+        <div class="hero-badge reveal-fade">
+          <div class="hero-badge-dot"></div>
+          Design & Motion Studio
+        </div>
+        <h1 class="hero-title">
+          <div style="overflow: hidden">
+            <div class="hero-line">Design studio for</div>
+          </div>
+          <div style="overflow: hidden">
+            <div class="hero-line">
+              <span class="italic text-accent-1" style="color: #ff3366"
+                >brands</span
+              >
+              &amp;
+            </div>
+          </div>
+          <div style="overflow: hidden">
+            <div class="hero-line">
+              <span class="italic text-accent-2" style="color: #3366ff"
+                >creators</span
+              >.
+            </div>
+          </div>
+        </h1>
+        <p class="hero-desc reveal-fade">
+          Brands get the full creative suite. Creators get the content engine.
+          Elevating your digital presence with intention.
+        </p>
+        <div class="reveal-fade">
+          <a href="#contact" class="magnetic-btn magnetic">
+            <span class="btn-text">Reserve your spot</span>
+            <div class="btn-bg"></div>
+          </a>
+        </div>
+      </section>
+
+      <!-- Infinite Marquee -->
+      <section class="marquee">
+        <div class="marquee-inner">
+          <div class="marquee-part">
+            Connecting selected creatives to selective brands. ✦
+          </div>
+          <div class="marquee-part">
+            Where the right creators find the right canvas. ✦
+          </div>
+          <div class="marquee-part">
+            Igniting brand potential with top-tier creative minds. ✦
+          </div>
+          <div class="marquee-part">
+            Connecting selected creatives to selective brands. ✦
+          </div>
+          <div class="marquee-part">
+            Where the right creators find the right canvas. ✦
+          </div>
+        </div>
+      </section>
+
+      <!-- Services -->
+      <section id="services" class="services container">
+        <h2 class="sec-title split-text">Who we build for.</h2>
+        <div class="services-grid">
+          <div class="service-card reveal-up">
+            <div class="service-icon">\u{1F4F1}</div>
+            <h3 class="service-title" style="color: #ff3366">For Creators</h3>
+            <p class="service-desc">
+              We handle the full creative pipeline\u2014from zero-retention
+              editing to algorithmic growth strategy. You focus on the camera,
+              we build the engine.
+            </p>
+          </div>
+          <div class="service-card reveal-up" style="transition-delay: 0.1s">
+            <div class="service-icon">\u2728</div>
+            <h3 class="service-title" style="color: #3366ff">For Brands</h3>
+            <p class="service-desc">
+              Design that converts. Presence that compounds. We engineer systems
+              that capture attention, drive action, and scale effortlessly.
+            </p>
+          </div>
+          <div class="service-card reveal-up">
+            <div class="service-icon">\u{1F3A8}</div>
+            <h3 class="service-title">Visual Identity</h3>
+            <p class="service-desc">
+              Logo, guidelines, positioning, and visual language built for
+              long-term equity and stunning aesthetic impact.
+            </p>
+          </div>
+          <div class="service-card reveal-up" style="transition-delay: 0.1s">
+            <div class="service-icon">\u{1F4BB}</div>
+            <h3 class="service-title">Digital Experiences</h3>
+            <p class="service-desc">
+              Custom websites and landing pages focused on one thing: getting
+              the click while looking like a million bucks.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Selected Work -->
+      <section id="work" class="work container">
+        <h2 class="sec-title split-text">Selected Work.</h2>
+        <div class="work-grid">
+          <div class="work-item" data-hover="View">
+            <div class="work-img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"
+                class="work-img"
+              />
+            </div>
+            <div class="work-overlay"></div>
+            <div class="work-content">
+              <div class="work-category">Brand Identity</div>
+              <h3 class="work-title">O.R.C.A Systems</h3>
+            </div>
+          </div>
+          <div class="work-item" data-hover="View">
+            <div class="work-img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=2664&auto=format&fit=crop"
+                class="work-img"
+              />
+            </div>
+            <div class="work-overlay"></div>
+            <div class="work-content">
+              <div class="work-category">Web Design</div>
+              <h3 class="work-title">Vela Creative</h3>
+            </div>
+          </div>
+          <div class="work-item" data-hover="View">
+            <div class="work-img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2672&auto=format&fit=crop"
+                class="work-img"
+              />
+            </div>
+            <div class="work-overlay"></div>
+            <div class="work-content">
+              <div class="work-category">Product UX</div>
+              <h3 class="work-title">Neo Banking App</h3>
+            </div>
+          </div>
+          <div class="work-item" data-hover="View">
+            <div class="work-img-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2764&auto=format&fit=crop"
+                class="work-img"
+              />
+            </div>
+            <div class="work-overlay"></div>
+            <div class="work-content">
+              <div class="work-category">Motion Design</div>
+              <h3 class="work-title">Forma Studio</h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Process Section -->
+      <section id="process" class="process">
+        <div class="container">
+          <h2 class="sec-title split-text">How it Works.</h2>
+          <div class="process-list">
+            <div class="process-line"></div>
+            <div class="process-line-fill"></div>
+
+            <div class="process-item">
+              <div class="process-num">1</div>
+              <h3 class="process-title">Discovery Call</h3>
+              <p class="process-desc">
+                A 15-minute chat to understand your brand, content goals, and
+                technical requirements.
+              </p>
+            </div>
+            <div class="process-item">
+              <div class="process-num">2</div>
+              <h3 class="process-title">Strategy Proposal</h3>
+              <p class="process-desc">
+                We map out the execution plan, architecture, timeline, and exact
+                cost. No hidden fees.
+              </p>
+            </div>
+            <div class="process-item">
+              <div class="process-num">3</div>
+              <h3 class="process-title">Execution Sprint</h3>
+              <p class="process-desc">
+                We craft the design or content systematically, seeking your
+                feedback at key milestones.
+              </p>
+            </div>
+            <div class="process-item" style="padding-bottom: 0">
+              <div class="process-num">4</div>
+              <h3 class="process-title">Handoff</h3>
+              <p class="process-desc">
+                You receive clean code, final assets, and a growth roadmap ready
+                for deployment.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer id="contact">
+        <div class="container">
+          <a href="mailto:hello@aovasite.com" class="footer-cta magnetic"
+            >Let's Talk.</a
+          >
+          <div class="footer-bottom">
+            <div>\xA9 2026 AOVA Studio</div>
+            <div>Designed with Intention</div>
+            <div>Back to Top &uarr;</div>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/split-type"></script>
+
+    <script>
+      // Register ScrollTrigger
+      gsap.registerPlugin(ScrollTrigger);
+
+      // --- LENIS SMOOTH SCROLL ---
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: "vertical",
+        gestureDirection: "vertical",
+        smooth: true,
+        mouseMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+        infinite: false,
+      });
+
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+
+      // Connect Lenis to ScrollTrigger
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+
+      // --- CUSTOM CURSOR ---
+      const cursorDot = document.querySelector(".cursor-dot");
+      const cursorOutline = document.querySelector(".cursor-outline");
+
+      let mouseX = 0;
+      let mouseY = 0;
+      let outlineX = 0;
+      let outlineY = 0;
+
+      window.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        // Instantly move dot
+        cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+      });
+
+      // Smooth follow for outline
+      function animateCursor() {
+        let distX = mouseX - outlineX;
+        let distY = mouseY - outlineY;
+        outlineX += distX * 0.15;
+        outlineY += distY * 0.15;
+
+        cursorOutline.style.transform = `translate3d(${outlineX}px, ${outlineY}px, 0) translate(-50%, -50%)`;
+        requestAnimationFrame(animateCursor);
+      }
+      animateCursor();
+
+      // Hover states for cursor
+      document
+        .querySelectorAll("a, button, .magnetic, [data-hover]")
+        .forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            cursorOutline.classList.add("hovered");
+          });
+          el.addEventListener("mouseleave", () => {
+            cursorOutline.classList.remove("hovered");
+          });
+        });
+
+      // --- MAGNETIC BUTTONS ---
+      document.querySelectorAll(".magnetic").forEach((elem) => {
+        elem.addEventListener("mousemove", (e) => {
+          const rect = elem.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+
+          gsap.to(elem, {
+            x: x * 0.4,
+            y: y * 0.4,
+            duration: 0.6,
+            ease: "power3.out",
+          });
+
+          // If it has a span/text inside, move it a bit more for parallax
+          const text = elem.querySelector("span, .btn-text");
+          if (text) {
+            gsap.to(text, {
+              x: x * 0.2,
+              y: y * 0.2,
+              duration: 0.6,
+              ease: "power3.out",
+            });
+          }
+        });
+
+        elem.addEventListener("mouseleave", () => {
+          gsap.to(elem, {
+            x: 0,
+            y: 0,
+            duration: 0.6,
+            ease: "elastic.out(1, 0.3)",
+          });
+          const text = elem.querySelector("span, .btn-text");
+          if (text) {
+            gsap.to(text, {
+              x: 0,
+              y: 0,
+              duration: 0.6,
+              ease: "elastic.out(1, 0.3)",
+            });
+          }
+        });
+      });
+
+      // --- LOADER & INTRO ANIMATION ---
+      window.addEventListener("load", () => {
+        const tl = gsap.timeline();
+
+        tl.to(".loader-bar", {
+          width: "100%",
+          duration: 1.5,
+          ease: "expo.inOut",
+        })
+          .to(
+            ".loader-text-inner",
+            {
+              yPercent: -100,
+              duration: 0.6,
+              ease: "power3.in",
+            },
+            "-=0.2",
+          )
+          .to(".loader", {
+            yPercent: -100,
+            duration: 1,
+            ease: "expo.inOut",
+          })
+          .call(
+            () => {
+              document.body.classList.remove("loading");
+            },
+            null,
+            "-=0.5",
+          )
+          // Re-trigger hero animations
+          .from(
+            ".nav-container",
+            {
+              y: -50,
+              opacity: 0,
+              duration: 1,
+              ease: "expo.out",
+            },
+            "-=0.5",
+          )
+          .from(
+            ".hero-line",
+            {
+              yPercent: 100,
+              stagger: 0.1,
+              duration: 1.2,
+              ease: "expo.out",
+            },
+            "-=0.8",
+          )
+          .from(
+            ".reveal-fade",
+            {
+              opacity: 0,
+              y: 30,
+              stagger: 0.1,
+              duration: 1,
+              ease: "expo.out",
+            },
+            "-=0.8",
+          );
+      });
+
+      // --- SPLIT TEXT ANIMATIONS (ScrollTrigger) ---
+      const splitTextEls = document.querySelectorAll(".split-text");
+      splitTextEls.forEach((el) => {
+        const split = new SplitType(el, { types: "words, chars" });
+
+        gsap.from(split.chars, {
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+          },
+          yPercent: 120,
+          stagger: 0.02,
+          duration: 0.8,
+          ease: "back.out(1.7)",
+        });
+      });
+
+      // Fade up reveals
+      gsap.utils.toArray(".reveal-up").forEach((elem) => {
+        gsap.from(elem, {
+          scrollTrigger: {
+            trigger: elem,
+            start: "top 85%",
+          },
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          ease: "expo.out",
+        });
+      });
+
+      // --- MARQUEE ANIMATION ---
+      const marqueePart = document.querySelector(".marquee-inner");
+      let marqueeTl = gsap.to(marqueePart, {
+        xPercent: -50,
+        repeat: -1,
+        duration: 15,
+        ease: "linear",
+      });
+
+      // --- IMAGE PARALLAX ---
+      gsap.utils.toArray(".work-img").forEach((img) => {
+        gsap.to(img, {
+          scrollTrigger: {
+            trigger: img.parentElement,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+          yPercent: 15,
+          ease: "none",
+        });
+      });
+
+      // --- PROCESS LINE DRAW ---
+      const processItems = gsap.utils.toArray(".process-item");
+
+      ScrollTrigger.create({
+        trigger: ".process-list",
+        start: "top 50%",
+        end: "bottom 50%",
+        animation: gsap.to(".process-line-fill", {
+          height: "100%",
+          ease: "none",
+        }),
+        scrub: true,
+      });
+
+      processItems.forEach((item, i) => {
+        ScrollTrigger.create({
+          trigger: item,
+          start: "top 60%",
+          onEnter: () => item.classList.add("active"),
+          onLeaveBack: () => item.classList.remove("active"),
+        });
+      });
+    </script>
+  </body>
+</html>
