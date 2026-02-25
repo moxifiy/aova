@@ -102,23 +102,16 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
             transition={{ duration: 0.8, ease: NAV_EASE }}
             className="fixed top-6 inset-x-0 z-50 pointer-events-none"
         >
-            <AnimatePresence mode="sync">
+            <AnimatePresence mode="wait">
                 {isAtTop ? (
                     /* ── SPLIT STATE (at top) ── */
                     <motion.div
                         key="split"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
                         className="flex items-center justify-between px-6 md:px-10"
                     >
                         {/* Left pill — arrow (scroll to bottom) */}
                         <motion.div
-                            initial={{ x: -24, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: -24, opacity: 0 }}
-                            transition={{ duration: 0.5, ease: NAV_EASE }}
+                            layoutId="nav-left"
                             style={pillStyle}
                             className="flex items-center pointer-events-auto rounded-full backdrop-blur-xl p-1.5 shadow-lg"
                         >
@@ -135,10 +128,7 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
 
                         {/* Center pill — nav links */}
                         <motion.div
-                            initial={{ y: -16, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: -16, opacity: 0 }}
-                            transition={{ duration: 0.5, ease: NAV_EASE, delay: 0.04 }}
+                            layoutId="nav-center"
                             style={pillStyle}
                             className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg"
                         >
@@ -149,10 +139,7 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
 
                         {/* Right pill — book + theme */}
                         <motion.div
-                            initial={{ x: 24, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: 24, opacity: 0 }}
-                            transition={{ duration: 0.5, ease: NAV_EASE, delay: 0.07 }}
+                            layoutId="nav-right"
                             style={pillStyle}
                             className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg"
                         >
@@ -167,33 +154,35 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
                     /* ── MERGED STATE (scrolled) ── */
                     <motion.div
                         key="merged"
-                        initial={{ opacity: 0, y: -12, scale: 0.94 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -12, scale: 0.94 }}
-                        transition={{ duration: 0.5, ease: NAV_EASE }}
                         className="flex justify-center"
                     >
-                        <div style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-xl">
-                            <button
-                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                                className={iconCls}
-                                aria-label="Scroll to top"
-                            >
-                                <svg style={{ transform: 'rotate(180deg)' }} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
-                                </svg>
-                            </button>
-                            <div className={divCls} />
+                        <motion.div layoutId="nav-center" style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-xl">
+                            <motion.div layoutId="nav-left" className="flex items-center">
+                                <button
+                                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                                    className={iconCls}
+                                    aria-label="Scroll to top"
+                                >
+                                    <svg style={{ transform: 'rotate(180deg)' }} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
+                                    </svg>
+                                </button>
+                                <div className={divCls} />
+                            </motion.div>
+                            
                             {NAV_LINKS.map(({ label, id }) => (
                                 <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{label}</button>
                             ))}
-                            <div className={divCls} />
-                            <button onClick={() => scrollToId('faq')} className={bookCls}>Book</button>
-                            <div className={divCls} />
-                            <button onClick={toggleDark} className={iconCls} aria-label="Toggle theme">
-                                <NavThemeIcon isDark={isDark} />
-                            </button>
-                        </div>
+                            
+                            <motion.div layoutId="nav-right" className="flex items-center">
+                                <div className={divCls} />
+                                <button onClick={() => scrollToId('faq')} className={bookCls}>Book</button>
+                                <div className={divCls} />
+                                <button onClick={toggleDark} className={iconCls} aria-label="Toggle theme">
+                                    <NavThemeIcon isDark={isDark} />
+                                </button>
+                            </motion.div>
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -321,13 +310,13 @@ function Marquee() {
     }, []);
 
     return (
-        <div className="pg-marquee-wrap flex items-center justify-center relative h-32 px-6">
-            <div className="font-serif italic text-2xl md:text-3xl flex items-center justify-center gap-4 md:gap-8 overflow-hidden max-w-7xl mx-auto w-full">
+        <div className="pg-marquee-wrap flex items-center justify-center relative h-16 px-6">
+            <div className="font-serif italic text-base md:text-lg flex items-center justify-center gap-4 md:gap-8 overflow-hidden max-w-7xl mx-auto w-full">
                 {/* Left Star (Static) */}
-                <span className="text-[var(--accent)] text-lg shrink-0">✦</span>
+                <span className="text-[var(--accent)] text-sm shrink-0">✦</span>
 
                 {/* Dynamic Text Container */}
-                <div className="relative flex-1 flex items-center justify-center h-16 md:h-20">
+                <div className="relative flex-1 flex items-center justify-center h-8 md:h-10">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={index}
@@ -348,6 +337,39 @@ function Marquee() {
         </div>
     );
 }
+
+const CREATOR_PACKAGES = [
+    {
+        num: "01",
+        name: "Content Foundation",
+        sub: "Starter Growth Engine",
+        target: "Creators under 50k or early brands",
+        items: ["Strategy session", "1 longform", "3 shortform", "Thumbnail", "Content calendar", "Bi-weekly review"],
+        price: "$1,000 – $1,500",
+        cycle: "per 2 weeks",
+        popular: false,
+    },
+    {
+        num: "02",
+        name: "Growth Engine Pro",
+        sub: null,
+        target: "Serious creators & small brands",
+        items: ["Full content strategy", "2 longform", "6–10 shortform", "Scriptwriting", "Hook research", "Repurposing", "Thumbnail system", "Analytics dashboard", "Distribution suggestions", "2-week sprint optimization"],
+        price: "$2,000 – $3,000",
+        cycle: "per 2 weeks",
+        popular: true,
+    },
+    {
+        num: "03",
+        name: "Authority / Scale",
+        sub: "Scale System",
+        target: "Brands at scale & large creators",
+        items: ["Everything in Growth Pro", "2 longform", "8–10 shortform", "Funnel strategy", "Ad creatives", "VSL production", "Testing roadmap", "Landing page suggestions", "Performance review", "Priority turnaround"],
+        price: "$4,000 – $8,000",
+        cycle: "per 2 weeks",
+        popular: false,
+    },
+];
 
 const SERVICES_DATA = {
     creator: {
@@ -411,9 +433,9 @@ function InteractiveServices() {
     const data = audience ? SERVICES_DATA[audience] : null;
 
     return (
-        <section className="relative py-32 px-6" id="services">
+        <section className="relative py-32" id="services">
             <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
-            <div className="max-w-7xl mx-auto">
+            <div className="pg-inner">
                 <div className="text-center mb-8">
                     <h2 className="text-4xl md:text-6xl font-serif tracking-tight mb-8">Who are we building for?</h2>
                 </div>
@@ -457,25 +479,73 @@ function InteractiveServices() {
                                 <div className={`absolute -right-20 -bottom-20 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none ${data.accent} opacity-10`} />
                             </div>
 
-                            {/* 2x2 Grid for Secondary Cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {data.cards.map((card, i) => (
-                                    <div key={i} className={`p-8 md:p-12 rounded-[32px] border-2 border-[var(--border)] bg-[var(--surface)] shadow-[0_4px_0_0_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group`}>
-                                        <div>
-                                            <div className="text-3xl mb-6 bg-[var(--border)] w-16 h-16 flex items-center justify-center rounded-2xl">{card.icon}</div>
-                                            <h4 className="text-2xl md:text-3xl font-serif mb-4 flex items-center gap-3">
-                                                {card.title}
-                                            </h4>
-                                            <p className="text-lg text-[var(--muted)] font-medium leading-relaxed">{card.desc}</p>
-                                        </div>
-                                        <div className="mt-12 flex justify-end">
-                                            <div className={`w-12 h-12 rounded-full border-2 border-[var(--border)] flex items-center justify-center text-[var(--muted)] transition-colors duration-300 ${data.hoverAccent} group-hover:text-[var(--text)] group-hover:border-[var(--border-hover)]`}>
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            {/* Creator: Pricing packages / Brand: service cards */}
+                            {audience === 'creator' ? (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+                                    {CREATOR_PACKAGES.map((pkg) => (
+                                        <div key={pkg.num} className={`flex flex-col rounded-[28px] border-2 overflow-hidden transition-all duration-300 hover:-translate-y-1 ${pkg.popular ? 'border-[#FF3366]/40 bg-[#FF3366]/[0.04] shadow-[0_12px_48px_rgba(255,51,102,0.14)]' : 'border-[var(--border)] bg-[var(--surface)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]'}`}>
+                                            {pkg.popular && (
+                                                <div className="bg-[#FF3366] text-white text-[10px] font-bold uppercase tracking-[0.15em] text-center py-2">
+                                                    Most Popular
+                                                </div>
+                                            )}
+                                            <div className="p-8 flex flex-col flex-1">
+                                                {/* Header */}
+                                                <div className="mb-6">
+                                                    <span className="text-[#FF3366] text-[10px] font-bold uppercase tracking-widest">{pkg.num}</span>
+                                                    <h4 className="text-2xl font-serif mt-1 mb-0.5">{pkg.name}</h4>
+                                                    {pkg.sub && <p className="text-xs text-[var(--muted)] mb-1">{pkg.sub}</p>}
+                                                    <p className="text-xs text-[var(--muted)] italic">{pkg.target}</p>
+                                                </div>
+
+                                                <div className="w-full h-px bg-[var(--border)] mb-6" />
+
+                                                {/* Includes */}
+                                                <div className="flex-1">
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)] mb-4">What&apos;s included</p>
+                                                    <ul className="space-y-2.5">
+                                                        {pkg.items.map((item, i) => (
+                                                            <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--text)]">
+                                                                <span className="text-[#FF3366] shrink-0 mt-px">✓</span>
+                                                                {item}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+
+                                                {/* Price + CTA */}
+                                                <div className="mt-8 pt-6 border-t border-[var(--border)]">
+                                                    <p className="text-3xl font-serif font-bold text-[var(--text)]">{pkg.price}</p>
+                                                    <p className="text-xs text-[var(--muted)] mb-6 mt-0.5">{pkg.cycle}</p>
+                                                    <button
+                                                        onClick={() => scrollToId('faq')}
+                                                        className={`w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${pkg.popular ? 'bg-[#FF3366] text-white hover:opacity-90' : 'border-2 border-[var(--border)] text-[var(--text)] hover:border-[#FF3366] hover:text-[#FF3366]'}`}
+                                                    >
+                                                        Get started →
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {data.cards.map((card, i) => (
+                                        <div key={i} className={`p-8 md:p-12 rounded-[32px] border-2 border-[var(--border)] bg-[var(--surface)] shadow-[0_4px_0_0_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group`}>
+                                            <div>
+                                                <div className="text-3xl mb-6 bg-[var(--border)] w-16 h-16 flex items-center justify-center rounded-2xl">{card.icon}</div>
+                                                <h4 className="text-2xl md:text-3xl font-serif mb-4">{card.title}</h4>
+                                                <p className="text-lg text-[var(--muted)] font-medium leading-relaxed">{card.desc}</p>
+                                            </div>
+                                            <div className="mt-12 flex justify-end">
+                                                <div className={`w-12 h-12 rounded-full border-2 border-[var(--border)] flex items-center justify-center text-[var(--muted)] transition-colors duration-300 ${data.hoverAccent} group-hover:text-[var(--text)] group-hover:border-[var(--border-hover)]`}>
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -643,7 +713,7 @@ const TESTIMONIALS = [
 function Testimonials() {
     return (
         <section className="pt-16 pb-32 overflow-hidden bg-transparent text-[var(--text)] relative mt-0" id="testimonials">
-            <div className="max-w-7xl mx-auto mb-16 px-6 relative z-10">
+            <div className="pg-inner mb-16 relative z-10">
                 <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">Aova <span className="italic text-[#FF3366]">Love</span></h2>
                 <p className="text-[var(--muted)] text-lg max-w-xl">Don&apos;t just take our word for it. Trusted by industry leaders constantly moving the needle.</p>
             </div>
@@ -1056,7 +1126,7 @@ function FaqSection() {
                                         className="w-full bg-white text-black font-semibold text-lg py-5 rounded-2xl shadow-xl transition-shadow duration-300 mb-8"
                                     >
                                         <span style={{ transform: "translateZ(20px)" }} className="block">
-                                            Book a call
+                                            Book a 30min free call with us
                                         </span>
                                     </motion.button>
 
