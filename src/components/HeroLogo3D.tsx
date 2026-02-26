@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
 import * as THREE from "three";
@@ -56,8 +56,9 @@ function LogoShape({ isDark }: { isDark: boolean }) {
                 <meshBasicMaterial
                     color={isDark ? "#ffffff" : "#000000"} // White lines in dark mode
                     transparent={true}
-                    opacity={isDark ? 0.08 : 0.04} // Slightly brighter on dark bg
+                    opacity={isDark ? 0.12 : 0.07} // Slightly brighter on dark bg
                     wireframe={true} // Creates the cool geometric pattern
+                    wireframeLinewidth={1.5}
                 />
             </mesh>
         </Float>
@@ -65,11 +66,27 @@ function LogoShape({ isDark }: { isDark: boolean }) {
 }
 
 export default function HeroLogo3D({ isDark = false }: { isDark?: boolean }) {
+    const [reducedMotion, setReducedMotion] = useState(false);
+
+    useEffect(() => {
+        const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+        setReducedMotion(mq.matches);
+        const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
+    }, []);
+
+    if (reducedMotion) return null;
+
     return (
         <div className="absolute inset-x-0 top-0 h-[100svh] z-0 flex items-center justify-center opacity-70 pointer-events-none overflow-hidden">
             {/* The Canvas itself needs pointer-events so useFrame(state.pointer) works, but we don't want it stealing clicks from the UI */}
             <div className="w-full h-[150vh] flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <Canvas camera={{ position: [0, 0, 15], fov: 45 }} style={{ pointerEvents: 'auto' }}>
+                <Canvas
+                    camera={{ position: [0, 0, 15], fov: 45 }}
+                    style={{ pointerEvents: 'auto' }}
+                    dpr={[1, 1.5]}
+                >
                     <LogoShape isDark={isDark} />
                 </Canvas>
             </div>

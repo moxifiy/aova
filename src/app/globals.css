@@ -44,10 +44,12 @@ html {
 	scroll-behavior: auto;
 }
 
-*,
-*::before,
-*::after {
-	cursor: none !important;
+@media (pointer: fine) {
+	*,
+	*::before,
+	*::after {
+		cursor: none !important;
+	}
 }
 
 body {
@@ -566,4 +568,13 @@ body.dark ::-webkit-scrollbar-thumb:hover {
 
 .animate-spark-flash {
 	animation: sparkFlash 4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes shimmer {
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
 }

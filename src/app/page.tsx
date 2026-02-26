@@ -86,14 +86,14 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const pillBg  = isDark ? 'rgba(20,20,20,0.92)'   : 'rgba(255,255,255,0.92)';
+    const pillBg = isDark ? 'rgba(20,20,20,0.92)' : 'rgba(255,255,255,0.92)';
     const pillBdr = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
     const pillStyle = { backgroundColor: pillBg, borderColor: pillBdr, borderWidth: 1, borderStyle: 'solid' as const };
 
-    const btnCls  = "px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-widest text-[var(--muted)] hover:text-[var(--text)] hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-all duration-150";
+    const btnCls = "px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-widest text-[var(--muted)] hover:text-[var(--text)] hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-all duration-150";
     const iconCls = "w-8 h-8 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] hover:bg-black/[0.06] dark:hover:bg-white/[0.08] transition-colors duration-150";
     const bookCls = "px-3 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-[var(--text)] text-[var(--surface)] hover:opacity-80 transition-opacity duration-150";
-    const divCls  = "w-px h-4 mx-0.5 bg-black/[0.08] dark:bg-white/[0.1]";
+    const divCls = "w-px h-4 mx-0.5 bg-black/[0.08] dark:bg-white/[0.1]";
 
     return (
         <motion.nav
@@ -169,11 +169,11 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
                                 </button>
                                 <div className={divCls} />
                             </motion.div>
-                            
+
                             {NAV_LINKS.map(({ label, id }) => (
                                 <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{label}</button>
                             ))}
-                            
+
                             <motion.div layoutId="nav-right" className="flex items-center">
                                 <div className={divCls} />
                                 <button onClick={() => scrollToId('faq')} className={bookCls}>Book</button>
@@ -208,7 +208,7 @@ function Hero({ isDark }: { isDark: boolean }) {
     return (
         <section className="relative min-h-[100svh] flex flex-col items-start justify-center pt-32 pb-20 px-8 md:px-16 lg:px-24 overflow-hidden">
             {/* Decorative ambient gradients */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-[#FF3366]/10 to-[#3366FF]/10 rounded-full blur-[100px] -z-10 animate-pulse pointer-events-none" />
+            <div className={`absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[450px] md:h-[450px] lg:w-[600px] lg:h-[600px] bg-gradient-to-tr rounded-full blur-[100px] -z-10 animate-pulse pointer-events-none ${isDark ? 'from-[#FF3366]/5 to-[#3366FF]/5' : 'from-[#FF3366]/10 to-[#3366FF]/10'}`} />
 
             {/* Interactive 3D glass logo element */}
             <HeroLogo3D isDark={isDark} />
@@ -219,7 +219,7 @@ function Hero({ isDark }: { isDark: boolean }) {
 
             <motion.div
                 style={{ y }}
-                className="pg-inner text-left z-10"
+                className="pg-inner text-left z-10 pointer-events-none"
             >
                 {/* Badge */}
                 <motion.div
@@ -259,7 +259,7 @@ function Hero({ isDark }: { isDark: boolean }) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
-                    className="flex items-center gap-4"
+                    className="flex items-center gap-4 pointer-events-auto"
                 >
                     <motion.button
                         onClick={triggerBookingSpark}
@@ -371,6 +371,39 @@ const CREATOR_PACKAGES = [
     },
 ];
 
+const BRAND_PACKAGES = [
+    {
+        num: "01",
+        name: "Brand Starter",
+        sub: "Logo & brand basics",
+        target: "For founders entering the market",
+        items: ["Logo design (up to 5 concepts)", "Brand color palette & typography", "Basic brand guidelines PDF", "Launch mockups (3 formats)", "Unlimited revisions", "Full ownership & source files"],
+        price: "$500 – $750",
+        cycle: "One-time · 1–2 week delivery",
+        popular: false,
+    },
+    {
+        num: "02",
+        name: "Full Brand",
+        sub: "Identity + Website + Assets",
+        target: "For brands ready to look the part",
+        items: ["Everything in Brand Starter", "Full brand identity system", "Custom website or landing page", "Brand guidelines (full doc)", "Visual mockups & brand assets", "Social templates (3 formats)", "2 rounds of revision per deliverable", "Full ownership & source files"],
+        price: "$2,000 – $3,000",
+        cycle: "One-time · 2–3 week delivery",
+        popular: true,
+    },
+    {
+        num: "03",
+        name: "Full Studio",
+        sub: "Everything + Ads + Motion + UI/UX",
+        target: "For brands scaling with intention",
+        items: ["Everything in Full Brand", "Performance ad creatives (static + motion)", "UI/UX design for product or app", "Motion design & brand animations", "Ad copy direction & visual testing", "Priority turnaround", "Post-launch creative support", "Full ownership & source files"],
+        price: "$5,000 – $8,000",
+        cycle: "One-time · 3–5 week delivery",
+        popular: false,
+    },
+];
+
 const SERVICES_DATA = {
     creator: {
         theme: "text-[#FF3366]",
@@ -428,6 +461,110 @@ const SERVICES_DATA = {
 
 type AudienceType = 'creator' | 'brand';
 
+type PackageData = { num: string; name: string; sub: string | null; target: string; items: string[]; price: string; cycle: string; popular: boolean };
+
+function PricingCard({ pkg, accentColor, accentRgb, index }: { pkg: PackageData; accentColor: string; accentRgb: string; index: number }) {
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
+    const cardX = useMotionValue(0.5);
+    const cardY = useMotionValue(0.5);
+
+    const springConfig = { damping: 25, stiffness: 150 };
+    const springX = useSpring(cardX, springConfig);
+    const springY = useSpring(cardY, springConfig);
+    const rotateX = useTransform(springY, [0, 1], [6, -6]);
+    const rotateY = useTransform(springX, [0, 1], [-6, 6]);
+
+    const spotlight = useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(${accentRgb}, 0.12), transparent 80%)`;
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+        mouseX.set(e.clientX - left);
+        mouseY.set(e.clientY - top);
+        cardX.set((e.clientX - left) / width);
+        cardY.set((e.clientY - top) / height);
+    };
+
+    const handleMouseLeave = () => {
+        cardX.set(0.5);
+        cardY.set(0.5);
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{
+                rotateX, rotateY, transformStyle: "preserve-3d", perspective: 800,
+                borderColor: pkg.popular ? `rgba(${accentRgb}, 0.4)` : undefined,
+                backgroundColor: pkg.popular ? `rgba(${accentRgb}, 0.04)` : undefined,
+                boxShadow: pkg.popular ? `0 12px 48px rgba(${accentRgb}, 0.14)` : undefined,
+            }}
+            whileHover={{
+                boxShadow: pkg.popular
+                    ? `0 20px 60px rgba(${accentRgb}, 0.22)`
+                    : '0 16px 48px rgba(0,0,0,0.1)',
+            }}
+            className={`group/card relative flex flex-col rounded-[28px] border-2 overflow-hidden transition-shadow duration-500 ${!pkg.popular ? 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-hover)]' : ''
+                }`}
+        >
+            {/* Spotlight glow overlay */}
+            <motion.div
+                className="pointer-events-none absolute inset-0 z-10 rounded-[28px] opacity-0 transition-opacity duration-500 group-hover/card:opacity-100"
+                style={{ background: spotlight }}
+            />
+
+            <div className="p-8 flex flex-col flex-1 relative z-20">
+                {/* Header */}
+                <div className="mb-6">
+                    <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: accentColor }}>{pkg.num}</span>
+                        {pkg.popular && (
+                            <span
+                                className="text-white text-[9px] font-bold uppercase tracking-[0.12em] px-2.5 py-0.5 rounded-full"
+                                style={{
+                                    background: `linear-gradient(90deg, ${accentColor}, ${accentColor}cc, ${accentColor})`,
+                                    backgroundSize: '200% 100%',
+                                    animation: 'shimmer 3s linear infinite',
+                                }}
+                            >
+                                Popular
+                            </span>
+                        )}
+                    </div>
+                    <h3 className="text-2xl font-serif mt-1 mb-0.5">{pkg.name}</h3>
+                    {pkg.sub && <p className="text-xs text-[var(--muted)] mb-1">{pkg.sub}</p>}
+                    <p className="text-xs text-[var(--muted)] italic">{pkg.target}</p>
+                </div>
+
+                <div className="w-full h-px bg-[var(--border)] mb-6" />
+
+                {/* Includes */}
+                <div className="flex-1">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)] mb-4">What&apos;s included</p>
+                    <ul className="space-y-2.5">
+                        {pkg.items.map((item, i) => (
+                            <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--text)]">
+                                <span className="shrink-0 mt-px" style={{ color: accentColor }}>✓</span>
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* Price */}
+                <div className="mt-8 pt-6 border-t border-[var(--border)]">
+                    <p className="text-3xl font-serif font-bold text-[var(--text)]">{pkg.price}</p>
+                    <p className="text-xs text-[var(--muted)] mt-0.5">{pkg.cycle}</p>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
 function InteractiveServices() {
     const [audience, setAudience] = useState<AudienceType | null>(null);
     const data = audience ? SERVICES_DATA[audience] : null;
@@ -440,13 +577,13 @@ function InteractiveServices() {
                     <h2 className="text-4xl md:text-6xl font-serif tracking-tight mb-8">Who are we building for?</h2>
                 </div>
 
-                {/* Sticky Interactive Selector */}
-                <div className="sticky top-24 z-50 flex justify-center mb-16 pointer-events-none">
-                    <div className="inline-flex flex-col md:flex-row p-2 bg-[var(--surface)]/70 backdrop-blur-xl rounded-[32px] md:rounded-full gap-2 relative border border-[var(--border)] shadow-2xl shadow-black/5 pointer-events-auto">
+                {/* Audience Selector */}
+                <div className="flex justify-center mb-6">
+                    <div className="inline-flex flex-col md:flex-row p-2 bg-[var(--surface)]/70 backdrop-blur-xl rounded-[32px] md:rounded-full gap-2 relative border border-[var(--border)] shadow-2xl shadow-black/5">
                         {(['creator', 'brand'] as AudienceType[]).map((type) => (
                             <button
                                 key={type}
-                                onClick={() => setAudience(prev => prev === type ? null : type)}
+                                onClick={() => setAudience(audience === type ? null : type)}
                                 className={`px-8 py-4 rounded-full text-lg md:text-xl font-serif transition-all duration-500 w-full md:w-auto relative ${audience === type
                                     ? `text-white scale-105 border border-white/20 ${type === 'creator' ? 'bg-[#FF3366] shadow-[inset_0_3px_12px_rgba(255,255,255,0.4),inset_0_-3px_8px_rgba(0,0,0,0.1),0_12px_30px_rgba(255,51,102,0.3)]' : 'bg-[#3366FF] shadow-[inset_0_3px_12px_rgba(255,255,255,0.4),inset_0_-3px_8px_rgba(0,0,0,0.1),0_12px_30px_rgba(51,102,255,0.3)]'}`
                                     : 'hover:bg-[var(--border)] text-[var(--muted)] hover:text-[var(--text)] border border-transparent'
@@ -466,85 +603,55 @@ function InteractiveServices() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.5, ease: "easeOut" }}
-                            className="mt-16"
+                            className="mt-2"
                         >
-                            {/* Massive Hero Card (Full Width) */}
-                            <div className={`w-full p-8 md:p-16 rounded-[40px] border-2 transition-colors duration-500 overflow-hidden relative mb-6 ${data.hero.color}`}>
-                                <div className="max-w-3xl relative z-10">
-                                    <h4 className={`text-4xl md:text-6xl font-serif mb-6 leading-tight ${data.theme}`}>{data.hero.title}</h4>
-                                    <p className="text-xl md:text-2xl text-[var(--text)] opacity-80 font-medium leading-relaxed mb-8">{data.hero.desc}</p>
-                                    {data.hero.proof}
-                                </div>
-                                {/* Abstract large background shape matching accent */}
-                                <div className={`absolute -right-20 -bottom-20 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none ${data.accent} opacity-10`} />
-                            </div>
-
                             {/* Creator: Pricing packages / Brand: service cards */}
                             {audience === 'creator' ? (
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-                                    {CREATOR_PACKAGES.map((pkg) => (
-                                        <div key={pkg.num} className={`flex flex-col rounded-[28px] border-2 overflow-hidden transition-all duration-300 hover:-translate-y-1 ${pkg.popular ? 'border-[#FF3366]/40 bg-[#FF3366]/[0.04] shadow-[0_12px_48px_rgba(255,51,102,0.14)]' : 'border-[var(--border)] bg-[var(--surface)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]'}`}>
-                                            {pkg.popular && (
-                                                <div className="bg-[#FF3366] text-white text-[10px] font-bold uppercase tracking-[0.15em] text-center py-2">
-                                                    Most Popular
-                                                </div>
-                                            )}
-                                            <div className="p-8 flex flex-col flex-1">
-                                                {/* Header */}
-                                                <div className="mb-6">
-                                                    <span className="text-[#FF3366] text-[10px] font-bold uppercase tracking-widest">{pkg.num}</span>
-                                                    <h4 className="text-2xl font-serif mt-1 mb-0.5">{pkg.name}</h4>
-                                                    {pkg.sub && <p className="text-xs text-[var(--muted)] mb-1">{pkg.sub}</p>}
-                                                    <p className="text-xs text-[var(--muted)] italic">{pkg.target}</p>
-                                                </div>
-
-                                                <div className="w-full h-px bg-[var(--border)] mb-6" />
-
-                                                {/* Includes */}
-                                                <div className="flex-1">
-                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)] mb-4">What&apos;s included</p>
-                                                    <ul className="space-y-2.5">
-                                                        {pkg.items.map((item, i) => (
-                                                            <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--text)]">
-                                                                <span className="text-[#FF3366] shrink-0 mt-px">✓</span>
-                                                                {item}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-
-                                                {/* Price + CTA */}
-                                                <div className="mt-8 pt-6 border-t border-[var(--border)]">
-                                                    <p className="text-3xl font-serif font-bold text-[var(--text)]">{pkg.price}</p>
-                                                    <p className="text-xs text-[var(--muted)] mb-6 mt-0.5">{pkg.cycle}</p>
-                                                    <button
-                                                        onClick={() => scrollToId('faq')}
-                                                        className={`w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${pkg.popular ? 'bg-[#FF3366] text-white hover:opacity-90' : 'border-2 border-[var(--border)] text-[var(--text)] hover:border-[#FF3366] hover:text-[#FF3366]'}`}
-                                                    >
-                                                        Get started →
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+                                        {CREATOR_PACKAGES.map((pkg, i) => (
+                                            <PricingCard key={pkg.num} pkg={pkg} accentColor="#FF3366" accentRgb="255,51,102" index={i} />
+                                        ))}
+                                    </div>
+                                    <div className="flex flex-col items-center mt-8">
+                                        <motion.button
+                                            onClick={() => scrollToId('faq')}
+                                            whileHover={{ scale: 1.05, rotateX: 8, rotateY: -6, y: -4, boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.3)" }}
+                                            whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
+                                            style={{ transformStyle: "preserve-3d", perspective: 800 }}
+                                            className="pg-btn bg-[#FF3366] text-white border-[#FF3366] !text-base !px-10 !py-4 shadow-xl transition-shadow duration-300 hover:shadow-[0_20px_40px_rgba(255,51,102,0.25)]"
+                                        >
+                                            <span style={{ transform: "translateZ(15px)" }} className="block">Get started →</span>
+                                        </motion.button>
+                                        <p className="text-center text-sm text-[var(--muted)] mt-6">
+                                            Not sure which fits? <button onClick={() => scrollToId('faq')} className="text-[#FF3366] font-semibold hover:underline">Book a free 30min call</button> and we&apos;ll figure it out together.<br />
+                                            <span className="text-xs opacity-70">All projects include a discovery session before work begins.</span>
+                                        </p>
+                                    </div>
+                                </>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {data.cards.map((card, i) => (
-                                        <div key={i} className={`p-8 md:p-12 rounded-[32px] border-2 border-[var(--border)] bg-[var(--surface)] shadow-[0_4px_0_0_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group`}>
-                                            <div>
-                                                <div className="text-3xl mb-6 bg-[var(--border)] w-16 h-16 flex items-center justify-center rounded-2xl">{card.icon}</div>
-                                                <h4 className="text-2xl md:text-3xl font-serif mb-4">{card.title}</h4>
-                                                <p className="text-lg text-[var(--muted)] font-medium leading-relaxed">{card.desc}</p>
-                                            </div>
-                                            <div className="mt-12 flex justify-end">
-                                                <div className={`w-12 h-12 rounded-full border-2 border-[var(--border)] flex items-center justify-center text-[var(--muted)] transition-colors duration-300 ${data.hoverAccent} group-hover:text-[var(--text)] group-hover:border-[var(--border-hover)]`}>
-                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+                                        {BRAND_PACKAGES.map((pkg, i) => (
+                                            <PricingCard key={pkg.num} pkg={pkg} accentColor="#3366FF" accentRgb="51,102,255" index={i} />
+                                        ))}
+                                    </div>
+                                    <div className="flex flex-col items-center mt-8">
+                                        <motion.button
+                                            onClick={() => scrollToId('faq')}
+                                            whileHover={{ scale: 1.05, rotateX: 8, rotateY: -6, y: -4, boxShadow: "0 25px 50px -12px rgba(51, 102, 255, 0.3)" }}
+                                            whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
+                                            style={{ transformStyle: "preserve-3d", perspective: 800 }}
+                                            className="pg-btn bg-[#3366FF] text-white border-[#3366FF] !text-base !px-10 !py-4 shadow-xl transition-shadow duration-300 hover:shadow-[0_20px_40px_rgba(51,102,255,0.25)]"
+                                        >
+                                            <span style={{ transform: "translateZ(15px)" }} className="block">Get started →</span>
+                                        </motion.button>
+                                        <p className="text-center text-sm text-[var(--muted)] mt-6">
+                                            Not sure which fits? <button onClick={() => scrollToId('faq')} className="text-[#3366FF] font-semibold hover:underline">Book a free 30min call</button> and we&apos;ll figure it out together.<br />
+                                            <span className="text-xs opacity-70">All projects include a discovery session before work begins.</span>
+                                        </p>
+                                    </div>
+                                </>
                             )}
                         </motion.div>
                     )}
@@ -563,7 +670,7 @@ function TrustedBy() {
             <div className="pg-inner">
                 <div className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-[32px] p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-16 relative overflow-hidden shadow-sm">
                     {/* Abstract decorative background hint */}
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl from-[var(--border)] to-transparent rounded-full blur-3xl opacity-40 pointer-events-none -mr-32 -mt-24"></div>
+                    <div className="absolute top-0 right-0 w-[250px] h-[250px] md:w-[500px] md:h-[500px] bg-gradient-to-bl from-[var(--border)] to-transparent rounded-full blur-3xl opacity-40 pointer-events-none -mr-16 -mt-12 md:-mr-32 md:-mt-24"></div>
 
                     <div className="w-full md:w-1/3 relative z-10 shrink-0">
                         <h2 className="text-4xl md:text-5xl font-serif leading-tight mb-8">Trusted by fast-moving <br /> brands & creators</h2>
@@ -623,56 +730,56 @@ function WorkSection() {
 
                 {/* Card grids — gap-4 between all rows and columns */}
                 <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {workProjects.map((p) => (
-                        <div key={p.num} className="group relative h-[480px] overflow-hidden rounded-2xl bg-[var(--border)] cursor-pointer">
-                            <img
-                                src={p.image}
-                                alt={p.name}
-                                className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-                            />
-                            {/* Category tag — top left */}
-                            <div className="absolute top-4 left-4 z-20">
-                                <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
-                                    {p.category}
-                                </span>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {workProjects.map((p) => (
+                            <div key={p.num} className="group relative h-[240px] sm:h-[360px] md:h-[480px] overflow-hidden rounded-2xl bg-[var(--border)] cursor-pointer">
+                                <img
+                                    src={p.image}
+                                    alt={p.name}
+                                    className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                                />
+                                {/* Category tag — top left */}
+                                <div className="absolute top-4 left-4 z-20">
+                                    <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
+                                        {p.category}
+                                    </span>
+                                </div>
+                                {/* Index — top right */}
+                                <span className="absolute top-4 right-4 z-20 text-white/40 text-xs font-mono">{p.num}</span>
+                                {/* Bottom gradient + title */}
+                                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent z-10 pointer-events-none" />
+                                <div className="absolute bottom-5 left-5 z-20">
+                                    <h3 className="text-white text-xl font-serif leading-tight">{p.name}</h3>
+                                </div>
                             </div>
-                            {/* Index — top right */}
-                            <span className="absolute top-4 right-4 z-20 text-white/40 text-xs font-mono">{p.num}</span>
-                            {/* Bottom gradient + title */}
-                            <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent z-10 pointer-events-none" />
-                            <div className="absolute bottom-5 left-5 z-20">
-                                <h3 className="text-white text-xl font-serif leading-tight">{p.name}</h3>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
 
-                {/* 2-column card grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {workProjectsRow2.map((p) => (
-                        <div key={p.num} className="group relative h-[360px] overflow-hidden rounded-2xl bg-[var(--border)] cursor-pointer">
-                            <img
-                                src={p.image}
-                                alt={p.name}
-                                className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-                            />
-                            {/* Category tag — top left */}
-                            <div className="absolute top-4 left-4 z-20">
-                                <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
-                                    {p.category}
-                                </span>
+                    {/* 2-column card grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {workProjectsRow2.map((p) => (
+                            <div key={p.num} className="group relative h-[240px] sm:h-[300px] md:h-[360px] overflow-hidden rounded-2xl bg-[var(--border)] cursor-pointer">
+                                <img
+                                    src={p.image}
+                                    alt={p.name}
+                                    className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                                />
+                                {/* Category tag — top left */}
+                                <div className="absolute top-4 left-4 z-20">
+                                    <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
+                                        {p.category}
+                                    </span>
+                                </div>
+                                {/* Index — top right */}
+                                <span className="absolute top-4 right-4 z-20 text-white/40 text-xs font-mono">{p.num}</span>
+                                {/* Bottom gradient + title */}
+                                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent z-10 pointer-events-none" />
+                                <div className="absolute bottom-5 left-5 z-20">
+                                    <h3 className="text-white text-xl font-serif leading-tight">{p.name}</h3>
+                                </div>
                             </div>
-                            {/* Index — top right */}
-                            <span className="absolute top-4 right-4 z-20 text-white/40 text-xs font-mono">{p.num}</span>
-                            {/* Bottom gradient + title */}
-                            <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent z-10 pointer-events-none" />
-                            <div className="absolute bottom-5 left-5 z-20">
-                                <h3 className="text-white text-xl font-serif leading-tight">{p.name}</h3>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
                 </div>
 
                 <div className="flex justify-center pt-8">
@@ -725,7 +832,7 @@ function Testimonials() {
 
                 <div className="flex gap-8 group-hover:[animation-play-state:paused] py-4" style={{ width: "max-content", animation: "scroll 40s linear infinite" }}>
                     {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
-                        <div key={i} className="w-[400px] md:w-[500px] bg-[var(--surface)] border-2 border-[var(--border)] shadow-[0_4px_0_0_rgba(0,0,0,0.05)] p-10 rounded-[32px] shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:border-[var(--border-hover)]">
+                        <div key={i} className="w-[280px] sm:w-[340px] md:w-[500px] bg-[var(--surface)] border-2 border-[var(--border)] shadow-[0_4px_0_0_rgba(0,0,0,0.05)] p-6 sm:p-8 md:p-10 rounded-[24px] md:rounded-[32px] shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:border-[var(--border-hover)]">
                             <div className="flex gap-1 mb-8 text-[#FF3366]">
                                 {[1, 2, 3, 4, 5].map(star => (
                                     <svg key={star} width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
@@ -1047,27 +1154,27 @@ function FaqSection() {
                                         items={[
                                             <div key="t1" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
                                                 <img src="https://i.pravatar.cc/150?u=sarah_aova" alt="Sarah" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
-                                                <h4 className="font-serif text-[13px] font-bold text-black leading-tight">Sarah</h4>
+                                                <p className="font-serif text-[13px] font-bold text-black leading-tight">Sarah</p>
                                                 <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Creative Dir.</p>
                                             </div>,
                                             <div key="t2" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
                                                 <img src="https://i.pravatar.cc/150?u=marcus_aova" alt="Marcus" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
-                                                <h4 className="font-serif text-[13px] font-bold text-black leading-tight">Marcus</h4>
+                                                <p className="font-serif text-[13px] font-bold text-black leading-tight">Marcus</p>
                                                 <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Engineer</p>
                                             </div>,
                                             <div key="t3" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
                                                 <img src="https://i.pravatar.cc/150?u=elena_aova" alt="Elena" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
-                                                <h4 className="font-serif text-[13px] font-bold text-black leading-tight">Elena</h4>
+                                                <p className="font-serif text-[13px] font-bold text-black leading-tight">Elena</p>
                                                 <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Design Lead</p>
                                             </div>,
                                             <div key="t4" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
                                                 <img src="https://i.pravatar.cc/150?u=david_aova" alt="David" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
-                                                <h4 className="font-serif text-[13px] font-bold text-black leading-tight">David</h4>
+                                                <p className="font-serif text-[13px] font-bold text-black leading-tight">David</p>
                                                 <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Motion</p>
                                             </div>,
                                             <div key="t5" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
                                                 <img src="https://i.pravatar.cc/150?u=amina_aova" alt="Amina" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
-                                                <h4 className="font-serif text-[13px] font-bold text-black leading-tight">Amina</h4>
+                                                <p className="font-serif text-[13px] font-bold text-black leading-tight">Amina</p>
                                                 <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Strategy</p>
                                             </div>
                                         ]}
@@ -1107,7 +1214,7 @@ function FaqSection() {
                                     <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/50 text-xs font-semibold uppercase tracking-widest mb-8">Currently accepting clients</span>
 
                                     <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-10 w-full text-[#FF3366]">
-                                        Book a 15-min intro call
+                                        Book a 30-min discovery call
                                     </h3>
 
                                     <motion.button
@@ -1126,7 +1233,7 @@ function FaqSection() {
                                         className="w-full bg-white text-black font-semibold text-lg py-5 rounded-2xl shadow-xl transition-shadow duration-300 mb-8"
                                     >
                                         <span style={{ transform: "translateZ(20px)" }} className="block">
-                                            Book a 30min free call with us
+                                            Book a call
                                         </span>
                                     </motion.button>
 
@@ -1168,15 +1275,16 @@ function Footer() {
         <footer className="relative bg-[#111111] text-white py-20 rounded-t-[40px] md:rounded-t-[80px] mt-20 overflow-hidden">
             <div className="absolute inset-0 bg-dots opacity-[0.05] pointer-events-none -z-10 mix-blend-overlay" />
             <div className="pg-inner flex flex-col items-center text-center">
-                <h2 className="text-6xl md:text-[120px] leading-none font-serif tracking-tight mb-12 text-[#FF3366] flex justify-center items-baseline cursor-default">
+                <h2 className="text-6xl md:text-[120px] leading-none font-serif tracking-tight mb-12 text-[#FF3366] text-center">
                     <div
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}
-                        className="inline-flex items-baseline"
+                        className="inline-flex items-baseline cursor-default"
                     >
                         Let&apos;s t
                         <span className="inline-block relative">
                             a
+                            {/* Absolutely-positioned overlay that expands to the right */}
                             <motion.span
                                 initial={{ width: 0 }}
                                 animate={{ width: isHovered ? "auto" : 0 }}
@@ -1186,12 +1294,13 @@ function Footer() {
                                 aaaaaa
                             </motion.span>
                         </span>
-                        {/* Ghost text for layout spacing */}
+                        {/* Ghost span — invisible but pushes 'lk' rightward in layout */}
                         <motion.span
                             initial={{ width: 0 }}
                             animate={{ width: isHovered ? "auto" : 0 }}
                             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                            className="overflow-hidden inline-flex whitespace-nowrap align-bottom opacity-0 pointer-events-none"
+                            className="overflow-hidden inline-flex whitespace-nowrap align-bottom opacity-0 pointer-events-none select-none"
+                            aria-hidden="true"
                         >
                             aaaaaa
                         </motion.span>
@@ -1243,6 +1352,15 @@ function Footer() {
 
 export default function HomePage() {
     const [isDark, setIsDark] = useState(false);
+
+    // Initialize from system preference
+    useEffect(() => {
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+        setIsDark(mq.matches);
+        const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
+    }, []);
 
     useEffect(() => {
         if (isDark) {
