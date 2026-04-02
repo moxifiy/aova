@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useMotionTemplate, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useMotionTemplate, useSpring, useInView } from "framer-motion";
 import { getCalApi } from "@calcom/embed-react";
 import dynamic from "next/dynamic";
 
@@ -97,9 +97,9 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
 
     return (
         <motion.nav
-            initial={{ y: -20, opacity: 0 }}
+            initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, ease: NAV_EASE }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
             className="fixed top-6 inset-x-0 z-50 pointer-events-none"
         >
             <AnimatePresence mode="wait">
@@ -207,6 +207,7 @@ function Hero({ isDark }: { isDark: boolean }) {
 
     return (
         <section className="relative min-h-[100svh] flex flex-col items-start justify-center pt-32 pb-20 px-8 md:px-16 lg:px-24 overflow-hidden">
+
             {/* Decorative ambient gradients */}
             <div className={`absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[450px] md:h-[450px] lg:w-[600px] lg:h-[600px] bg-gradient-to-tr rounded-full blur-[100px] -z-10 animate-pulse pointer-events-none ${isDark ? 'from-[#FF3366]/5 to-[#3366FF]/5' : 'from-[#FF3366]/10 to-[#3366FF]/10'}`} />
 
@@ -218,20 +219,9 @@ function Hero({ isDark }: { isDark: boolean }) {
             <div className="absolute bottom-32 right-12 md:right-24 text-[var(--text)]/20 text-xl font-light pointer-events-none">+</div>
 
             <motion.div
-                style={{ y }}
-                className="pg-inner text-left z-10 pointer-events-none"
+                style={{ y, opacity: useTransform(scrollYProgress, [0, 0.25], [1, 0]) }}
+                className="pg-inner text-left z-10"
             >
-                {/* Badge */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                    className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--muted)] text-xs font-semibold uppercase tracking-widest mb-8 shadow-sm"
-                >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF3366] inline-block"></span>
-                    Design &amp; Motion Studio
-                </motion.div>
-
                 {/* Headline: bold sans + italic serif accents */}
                 <motion.h1
                     initial={{ opacity: 0, y: 30 }}
@@ -282,7 +272,6 @@ function Hero({ isDark }: { isDark: boolean }) {
                             </svg>
                         </span>
                     </motion.button>
-                    <p className="text-xs font-medium text-[var(--muted)] opacity-80 uppercase tracking-widest">Booking for Q1 2026</p>
                 </motion.div>
             </motion.div>
         </section>
@@ -338,255 +327,187 @@ function Marquee() {
     );
 }
 
-const CREATOR_PACKAGES = [
+const PRICING_TABS_DATA = [
     {
-        num: "01",
-        name: "Content Foundation",
-        sub: "Starter Growth Engine",
-        target: "Creators under 50k or early brands",
-        items: ["Strategy session", "1 longform", "3 shortform", "Thumbnail", "Content calendar", "Bi-weekly review"],
-        price: "$1,000 – $1,500",
-        cycle: "per 2 weeks",
-        popular: false,
+        id: "landing-page",
+        label: "Landing Page",
+        title: "LANDING PAGE",
+        duration: "15-20 Days",
+        gradient: "from-[#FF3366] to-[#FF9933]",
+        price: "$5,149",
+        features: [
+            "Custom Wireframe",
+            "Figma Design Source",
+            "Responsive Design (Mobile & Tablet)",
+            "Updates every 48 hours",
+            "SEO Setup",
+        ],
+        addons: [
+            { name: "Add Framer Dev", price: "+$2,799" },
+            { name: "Extra Pages", price: "+$999" },
+        ],
+        tags: ["WebDesign", "Framer", "React", "NextJS"]
     },
     {
-        num: "02",
-        name: "Growth Engine Pro",
-        sub: null,
-        target: "Serious creators & small brands",
-        items: ["Full content strategy", "2 longform", "6–10 shortform", "Scriptwriting", "Hook research", "Repurposing", "Thumbnail system", "Analytics dashboard", "Distribution suggestions", "2-week sprint optimization"],
-        price: "$2,000 – $3,000",
-        cycle: "per 2 weeks",
-        popular: true,
+        id: "branding",
+        label: "Branding",
+        title: "BRANDING",
+        duration: "10-15 Days",
+        gradient: "from-[#3366FF] to-[#33CCFF]",
+        price: "$3,499",
+        features: [
+            "Logo Design (3 Concepts)",
+            "Brand Guidelines",
+            "Typography & Colors",
+            "Social Media Kit",
+        ],
+        addons: [
+            { name: "Brand Book Strategy", price: "+$1,200" },
+        ],
+        tags: ["Identity", "Visuals", "Guidelines"]
     },
     {
-        num: "03",
-        name: "Authority / Scale",
-        sub: "Scale System",
-        target: "Brands at scale & large creators",
-        items: ["Everything in Growth Pro", "2 longform", "8–10 shortform", "Funnel strategy", "Ad creatives", "VSL production", "Testing roadmap", "Landing page suggestions", "Performance review", "Priority turnaround"],
-        price: "$4,000 – $8,000",
-        cycle: "per 2 weeks",
-        popular: false,
+        id: "product-animation",
+        label: "Product Animation",
+        title: "PRODUCT ANIMATION",
+        duration: "14-25 Days",
+        gradient: "from-[#9933FF] to-[#FF33CC]",
+        price: "$4,299",
+        features: [
+            "3D Product Modeling",
+            "Texturing & Lighting",
+            "15-30s Loop Animation",
+            "High-Res Rendering",
+        ],
+        addons: [
+            { name: "Interactive WebGL", price: "+$3,500" },
+            { name: "Extra Angled Shots", price: "+$800" },
+        ],
+        tags: ["3D", "Spline", "Blender", "Motion"]
     },
+    {
+        id: "mobile-app",
+        label: "Mobile App Design",
+        title: "MOBILE APP DESIGN",
+        duration: "20-30 Days",
+        gradient: "from-[#00CC66] to-[#a8ff78]",
+        price: "$6,999",
+        features: [
+            "User Research & UX Strategy",
+            "Wireframes & Flow",
+            "High-Fidelity UI Design",
+            "Interactive Prototype",
+        ],
+        addons: [
+            { name: "Development Handoff Prep", price: "+$1,500" },
+            { name: "App Store Assets", price: "+$500" },
+        ],
+        tags: ["iOS", "Android", "UIUX", "Figma"]
+    }
 ];
 
-const BRAND_PACKAGES = [
-    {
-        num: "01",
-        name: "Brand Starter",
-        sub: "Logo & brand basics",
-        target: "For founders entering the market",
-        items: ["Logo design (up to 5 concepts)", "Brand color palette & typography", "Basic brand guidelines PDF", "Launch mockups (3 formats)", "Unlimited revisions", "Full ownership & source files"],
-        price: "$500 – $750",
-        cycle: "One-time · 1–2 week delivery",
-        popular: false,
-    },
-    {
-        num: "02",
-        name: "Full Brand",
-        sub: "Identity + Website + Assets",
-        target: "For brands ready to look the part",
-        items: ["Everything in Brand Starter", "Full brand identity system", "Custom website or landing page", "Brand guidelines (full doc)", "Visual mockups & brand assets", "Social templates (3 formats)", "2 rounds of revision per deliverable", "Full ownership & source files"],
-        price: "$2,000 – $3,000",
-        cycle: "One-time · 2–3 week delivery",
-        popular: true,
-    },
-    {
-        num: "03",
-        name: "Full Studio",
-        sub: "Everything + Ads + Motion + UI/UX",
-        target: "For brands scaling with intention",
-        items: ["Everything in Full Brand", "Performance ad creatives (static + motion)", "UI/UX design for product or app", "Motion design & brand animations", "Ad copy direction & visual testing", "Priority turnaround", "Post-launch creative support", "Full ownership & source files"],
-        price: "$5,000 – $8,000",
-        cycle: "One-time · 3–5 week delivery",
-        popular: false,
-    },
-];
 
 const SERVICES_DATA = {
     creator: {
-        theme: "text-[#FF3366]",
-        accent: "bg-[#FF3366]",
-        hoverAccent: "hover:bg-[#FF3366]/10",
-        tabLabel: "I'm a creator",
+        theme: "text-[#FF9933]",
+        accent: "bg-[#FF9933]",
+        hoverAccent: "hover:bg-[#FF9933]/10",
+        bgAccent: "bg-[#FF9933]/10",
+        tabLabel: "For Creators",
         hero: {
             title: "Content that grows. Channels that last.",
             desc: "AOVA handles the full creative pipeline for creators — from zero-retention editing to algorithmic growth strategy. You focus on the camera, we build the engine.",
-            color: "bg-[#FF3366]/5 border-[#FF3366]/20",
-            proof: (
-                <div className="mt-8 flex -space-x-4 opacity-100">
-                    <div className="w-16 h-16 rounded-full border-2 border-white bg-[url('https://i.pravatar.cc/100?img=4')] bg-cover relative z-30 shadow-md"></div>
-                    <div className="w-16 h-16 rounded-full border-2 border-white bg-[url('https://i.pravatar.cc/100?img=5')] bg-cover relative z-20 shadow-md"></div>
-                    <div className="w-16 h-16 rounded-full border-2 border-white bg-[url('https://i.pravatar.cc/100?img=6')] bg-cover relative z-10 shadow-md"></div>
-                    <div className="w-16 h-16 rounded-full border-2 border-white bg-[#FF3366] text-white flex items-center justify-center text-xs font-bold shadow-md">+10M</div>
-                </div>
-            )
+            color: "bg-[#FF9933]/5 border-[#FF9933]/10",
         },
-        cards: [
-            { icon: "\u{1F4F1}", title: "Short Form Editing", desc: "Reels, TikToks, Shorts engineered for retention. Hook-first cuts, pacing, captions." },
-            { icon: "\u{1F39E}\uFE0F", title: "Long Form Editing", desc: "YouTube and podcast edits that keep viewers watching end-to-end. Story arc, b-roll, chapters." },
-            { icon: "\u{1F5BC}\uFE0F", title: "Thumbnails", desc: "High-CTR thumbnail design and title testing. The first click starts here." },
-            { icon: "\u{1F4C8}", title: "Growth Guidance", desc: "Content strategy, posting cadence, analytics review, and positioning to compound your audience." },
+        pricingCards: [
+            {
+                title: "Shorts & Reels",
+                desc: "High-retention vertical edits.",
+                features: ["4 Videos / Month", "Hook Optimization", "Custom Motion Graphics"],
+                price: "$1,200",
+                period: "/mo",
+                featured: false
+            },
+            {
+                title: "YouTube Engine",
+                desc: "Full long-form production.",
+                features: ["2 Long Form Videos", "A/B Thumbnail Testing", "Title SEO", "4 Shorts Cut-downs"],
+                price: "$2,500",
+                period: "/mo",
+                featured: true
+            },
+            {
+                title: "Scale Partner",
+                desc: "Total channel management.",
+                features: ["4 Long Form Videos", "8 Shorts / Reels", "Weekly Strategy Calls", "Sponsorship Deck"],
+                price: "$4,500",
+                period: "/mo",
+                featured: false
+            }
         ]
     },
     brand: {
         theme: "text-[#3366FF]",
         accent: "bg-[#3366FF]",
         hoverAccent: "hover:bg-[#3366FF]/10",
-        tabLabel: "I own a brand",
+        bgAccent: "bg-[#3366FF]/10",
+        tabLabel: "For Brands",
         hero: {
             title: "Design that converts. Presence that compounds.",
             desc: "AOVA builds brand infrastructure — not just visuals. We engineer systems that capture attention, drive action, and scale effortlessly as your business grows.",
-            color: "bg-[#3366FF]/10 border-[#3366FF]/20",
-            proof: (
-                <div className="mt-8 grid grid-cols-4 gap-2 opacity-80 max-w-xs">
-                    {[...Array(8)].map((_, i) => (
-                        <div key={i} className="h-8 rounded overflow-hidden flex shadow-sm bg-[var(--surface)]">
-                            <div className="w-1/3 bg-[#3366FF]/20" />
-                            <div className="w-2/3 bg-transparent" />
-                        </div>
-                    ))}
-                </div>
-            )
+            color: "bg-[#3366FF]/5 border-[#3366FF]/10",
         },
-        cards: [
-            { icon: "\u2728", title: "Brand Identity", desc: "Logo, guidelines, positioning, and visual language built for long-term equity." },
-            { icon: "\u{1F4BB}", title: "Websites & Landing Pages", desc: "Custom builds focused on one thing: getting the click or the call." },
-            { icon: "\u{1F680}", title: "Ads & Motion", desc: "Performance-driven static and motion ads for paid social and display." },
-            { icon: "\u{1F3A8}", title: "Graphics & UI/UX", desc: "Pitch decks, social assets, product interfaces, and print collateral." },
+        pricingCards: [
+            {
+                title: "Identity Sprint",
+                desc: "Your brand's visual foundation.",
+                features: ["Logo System", "Brand Guidelines", "Typography & Color", "Social Assets"],
+                price: "$3,500",
+                period: "fixed",
+                featured: false
+            },
+            {
+                title: "Conversion Web",
+                desc: "High-performance landing pages.",
+                features: ["Figma Platform Design", "Framer / Next.js Build", "Copywriting Strategy", "SEO Setup"],
+                price: "$5,500",
+                period: "fixed",
+                featured: true
+            },
+            {
+                title: "Full Launch",
+                desc: "End-to-end brand & digital.",
+                features: ["Complete Identity System", "Website (Up to 8 pages)", "Motion Guidelines", "Pitch Deck Template"],
+                price: "$12,000",
+                period: "fixed",
+                featured: false
+            }
         ]
     }
 };
 
 type AudienceType = 'creator' | 'brand';
 
-type PackageData = { num: string; name: string; sub: string | null; target: string; items: string[]; price: string; cycle: string; popular: boolean };
-
-function PricingCard({ pkg, accentColor, accentRgb, index }: { pkg: PackageData; accentColor: string; accentRgb: string; index: number }) {
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-    const cardX = useMotionValue(0.5);
-    const cardY = useMotionValue(0.5);
-
-    const springConfig = { damping: 25, stiffness: 150 };
-    const springX = useSpring(cardX, springConfig);
-    const springY = useSpring(cardY, springConfig);
-    const rotateX = useTransform(springY, [0, 1], [6, -6]);
-    const rotateY = useTransform(springX, [0, 1], [-6, 6]);
-
-    const spotlight = useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(${accentRgb}, 0.12), transparent 80%)`;
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-        mouseX.set(e.clientX - left);
-        mouseY.set(e.clientY - top);
-        cardX.set((e.clientX - left) / width);
-        cardY.set((e.clientY - top) / height);
-    };
-
-    const handleMouseLeave = () => {
-        cardX.set(0.5);
-        cardY.set(0.5);
-    };
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={{
-                rotateX, rotateY, transformStyle: "preserve-3d", perspective: 800,
-                borderColor: pkg.popular ? `rgba(${accentRgb}, 0.4)` : undefined,
-                backgroundColor: pkg.popular ? `rgba(${accentRgb}, 0.04)` : undefined,
-                boxShadow: pkg.popular ? `0 12px 48px rgba(${accentRgb}, 0.14)` : undefined,
-            }}
-            whileHover={{
-                boxShadow: pkg.popular
-                    ? `0 20px 60px rgba(${accentRgb}, 0.22)`
-                    : '0 16px 48px rgba(0,0,0,0.1)',
-            }}
-            className={`group/card relative flex flex-col rounded-[28px] border-2 overflow-hidden transition-shadow duration-500 ${!pkg.popular ? 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-hover)]' : ''
-                }`}
-        >
-            {/* Spotlight glow overlay */}
-            <motion.div
-                className="pointer-events-none absolute inset-0 z-10 rounded-[28px] opacity-0 transition-opacity duration-500 group-hover/card:opacity-100"
-                style={{ background: spotlight }}
-            />
-
-            <div className="p-8 flex flex-col flex-1 relative z-20">
-                {/* Header */}
-                <div className="mb-6">
-                    <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: accentColor }}>{pkg.num}</span>
-                        {pkg.popular && (
-                            <span
-                                className="text-white text-[9px] font-bold uppercase tracking-[0.12em] px-2.5 py-0.5 rounded-full"
-                                style={{
-                                    background: `linear-gradient(90deg, ${accentColor}, ${accentColor}cc, ${accentColor})`,
-                                    backgroundSize: '200% 100%',
-                                    animation: 'shimmer 3s linear infinite',
-                                }}
-                            >
-                                Popular
-                            </span>
-                        )}
-                    </div>
-                    <h3 className="text-2xl font-serif mt-1 mb-0.5">{pkg.name}</h3>
-                    {pkg.sub && <p className="text-xs text-[var(--muted)] mb-1">{pkg.sub}</p>}
-                    <p className="text-xs text-[var(--muted)] italic">{pkg.target}</p>
-                </div>
-
-                <div className="w-full h-px bg-[var(--border)] mb-6" />
-
-                {/* Includes */}
-                <div className="flex-1">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)] mb-4">What&apos;s included</p>
-                    <ul className="space-y-2.5">
-                        {pkg.items.map((item, i) => (
-                            <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--text)]">
-                                <span className="shrink-0 mt-px" style={{ color: accentColor }}>✓</span>
-                                {item}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                {/* Price */}
-                <div className="mt-8 pt-6 border-t border-[var(--border)]">
-                    <p className="text-3xl font-serif font-bold text-[var(--text)]">{pkg.price}</p>
-                    <p className="text-xs text-[var(--muted)] mt-0.5">{pkg.cycle}</p>
-                </div>
-            </div>
-        </motion.div>
-    );
-}
-
 function InteractiveServices() {
+    // You have to click to open it, so it initiates as null
     const [audience, setAudience] = useState<AudienceType | null>(null);
-    const data = audience ? SERVICES_DATA[audience] : null;
 
     return (
-        <section className="relative py-32" id="services">
+        <section className="relative py-32 px-6" id="services-interactive">
             <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
-            <div className="pg-inner">
-                <div className="text-center mb-8">
+            <div className="max-w-7xl mx-auto">
+                <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-6xl font-serif tracking-tight mb-8">Who are we building for?</h2>
-                </div>
 
-                {/* Audience Selector */}
-                <div className="flex justify-center mb-6">
-                    <div className="inline-flex flex-col md:flex-row p-2 bg-[var(--surface)]/70 backdrop-blur-xl rounded-[32px] md:rounded-full gap-2 relative border border-[var(--border)] shadow-2xl shadow-black/5">
+                    {/* Interactive Selector */}
+                    <div className="inline-flex flex-col md:flex-row p-1.5 bg-[#111111] border border-white/10 rounded-[32px] md:rounded-full gap-2 relative z-10 w-full md:w-auto shadow-xl">
                         {(['creator', 'brand'] as AudienceType[]).map((type) => (
                             <button
                                 key={type}
                                 onClick={() => setAudience(audience === type ? null : type)}
-                                className={`px-8 py-4 rounded-full text-lg md:text-xl font-serif transition-all duration-500 w-full md:w-auto relative ${audience === type
-                                    ? `text-white scale-105 border border-white/20 ${type === 'creator' ? 'bg-[#FF3366] shadow-[inset_0_3px_12px_rgba(255,255,255,0.4),inset_0_-3px_8px_rgba(0,0,0,0.1),0_12px_30px_rgba(255,51,102,0.3)]' : 'bg-[#3366FF] shadow-[inset_0_3px_12px_rgba(255,255,255,0.4),inset_0_-3px_8px_rgba(0,0,0,0.1),0_12px_30px_rgba(51,102,255,0.3)]'}`
-                                    : 'hover:bg-[var(--border)] text-[var(--muted)] hover:text-[var(--text)] border border-transparent'
+                                className={`px-8 py-3.5 rounded-full text-lg md:text-xl font-serif transition-all duration-300 w-full md:w-auto ${audience === type
+                                    ? `${SERVICES_DATA[type].accent} text-black font-semibold shadow-[0_0_20px_rgba(255,255,255,0.1)] scale-100`
+                                    : 'hover:bg-white/5 text-white/50 hover:text-white'
                                     }`}
                             >
                                 {SERVICES_DATA[type].tabLabel}
@@ -596,63 +517,64 @@ function InteractiveServices() {
                 </div>
 
                 <AnimatePresence mode="wait">
-                    {audience && data && (
+                    {audience && (
                         <motion.div
                             key={audience}
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
+                            initial={{ opacity: 0, height: 0, y: 30 }}
+                            animate={{ opacity: 1, height: "auto", y: 0 }}
+                            exit={{ opacity: 0, height: 0, y: -20 }}
                             transition={{ duration: 0.5, ease: "easeOut" }}
-                            className="mt-2"
+                            className="mt-16 overflow-hidden"
                         >
-                            {/* Creator: Pricing packages / Brand: service cards */}
-                            {audience === 'creator' ? (
-                                <>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-                                        {CREATOR_PACKAGES.map((pkg, i) => (
-                                            <PricingCard key={pkg.num} pkg={pkg} accentColor="#FF3366" accentRgb="255,51,102" index={i} />
-                                        ))}
+                            <div className="pt-2 pb-8">
+                                {/* Hero Card */}
+                                <div className={`w-full p-8 md:p-16 rounded-[40px] border border-white/5 transition-colors duration-500 overflow-hidden relative mb-12 bg-[#0A0A0A] shadow-2xl ${SERVICES_DATA[audience].hero.color}`}>
+                                    <div className="max-w-3xl relative z-10">
+                                        <h4 className={`text-4xl md:text-6xl font-serif mb-6 leading-tight ${SERVICES_DATA[audience].theme}`}>{SERVICES_DATA[audience].hero.title}</h4>
+                                        <p className="text-xl md:text-2xl text-white/70 font-medium leading-relaxed">{SERVICES_DATA[audience].hero.desc}</p>
                                     </div>
-                                    <div className="flex flex-col items-center mt-8">
-                                        <motion.button
-                                            onClick={() => scrollToId('faq')}
-                                            whileHover={{ scale: 1.05, rotateX: 8, rotateY: -6, y: -4, boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.3)" }}
-                                            whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
-                                            style={{ transformStyle: "preserve-3d", perspective: 800 }}
-                                            className="pg-btn bg-[#FF3366] text-white border-[#FF3366] !text-base !px-10 !py-4 shadow-xl transition-shadow duration-300 hover:shadow-[0_20px_40px_rgba(255,51,102,0.25)]"
-                                        >
-                                            <span style={{ transform: "translateZ(15px)" }} className="block">Get started →</span>
-                                        </motion.button>
-                                        <p className="text-center text-sm text-[var(--muted)] mt-6">
-                                            Not sure which fits? <button onClick={() => scrollToId('faq')} className="text-[#FF3366] font-semibold hover:underline">Book a free 30min call</button> and we&apos;ll figure it out together.<br />
-                                            <span className="text-xs opacity-70">All projects include a discovery session before work begins.</span>
-                                        </p>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-                                        {BRAND_PACKAGES.map((pkg, i) => (
-                                            <PricingCard key={pkg.num} pkg={pkg} accentColor="#3366FF" accentRgb="51,102,255" index={i} />
-                                        ))}
-                                    </div>
-                                    <div className="flex flex-col items-center mt-8">
-                                        <motion.button
-                                            onClick={() => scrollToId('faq')}
-                                            whileHover={{ scale: 1.05, rotateX: 8, rotateY: -6, y: -4, boxShadow: "0 25px 50px -12px rgba(51, 102, 255, 0.3)" }}
-                                            whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
-                                            style={{ transformStyle: "preserve-3d", perspective: 800 }}
-                                            className="pg-btn bg-[#3366FF] text-white border-[#3366FF] !text-base !px-10 !py-4 shadow-xl transition-shadow duration-300 hover:shadow-[0_20px_40px_rgba(51,102,255,0.25)]"
-                                        >
-                                            <span style={{ transform: "translateZ(15px)" }} className="block">Get started →</span>
-                                        </motion.button>
-                                        <p className="text-center text-sm text-[var(--muted)] mt-6">
-                                            Not sure which fits? <button onClick={() => scrollToId('faq')} className="text-[#3366FF] font-semibold hover:underline">Book a free 30min call</button> and we&apos;ll figure it out together.<br />
-                                            <span className="text-xs opacity-70">All projects include a discovery session before work begins.</span>
-                                        </p>
-                                    </div>
-                                </>
-                            )}
+                                    <div className={`absolute -right-20 -bottom-20 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none ${SERVICES_DATA[audience].accent} opacity-[0.05]`} />
+                                </div>
+
+                                {/* 3 Cards Next to Each Other with Price at Bottom */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {SERVICES_DATA[audience].pricingCards.map((card, i) => (
+                                        <div key={i} className={`relative flex flex-col justify-between p-8 rounded-[32px] border bg-[#111111]/80 backdrop-blur-md shadow-lg transition-all duration-300 ${card.featured ? `border-white/30 -translate-y-2 ${SERVICES_DATA[audience].bgAccent}` : `border-white/5 hover:border-white/20 hover:-translate-y-1`}`}>
+                                            {card.featured && (
+                                                <div className={`absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-black text-xs font-bold uppercase tracking-widest ${SERVICES_DATA[audience].accent}`}>
+                                                    Most Popular
+                                                </div>
+                                            )}
+                                            <div>
+                                                <h4 className="text-2xl font-serif text-white mb-2">{card.title}</h4>
+                                                <p className="text-sm text-white/50 font-medium mb-8 pb-8 border-b border-white/5">{card.desc}</p>
+                                                
+                                                <ul className="space-y-4 mb-16">
+                                                    {card.features.map((feat, idx) => (
+                                                        <li key={idx} className="flex items-start gap-3 text-white/70 text-sm font-medium">
+                                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${SERVICES_DATA[audience].bgAccent} ${SERVICES_DATA[audience].theme}`}>
+                                                                <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 7l4 4 8-8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                                            </div>
+                                                            {feat}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+
+                                            {/* Price at Bottom */}
+                                            <div className="pt-8 border-t border-white/5 mt-auto">
+                                                <div className="flex items-end gap-2 mb-6">
+                                                    <span className="text-5xl font-serif text-white tracking-tight leading-none">{card.price}</span>
+                                                    <span className="text-white/40 text-sm font-bold uppercase pb-1 tracking-widest">{card.period}</span>
+                                                </div>
+                                                <button className={`w-full py-4 rounded-2xl font-semibold transition-colors duration-300 ${card.featured ? `${SERVICES_DATA[audience].accent} text-black` : 'bg-white/5 text-white hover:bg-white/10'}`}>
+                                                    Get Started
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -661,47 +583,124 @@ function InteractiveServices() {
     );
 }
 
-/* ================================================================
-   TRUSTED BY
-   ================================================================ */
-function TrustedBy() {
-    return (
-        <section className="py-32 relative z-20">
-            <div className="pg-inner">
-                <div className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-[32px] p-10 md:p-16 flex flex-col md:flex-row items-center justify-between gap-16 relative overflow-hidden shadow-sm">
-                    {/* Abstract decorative background hint */}
-                    <div className="absolute top-0 right-0 w-[250px] h-[250px] md:w-[500px] md:h-[500px] bg-gradient-to-bl from-[var(--border)] to-transparent rounded-full blur-3xl opacity-40 pointer-events-none -mr-16 -mt-12 md:-mr-32 md:-mt-24"></div>
+function PricingServices() {
+    const [activeTab, setActiveTab] = useState(PRICING_TABS_DATA[0].id);
+    const data = PRICING_TABS_DATA.find(t => t.id === activeTab)!;
+    const [activeAddons, setActiveAddons] = useState<Record<string, boolean>>({});
 
-                    <div className="w-full md:w-1/3 relative z-10 shrink-0">
-                        <h2 className="text-4xl md:text-5xl font-serif leading-tight mb-8">Trusted by fast-moving <br /> brands & creators</h2>
-                        <div className="flex gap-8 items-center">
+    useEffect(() => {
+        setActiveAddons({});
+    }, [activeTab]);
+
+    const handleAddonToggle = (addonName: string) => {
+        setActiveAddons(prev => ({ ...prev, [addonName]: !prev[addonName] }));
+    };
+
+    return (
+        <section className="relative py-32" id="services">
+            <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
+            <div className="pg-inner">
+                <div className="flex flex-wrap justify-center gap-2 mb-12 relative z-10">
+                    {PRICING_TABS_DATA.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`px-8 py-3 rounded-full text-base font-semibold transition-all duration-300 shadow-sm ${activeTab === tab.id
+                                ? "bg-[var(--text)] text-[var(--surface)] scale-105"
+                                : "bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--border)] border border-[var(--border)]"
+                            }`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={data.id}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        className="bg-[var(--surface)] border border-[var(--border)] rounded-[32px] p-6 lg:p-10 shadow-[0_20px_40px_rgba(0,0,0,0.05)] flex flex-col lg:flex-row gap-10 relative z-10"
+                    >
+                        <div className="flex-1 flex flex-col justify-between">
                             <div>
-                                <p className="text-4xl font-bold text-[var(--text)] mb-1">10k+</p>
-                                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">Tasks delivered</p>
+                                <div className="flex items-center gap-4 mb-8">
+                                    <h3 className="text-4xl md:text-5xl font-black uppercase tracking-tight">{data.title}</h3>
+                                    <div className="px-3 py-1 rounded-full border border-[var(--border)] text-xs text-[var(--muted)] flex items-center gap-2 font-mono">
+                                        <span className="text-xl leading-none">⏱</span> {data.duration}
+                                    </div>
+                                </div>
+
+                                {data.addons && data.addons.length > 0 && (
+                                    <div className="mb-8 space-y-3">
+                                        {data.addons.map((addon) => (
+                                            <div key={addon.name} className="flex items-center justify-between p-4 rounded-2xl border border-[var(--border)] bg-[var(--bg)] shadow-sm">
+                                                <div className="flex items-center gap-4">
+                                                    <span className="font-bold text-[var(--text)] text-sm md:text-base">{addon.name}</span>
+                                                    <span className="text-[10px] uppercase font-bold text-[#FF3366] bg-[#FF3366]/10 px-2 py-0.5 rounded-sm tracking-widest">{addon.price}</span>
+                                                </div>
+                                                <button 
+                                                    onClick={() => handleAddonToggle(addon.name)}
+                                                    className={`w-12 h-6 rounded-full transition-colors duration-300 relative ${activeAddons[addon.name] ? 'bg-[var(--text)]' : 'bg-[var(--border-hover)]'}`}
+                                                >
+                                                    <div className={`w-5 h-5 bg-[var(--surface)] rounded-full absolute top-0.5 transition-all duration-300 shadow-md ${activeAddons[addon.name] ? 'left-[26px] bg-white' : 'left-0.5'}`} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <ul className="space-y-4 mb-8">
+                                    {data.features.map((feat, i) => (
+                                        <li key={i} className="flex items-center gap-3 text-base md:text-lg text-[var(--text)]">
+                                            <span className="w-6 h-6 shrink-0 rounded-full bg-[var(--text)] text-[var(--surface)] flex items-center justify-center text-sm">✓</span>
+                                            {feat}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                            <div className="w-[1px] h-12 bg-[var(--border)]"></div>
-                            <div>
-                                <p className="text-4xl font-bold text-[#3366FF] mb-1">200+</p>
-                                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">Projects nailed</p>
+
+                            <div className="flex flex-wrap gap-2 mt-8">
+                                {data.tags.map(tag => (
+                                    <span key={tag} className="px-3 py-1 bg-[var(--border)] text-[var(--muted)] text-xs rounded-full font-mono tracking-widest uppercase">
+                                        {tag}
+                                    </span>
+                                ))}
                             </div>
                         </div>
-                    </div>
 
-                    <div className="w-full md:w-2/3 grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 opacity-60 grayscale hover:grayscale-0 transition-all duration-700 select-none relative z-10">
-                        <div className="flex items-center justify-center font-bold text-2xl tracking-tighter hover:scale-105 transition-transform cursor-pointer">systeme</div>
-                        <div className="flex items-center justify-center font-black text-xl tracking-widest hover:scale-105 transition-transform cursor-pointer">MAXONE</div>
-                        <div className="flex items-center justify-center font-semibold text-2xl tracking-tight text-[#FF3366] hover:scale-105 transition-transform cursor-pointer">TEEMYCO</div>
-                        <div className="flex items-center justify-center font-serif text-3xl italic hover:scale-105 transition-transform cursor-pointer">LYFEfuel</div>
-                        <div className="flex items-center justify-center font-bold text-2xl tracking-tighter text-[var(--text)] opacity-80 hover:scale-105 transition-transform cursor-pointer">staffgeek</div>
-                        <div className="flex items-center justify-center font-semibold text-xl tracking-tighter hover:scale-105 transition-transform cursor-pointer opacity-80">sendcloud</div>
-                        <div className="flex items-center justify-center font-bold text-xl tracking-widest hover:scale-105 transition-transform cursor-pointer">assima</div>
-                        <div className="flex items-center justify-center font-black text-2xl tracking-tighter hover:scale-105 transition-transform cursor-pointer">prodigy</div>
-                    </div>
-                </div>
+                        <div className="w-full lg:w-[400px] shrink-0 flex flex-col gap-4">
+                            <div className={`w-full aspect-square rounded-[32px] bg-gradient-to-br ${data.gradient} p-8 flex flex-col justify-between text-white relative overflow-hidden shadow-2xl`}>
+                                <div className="absolute -bottom-10 -right-10 text-[180px] opacity-10 font-black leading-none drop-shadow-lg pointer-events-none select-none">A</div>
+                                
+                                <div className="relative z-10">
+                                    <p className="text-white text-xs font-bold tracking-[0.2em] uppercase mb-1">{data.label}</p>
+                                    <h4 className="text-4xl font-serif italic drop-shadow-md">{data.title.toLowerCase()}</h4>
+                                </div>
+                                <div className="relative z-10">
+                                    <p className="text-xs font-bold uppercase tracking-widest text-white/70 mb-1">Starting from</p>
+                                    <p className="text-6xl md:text-7xl font-black tracking-tighter drop-shadow-lg">{data.price}</p>
+                                </div>
+                            </div>
+
+                            <button className="w-full py-4 mt-2 rounded-[20px] bg-[var(--text)] text-[var(--surface)] text-lg font-bold shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                                Send a Message
+                            </button>
+                            <button className="w-full py-4 rounded-[20px] bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-lg font-bold hover:bg-[var(--border)] transition-colors duration-300 shadow-sm">
+                                Book a Call
+                            </button>
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </section>
     );
 }
+
+/* ================================================================
+
 
 /* ================================================================
    PROJECTS
@@ -909,14 +908,21 @@ function BuyingProcess() {
    FAQ
    ================================================================ */
 const FAQS = [
-    { q: "What types of projects do you take on?", a: "We work across brand identity, UI/UX design, design systems, motion graphics, and web development. We're selective — we take on fewer projects so we can give each one our full attention and craft." },
-    { q: "How long does a typical project take?", a: "Brand identity projects typically take 6\u201310 weeks. Web and product design engagements run 8\u201316 weeks." },
-    { q: "What is your pricing structure?", a: "We work on a project-fee basis, not hourly. This means you know the full cost upfront with no surprises." },
+    { q: "What types of projects do you take on?", a: "We work across brand identity, UI/UX design, design systems, motion graphics, video production, and web development. We're selective — we take on fewer clients so each one gets our full attention and craft." },
+    { q: "How long does a typical project take?", a: "Brand identity projects typically run 6–10 weeks. Web and product design engagements run 8–16 weeks. Video and motion work varies by scope, but most packages operate on a two-week sprint cadence." },
+    { q: "What is your pricing structure?", a: "We work on a project-fee basis for one-off work, and a sprint retainer model for ongoing clients. Either way, you know the full cost upfront — no hourly billing, no surprises." },
+    { q: "Do you work with early-stage brands?", a: "Yes. We have packages built specifically for founders and early-stage brands who need a strong foundation fast — brand identity, social kit, and motion assets — without the overhead of a full agency." },
+    { q: "Who will I actually be working with?", a: "Leif and Kudy run every engagement directly. You'll deal with the founders on strategy, creative direction, and reviews — not account managers or junior staff. A production team handles execution under our oversight." },
+    { q: "How does the sprint model work?", a: "We operate in two-week sprints. Each sprint starts with a scope call, we produce and deliver assets, then close with a review. Ongoing clients can book consecutive sprints at a locked retainer rate." },
+    { q: "What does onboarding look like?", a: "It starts with a 30–45 minute discovery call. From there we build a strategy blueprint, present it to you, confirm scope, and kick off the first sprint — typically within a week of signing." },
+    { q: "Can we work together on just one thing?", a: "Absolutely. You don't need a long-term commitment to start. We can suite a single project, deliver it, and go from there. A lot of our ongoing clients started with one sprint." },
+    { q: "What if I need revisions?", a: "Revisions are part of the process, not a gotcha. We build feedback rounds into every sprint. For larger scopes, we align on revision rounds upfront so there's never ambiguity." },
+    { q: "Do you handle distribution or posting?", a: "On the Creator Growth Engine side, yes — posting management and distribution strategy are available. On the Brand side, we'll give you distribution suggestions, but execution stays with your team." }
 ];
 
 function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boolean, onToggle: () => void }) {
     return (
-        <div className="border-b border-[var(--border)] py-6">
+        <div className={`bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 mb-4 transition-all duration-300 ${isOpen ? "shadow-md border-[var(--border-hover)]" : "shadow-sm hover:shadow-md hover:border-[var(--border-hover)]"}`}>
             <button
                 onClick={onToggle}
                 className="w-full flex items-center justify-between text-left focus:outline-none cursor-none"
@@ -947,9 +953,18 @@ function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boo
 }
 
 function FaqSection() {
-    const [openIndex, setOpenIndex] = useState<number | null>(0);
+    const [openIndices, setOpenIndices] = useState<number[]>([]);
     const [folderOpen, setFolderOpen] = useState(false);
     const [selectedMember, setSelectedMember] = useState<number | null>(null);
+    const faqRef = useRef<HTMLDivElement>(null);
+    const isInView = useInView(faqRef);
+
+    useEffect(() => {
+        if (!isInView && folderOpen) {
+            setFolderOpen(false);
+            if (selectedMember !== null) setSelectedMember(null);
+        }
+    }, [isInView, folderOpen, selectedMember]);
 
     const teamMembers = [
         {
@@ -974,9 +989,9 @@ function FaqSection() {
             location: 'Barcelona, ES',
         },
         {
-            name: 'David', role: 'Motion Designer', avatar: 'david_aova',
+            name: 'Kudy', role: 'Motion Designer', avatar: '/Kudy.png',
             quote: '"Animation is the punctuation of digital experience."',
-            bio: 'David creates the motion layer that gives AOVA\'s work its signature energy. From micro-interactions to full motion identities, he makes interfaces feel alive without overwhelming the underlying message.',
+            bio: 'Kudy creates the motion layer that gives AOVA\'s work its signature energy. From micro-interactions to full motion identities, he makes interfaces feel alive without overwhelming the underlying message.',
             skills: ['After Effects', 'CSS Animation', 'Lottie', 'Framer'],
             location: 'London, UK',
         },
@@ -1057,7 +1072,7 @@ function FaqSection() {
                                 return (
                                     <motion.div
                                         key={idx}
-                                        className="absolute inset-0 bg-white rounded-[32px] shadow-2xl overflow-hidden"
+                                        className="absolute inset-0 bg-[#0A0A0A] rounded-[32px] border border-white/10 shadow-2xl overflow-hidden"
                                         animate={{ x: d * 165, scale: 1 - absD * 0.11, opacity: absD === 0 ? 1 : Math.max(0.45, 0.78 - absD * 0.18), zIndex: 10 - absD, rotate: d * -2.5, y: absD * 12 }}
                                         transition={{ type: 'spring', stiffness: 340, damping: 32 }}
                                         style={{ cursor: absD > 0 ? 'pointer' : 'default' }}
@@ -1069,19 +1084,19 @@ function FaqSection() {
                                                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="white" strokeWidth="2" strokeLinecap="round" /></svg>
                                                 </button>
                                             )}
-                                            <img src={`https://i.pravatar.cc/200?u=${member.avatar}`} alt={member.name} className={`rounded-full border-4 border-white shadow-xl object-cover mb-3 ${absD === 0 ? 'w-20 h-20' : 'w-14 h-14'}`} />
+                                            <img src={`https://i.pravatar.cc/200?u=${member.avatar}`} alt={member.name} className={`rounded-full border-4 border-white/20 shadow-xl object-cover mb-3 ${absD === 0 ? 'w-20 h-20' : 'w-14 h-14'}`} />
                                             <h2 className={`font-serif font-bold text-white leading-tight ${absD === 0 ? 'text-2xl' : 'text-lg'}`}>{member.name}</h2>
                                             <p className="text-white/70 text-xs font-semibold uppercase tracking-widest mt-0.5">{member.role}</p>
                                             {absD === 0 && <p className="text-white/50 text-[11px] mt-1 flex items-center gap-1"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" /><circle cx="12" cy="9" r="2.5" /></svg>{member.location}</p>}
                                         </div>
                                         {absD === 0 && (
                                             <div className="px-6 py-5 -mt-8 relative">
-                                                <div className="bg-white rounded-2xl p-5 shadow-lg border border-black/5 mb-4">
+                                                <div className="bg-[#111111] rounded-2xl p-5 shadow-lg border border-white/10 mb-4">
                                                     <p className="font-serif italic text-[#FF3366] text-base leading-snug">{member.quote}</p>
                                                 </div>
-                                                <p className="text-gray-600 text-sm leading-relaxed mb-4">{member.bio}</p>
-                                                <div className="flex flex-wrap gap-1.5">
-                                                    {member.skills.map(skill => <span key={skill} className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold tracking-wide border border-gray-200">{skill}</span>)}
+                                                <p className="text-gray-400 text-sm leading-relaxed mb-4">{member.bio}</p>
+                                                <div className="flex flex-wrap gap-1.5 justify-center">
+                                                    {member.skills.map(skill => <span key={skill} className="px-3 py-1 rounded-full bg-white/5 text-gray-300 text-xs font-semibold tracking-wide border border-white/10">{skill}</span>)}
                                                 </div>
                                             </div>
                                         )}
@@ -1115,8 +1130,8 @@ function FaqSection() {
                                     key={i}
                                     q={faq.q}
                                     a={faq.a}
-                                    isOpen={openIndex === i}
-                                    onToggle={() => setOpenIndex(prev => prev === i ? null : i)}
+                                    isOpen={openIndices.includes(i)}
+                                    onToggle={() => setOpenIndices(prev => prev.includes(i) ? prev.filter(idx => idx !== i) : [...prev, i])}
                                 />
                             ))}
                         </div>
@@ -1129,18 +1144,18 @@ function FaqSection() {
                         <div className="sticky top-32 w-full overflow-visible">
 
                             {/* TEAM Folder ─ top of sticky column */}
-                            <div className="relative flex justify-center overflow-visible" style={{ paddingTop: '110px', marginTop: '-110px' }}>
+                            <div ref={faqRef} className="relative flex justify-center overflow-visible" style={{ paddingTop: '110px', marginTop: '-110px' }}>
                                 {/* Annotation: positioned so right edge clears folder's left edge */}
                                 <div
                                     className={`absolute top-1/2 translate-y-4 flex flex-col items-end gap-1 rotate-[-10deg] pointer-events-none transition-opacity duration-300 ${folderOpen ? 'opacity-0' : 'opacity-100'
                                         }`}
-                                    style={{ zIndex: 1, right: 'calc(50% + 180px)' }}
+                                    style={{ zIndex: 1, right: 'calc(50% + 140px)' }}
                                 >
                                     <span className="font-serif italic text-3xl text-[#FF3366] whitespace-nowrap leading-tight">Get to know us!</span>
                                     {/* Arrow sweeps from bottom-left (below text) curving right → toward folder */}
                                     <svg width="88" height="56" viewBox="0 0 110 70" fill="none" xmlns="http://www.w3.org/2000/svg" className="self-end mr-2">
-                                        <path d="M8 8 Q20 65 100 55" stroke="#FF3366" strokeWidth="4" fill="none" strokeDasharray="6,5" strokeLinecap="round" />
-                                        <path d="M88 44 L100 55 L86 60" stroke="#FF3366" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M8 8 Q20 65 82 58" stroke="#FF3366" strokeWidth="4" fill="none" strokeDasharray="6,5" strokeLinecap="round" />
+                                        <path d="M88 47 L100 55 L88 63" stroke="#FF3366" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                                     </svg>
                                 </div>
 
@@ -1152,30 +1167,35 @@ function FaqSection() {
                                         onOpenChange={setFolderOpen}
                                         onCardClick={i => setSelectedMember(i)}
                                         items={[
-                                            <div key="t1" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
-                                                <img src="https://i.pravatar.cc/150?u=sarah_aova" alt="Sarah" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
-                                                <p className="font-serif text-[13px] font-bold text-black leading-tight">Sarah</p>
-                                                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Creative Dir.</p>
+                                            <div key="t1" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
+                                                    <img src="https://i.pravatar.cc/150?u=sarah_aova" alt="Sarah" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                                </div>
+                                                <p className="font-serif text-[15px] font-medium text-white leading-none tracking-tight">Sarah</p>
                                             </div>,
-                                            <div key="t2" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
-                                                <img src="https://i.pravatar.cc/150?u=marcus_aova" alt="Marcus" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
-                                                <p className="font-serif text-[13px] font-bold text-black leading-tight">Marcus</p>
-                                                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Engineer</p>
+                                            <div key="t2" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
+                                                    <img src="https://i.pravatar.cc/150?u=marcus_aova" alt="Marcus" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                                </div>
+                                                <p className="font-serif text-[15px] font-medium text-white leading-none tracking-tight">Marcus</p>
                                             </div>,
-                                            <div key="t3" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
-                                                <img src="https://i.pravatar.cc/150?u=elena_aova" alt="Elena" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
-                                                <p className="font-serif text-[13px] font-bold text-black leading-tight">Elena</p>
-                                                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Design Lead</p>
+                                            <div key="t3" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
+                                                    <img src="https://i.pravatar.cc/150?u=elena_aova" alt="Elena" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                                </div>
+                                                <p className="font-serif text-[15px] font-medium text-white leading-none tracking-tight">Elena</p>
                                             </div>,
-                                            <div key="t4" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
-                                                <img src="https://i.pravatar.cc/150?u=david_aova" alt="David" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
-                                                <p className="font-serif text-[13px] font-bold text-black leading-tight">David</p>
-                                                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Motion</p>
+                                            <div key="t4" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
+                                                    <img src="/Kudy.png" alt="Kudy" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                                </div>
+                                                <p className="font-serif text-[15px] font-medium text-white leading-none tracking-tight">Kudy</p>
                                             </div>,
-                                            <div key="t5" className="flex flex-col items-center justify-center h-full w-full text-center bg-white rounded-xl p-2 border border-black/5">
-                                                <img src="https://i.pravatar.cc/150?u=amina_aova" alt="Amina" className="w-12 h-12 rounded-full border border-gray-200 mb-2 object-cover shadow-sm" />
-                                                <p className="font-serif text-[13px] font-bold text-black leading-tight">Amina</p>
-                                                <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Strategy</p>
+                                            <div key="t5" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
+                                                    <img src="https://i.pravatar.cc/150?u=amina_aova" alt="Amina" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                                </div>
+                                                <p className="font-serif text-[15px] font-medium text-white leading-none tracking-tight">Amina</p>
                                             </div>
                                         ]}
                                     />
@@ -1210,8 +1230,15 @@ function FaqSection() {
                                 />
 
                                 <div className="relative z-10 flex flex-col h-full items-center text-center" style={{ transform: "translateZ(30px)" }}>
-
-                                    <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/50 text-xs font-semibold uppercase tracking-widest mb-8">Currently accepting clients</span>
+                                    {/* Profile Avatar Circles */}
+                                    <div className="flex justify-center -space-x-6 mb-6">
+                                        <div className="w-[84px] h-[84px] rounded-full border-4 border-[#0A0A0A] overflow-hidden shadow-lg relative z-10">
+                                            <img src="/Kudy.png" alt="Profile" className="w-full h-full object-cover" />
+                                        </div>
+                                        <div className="w-[84px] h-[84px] rounded-full border-4 border-[#0A0A0A] overflow-hidden shadow-lg relative z-0">
+                                            <img src="/Noire.png" alt="Profile" className="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
 
                                     <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-10 w-full text-[#FF3366]">
                                         Book a 30-min discovery call
@@ -1375,10 +1402,10 @@ export default function HomePage() {
             <CustomCursor />
             <Navbar isDark={isDark} toggleDark={() => setIsDark(!isDark)} />
             <Hero isDark={isDark} />
-            <Marquee />
             <WorkSection />
             <InteractiveServices />
-            <TrustedBy />
+            <PricingServices />
+
             <Testimonials />
 
             <BuyingProcess />

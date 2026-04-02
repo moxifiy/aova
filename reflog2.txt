@@ -1,0 +1,11 @@
+﻿f094974 HEAD@{0}: commit: feat: Implement initial landing page with navigation, theme toggle, and 3D hero sections.
+7dd9daf HEAD@{1}: pull --tags origin main: Fast-forward
+1b9cefd HEAD@{2}: commit: ch
+7d4e905 HEAD@{3}: commit: FixedWaitforRevisions
+99182a5 HEAD@{4}: commit: Font Changes
+e44abfc HEAD@{5}: commit: NewSite
+cda4a60 HEAD@{6}: commit: feat: complete Playground UI with recent refinements
+f931f65 HEAD@{7}: commit: feat: complete Playground UI with refinements
+e6ea6fb HEAD@{8}: commit: booking
+8fe88ed HEAD@{9}: commit: domain
+f7d34be HEAD@{10}: clone: from https://github.com/moxifiy/aova.git

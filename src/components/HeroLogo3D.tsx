@@ -31,17 +31,26 @@ function LogoShape({ isDark }: { isDark: boolean }) {
         return geo;
     }, []);
 
-    // Make the logo gently follow the mouse
-    useFrame((state) => {
+    const targetRot = useRef({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const onMouseMove = (e: MouseEvent) => {
+            const nx = (e.clientX / window.innerWidth) * 2 - 1;
+            const ny = -(e.clientY / window.innerHeight) * 2 + 1;
+            targetRot.current.x = (ny * Math.PI) / 8; // Gentle tilt up/down
+            targetRot.current.y = (nx * Math.PI) / 6; // Gentle turn left/right
+        };
+        window.addEventListener('mousemove', onMouseMove);
+        return () => window.removeEventListener('mousemove', onMouseMove);
+    }, []);
+
+    // Make the logo gently follow the mouse smoothly regardless of DOM overlays
+    useFrame((state, delta) => {
         if (!meshRef.current) return;
 
-        // Calculate target rotation based on normalized mouse coordinates (-1 to +1)
-        const targetX = (state.pointer.y * Math.PI) / 8; // Gentle tilt up/down
-        const targetY = (state.pointer.x * Math.PI) / 6; // Gentle turn left/right
-
-        // Smoothly interpolate current rotation towards target rotation
-        meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetX, 0.05);
-        meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetY, 0.05);
+        // Smoothly interpolate current rotation towards global target rotation (0.08 is punchier but smooth)
+        meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRot.current.x, 0.08);
+        meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRot.current.y, 0.08);
     });
 
     return (
@@ -79,7 +88,10 @@ export default function HeroLogo3D({ isDark = false }: { isDark?: boolean }) {
     if (reducedMotion) return null;
 
     return (
-        <div className="absolute inset-x-0 top-0 h-[100svh] z-0 flex items-center justify-center opacity-70 pointer-events-none overflow-hidden">
+        <div 
+            className="absolute inset-x-0 top-0 h-[100svh] z-0 flex items-center justify-center opacity-70 pointer-events-none overflow-hidden"
+            style={{ maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)' }}
+        >
             {/* The Canvas itself needs pointer-events so useFrame(state.pointer) works, but we don't want it stealing clicks from the UI */}
             <div className="w-full h-[150vh] flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <Canvas
