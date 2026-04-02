@@ -1,0 +1,21 @@
+﻿diff --git a/src/app/page.tsx b/src/app/page.tsx
+index b609b32..40bf3ae 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -6,6 +6,7 @@ import { getCalApi } from "@calcom/embed-react";
+ import dynamic from "next/dynamic";
+ 
+ const HeroLogo3D = dynamic<{ isDark: boolean }>(() => import("@/components/HeroLogo3D"), { ssr: false });
++const AovaLogo3D = dynamic<{ size?: number; className?: string }>(() => import("@/components/AovaLogo3D"), { ssr: false });
+ import Folder from '@/components/Folder';
+ 
+ function CustomCursor() {
+@@ -1211,7 +1212,7 @@ function FaqSection() {
+ 
+                                 <div className="relative z-10 flex flex-col h-full items-center text-center" style={{ transform: "translateZ(30px)" }}>
+ 
+-                                    <span className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/50 text-xs font-semibold uppercase tracking-widest mb-8">Currently accepting clients</span>
++                                    <AovaLogo3D size={70} className="mb-2 -mt-2" />
+ 
+                                     <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-10 w-full text-[#FF3366]">
+                                         Book a 30-min discovery call
