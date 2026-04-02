@@ -7,8 +7,6 @@ import dynamic from "next/dynamic";
 
 const HeroLogo3D = dynamic<{ isDark: boolean }>(() => import("@/components/HeroLogo3D"), { ssr: false });
 import Folder from '@/components/Folder';
-import BorderGlow from '@/components/BorderGlow';
-import ThemeToggle from '@/components/ThemeToggle';
 
 function CustomCursor() {
     const dotRef = useRef<HTMLDivElement>(null);
@@ -62,7 +60,21 @@ const NAV_LINKS = [
 
 const NAV_EASE = [0.16, 1, 0.3, 1] as const;
 
-// Previously NavThemeIcon lived here, now using ThemeToggle
+function NavThemeIcon({ isDark }: { isDark: boolean }) {
+    return (
+        <AnimatePresence mode="wait" initial={false}>
+            {isDark ? (
+                <motion.svg key="moon" initial={{ opacity: 0, rotate: -45 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 45 }} transition={{ duration: 0.18 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </motion.svg>
+            ) : (
+                <motion.svg key="sun" initial={{ opacity: 0, rotate: -45 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 45 }} transition={{ duration: 0.18 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="4.22" x2="19.78" y2="5.64" />
+                </motion.svg>
+            )}
+        </AnimatePresence>
+    );
+}
 
 function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => void }) {
     const [isAtTop, setIsAtTop] = useState(true);
@@ -132,7 +144,10 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
                             className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg"
                         >
                             <button onClick={() => scrollToId('faq')} className={bookCls}>Book</button>
-                            <ThemeToggle isDark={isDark} onToggle={toggleDark} />
+                            <div className={divCls} />
+                            <button onClick={toggleDark} className={iconCls} aria-label="Toggle theme">
+                                <NavThemeIcon isDark={isDark} />
+                            </button>
                         </motion.div>
                     </motion.div>
                 ) : (
@@ -159,9 +174,13 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
                                 <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{label}</button>
                             ))}
 
-                            <motion.div layoutId="nav-right" className="flex items-center gap-1">
+                            <motion.div layoutId="nav-right" className="flex items-center">
+                                <div className={divCls} />
                                 <button onClick={() => scrollToId('faq')} className={bookCls}>Book</button>
-                                <ThemeToggle isDark={isDark} onToggle={toggleDark} />
+                                <div className={divCls} />
+                                <button onClick={toggleDark} className={iconCls} aria-label="Toggle theme">
+                                    <NavThemeIcon isDark={isDark} />
+                                </button>
                             </motion.div>
                         </motion.div>
                     </motion.div>
@@ -470,6 +489,7 @@ const SERVICES_DATA = {
 type AudienceType = 'creator' | 'brand';
 
 function InteractiveServices() {
+    // You have to click to open it, so it initiates as null
     const [audience, setAudience] = useState<AudienceType | null>(null);
 
     return (
@@ -479,6 +499,7 @@ function InteractiveServices() {
                 <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-6xl font-serif tracking-tight mb-8">Who are we building for?</h2>
 
+                    {/* Interactive Selector */}
                     <div className="inline-flex flex-col md:flex-row p-1.5 bg-[#111111] border border-white/10 rounded-[32px] md:rounded-full gap-2 relative z-10 w-full md:w-auto shadow-xl">
                         {(['creator', 'brand'] as AudienceType[]).map((type) => (
                             <button
@@ -506,6 +527,7 @@ function InteractiveServices() {
                             className="mt-16 overflow-hidden"
                         >
                             <div className="pt-2 pb-8">
+                                {/* Hero Card */}
                                 <div className={`w-full p-8 md:p-16 rounded-[40px] border border-white/5 transition-colors duration-500 overflow-hidden relative mb-12 bg-[#0A0A0A] shadow-2xl ${SERVICES_DATA[audience].hero.color}`}>
                                     <div className="max-w-3xl relative z-10">
                                         <h4 className={`text-4xl md:text-6xl font-serif mb-6 leading-tight ${SERVICES_DATA[audience].theme}`}>{SERVICES_DATA[audience].hero.title}</h4>
@@ -514,6 +536,7 @@ function InteractiveServices() {
                                     <div className={`absolute -right-20 -bottom-20 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none ${SERVICES_DATA[audience].accent} opacity-[0.05]`} />
                                 </div>
 
+                                {/* 3 Cards Next to Each Other with Price at Bottom */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {SERVICES_DATA[audience].pricingCards.map((card, i) => (
                                         <div key={i} className={`relative flex flex-col justify-between p-8 rounded-[32px] border bg-[#111111]/80 backdrop-blur-md shadow-lg transition-all duration-300 ${card.featured ? `border-white/30 -translate-y-2 ${SERVICES_DATA[audience].bgAccent}` : `border-white/5 hover:border-white/20 hover:-translate-y-1`}`}>
@@ -525,7 +548,7 @@ function InteractiveServices() {
                                             <div>
                                                 <h4 className="text-2xl font-serif text-white mb-2">{card.title}</h4>
                                                 <p className="text-sm text-white/50 font-medium mb-8 pb-8 border-b border-white/5">{card.desc}</p>
-
+                                                
                                                 <ul className="space-y-4 mb-16">
                                                     {card.features.map((feat, idx) => (
                                                         <li key={idx} className="flex items-start gap-3 text-white/70 text-sm font-medium">
@@ -538,6 +561,7 @@ function InteractiveServices() {
                                                 </ul>
                                             </div>
 
+                                            {/* Price at Bottom */}
                                             <div className="pt-8 border-t border-white/5 mt-auto">
                                                 <div className="flex items-end gap-2 mb-6">
                                                     <span className="text-5xl font-serif text-white tracking-tight leading-none">{card.price}</span>
@@ -584,7 +608,7 @@ function PricingServices() {
                             className={`px-8 py-3 rounded-full text-base font-semibold transition-all duration-300 shadow-sm ${activeTab === tab.id
                                 ? "bg-[var(--text)] text-[var(--surface)] scale-105"
                                 : "bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--border)] border border-[var(--border)]"
-                                }`}
+                            }`}
                         >
                             {tab.label}
                         </button>
@@ -617,7 +641,7 @@ function PricingServices() {
                                                     <span className="font-bold text-[var(--text)] text-sm md:text-base">{addon.name}</span>
                                                     <span className="text-[10px] uppercase font-bold text-[#FF3366] bg-[#FF3366]/10 px-2 py-0.5 rounded-sm tracking-widest">{addon.price}</span>
                                                 </div>
-                                                <button
+                                                <button 
                                                     onClick={() => handleAddonToggle(addon.name)}
                                                     className={`w-12 h-6 rounded-full transition-colors duration-300 relative ${activeAddons[addon.name] ? 'bg-[var(--text)]' : 'bg-[var(--border-hover)]'}`}
                                                 >
@@ -650,7 +674,7 @@ function PricingServices() {
                         <div className="w-full lg:w-[400px] shrink-0 flex flex-col gap-4">
                             <div className={`w-full aspect-square rounded-[32px] bg-gradient-to-br ${data.gradient} p-8 flex flex-col justify-between text-white relative overflow-hidden shadow-2xl`}>
                                 <div className="absolute -bottom-10 -right-10 text-[180px] opacity-10 font-black leading-none drop-shadow-lg pointer-events-none select-none">A</div>
-
+                                
                                 <div className="relative z-10">
                                     <p className="text-white text-xs font-bold tracking-[0.2em] uppercase mb-1">{data.label}</p>
                                     <h4 className="text-4xl font-serif italic drop-shadow-md">{data.title.toLowerCase()}</h4>
@@ -898,43 +922,33 @@ const FAQS = [
 
 function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boolean, onToggle: () => void }) {
     return (
-        <BorderGlow
-            className="mb-4 w-full"
-            borderRadius={16}
-            backgroundColor="#0A0A0A"
-            edgeSensitivity={30}
-            glowColor="341 100 60"
-            colors={['#FF3366', '#3366FF', '#FF9933']}
-            animated={false}
-        >
-            <div className={`p-6 transition-all duration-300 w-full`}>
-                <button
-                    onClick={onToggle}
-                    className="w-full flex items-center justify-between text-left focus:outline-none cursor-none"
-                >
-                    <span className={`text-xl md:text-2xl font-serif transition-colors ${isOpen ? "text-[#FF3366]" : "text-[var(--text)]"}`}>{q}</span>
-                    <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${isOpen ? "bg-[var(--text)] text-[var(--surface)] border-[var(--text)] rotate-45" : "border-[var(--border-hover)] text-[var(--muted)]"}`}>
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                            <line x1="6" y1="2" x2="6" y2="10" />
-                            <line x1="2" y1="6" x2="10" y2="6" />
-                        </svg>
-                    </span>
-                </button>
-                <AnimatePresence>
-                    {isOpen && (
-                        <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="overflow-hidden"
-                        >
-                            <p className="pt-4 text-[var(--muted)] text-lg max-w-2xl">{a}</p>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-        </BorderGlow>
+        <div className={`bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 mb-4 transition-all duration-300 ${isOpen ? "shadow-md border-[var(--border-hover)]" : "shadow-sm hover:shadow-md hover:border-[var(--border-hover)]"}`}>
+            <button
+                onClick={onToggle}
+                className="w-full flex items-center justify-between text-left focus:outline-none cursor-none"
+            >
+                <span className={`text-xl md:text-2xl font-serif transition-colors ${isOpen ? "text-[#FF3366]" : "text-[var(--text)]"}`}>{q}</span>
+                <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${isOpen ? "bg-[var(--text)] text-[var(--surface)] border-[var(--text)] rotate-45" : "border-[var(--border-hover)] text-[var(--muted)]"}`}>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <line x1="6" y1="2" x2="6" y2="10" />
+                        <line x1="2" y1="6" x2="10" y2="6" />
+                    </svg>
+                </span>
+            </button>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                    >
+                        <p className="pt-4 text-[var(--muted)] text-lg max-w-2xl">{a}</p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
     );
 }
 
@@ -1193,21 +1207,13 @@ function FaqSection() {
                                 id="booking-widget"
                                 onMouseMove={handleMouseMove}
                                 onMouseLeave={handleMouseLeave}
-                                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.4)" }}
+                                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.3)" }}
                                 transition={{ duration: 0.3 }}
-                                className="w-full rounded-[40px] p-8 md:p-12 overflow-hidden relative border border-white/[0.08] shadow-2xl bg-[#0A0A0A] group mt-8"
+                                className="w-full rounded-[40px] p-8 md:p-12 overflow-hidden relative border border-[#222222] bg-[#0A0A0A] group mt-8"
                                 style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: 1000 }}
                             >
-                                {/* Sexy Premium Silver-to-Black Gradient Spotlight */}
-                                <div className="absolute inset-0 pointer-events-none z-0" style={{
-                                    background: 'radial-gradient(800px circle at 0% 0%, rgba(255, 255, 255, 0.12), transparent 60%)'
-                                }}></div>
-
-                                {/* Subtle corner highlight (top-left) */}
-                                <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-gradient-to-br from-white/[0.08] to-transparent pointer-events-none -z-1" />
-
                                 {/* Inner grain overlay */}
-                                <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+                                <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
 
                                 {/* Pink Spotlight Hover Glow */}
                                 <motion.div

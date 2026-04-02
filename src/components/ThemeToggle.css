@@ -1,0 +1,101 @@
+/* AOVA Custom Theme Toggle (Adapted from Uiverse.io by njesenberger) */
+.toggle-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-radius: 50px;
+  padding: 0.125em;
+  /* Premium glass feel to match navbar */
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0,0,0,0.2);
+  /* Sizing relative to font-size of the parent wrapper */
+  font-size: 1.25rem; /* ~20px base */
+}
+
+/* For Light Mode Navbar */
+.light-mode-nav .toggle-wrapper {
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.toggle-checkbox {
+  appearance: none;
+  position: absolute;
+  z-index: 1;
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+  font: inherit;
+  opacity: 0;
+  cursor: pointer;
+  margin: 0;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  border-radius: 50px;
+  width: 3em;
+  height: 1.5em;
+  /* Default: Dark mode state (sleek dark grey) */
+  background-color: #1A1A1A;
+  box-shadow: inset 0 0 0.0625em 0.125em rgba(255, 255, 255, 0.1), inset 0 0.0625em 0.125em rgba(0, 0, 0, 0.8);
+  transition: background-color 0.4s linear;
+}
+
+.light-mode-nav .toggle-container {
+  background-color: #e8e8e8;
+  box-shadow: inset 0 0 0.0625em 0.125em rgba(0, 0, 0, 0.1), inset 0 0.0625em 0.125em rgba(0, 0, 0, 0.2);
+}
+
+/* When Checked (Light Mode) */
+.toggle-checkbox:checked + .toggle-container {
+  /* Match AOVA primary blue for light mode active, or keep it neutral */
+  background-color: #3366FF; 
+}
+
+.toggle-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0.0625em;
+  border-radius: 50%;
+  width: 1.375em;
+  height: 1.375em;
+  background-color: #333333; /* Dark button */
+  box-shadow: inset 0 -0.0625em 0.0625em 0.125em rgba(0, 0, 0, 0.4), inset 0 -0.125em 0.0625em rgba(0, 0, 0, 0.5), inset 0 0.1875em 0.0625em rgba(255, 255, 255, 0.1), 0 0.125em 0.125em rgba(0, 0, 0, 0.8);
+  transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s;
+}
+
+.light-mode-nav .toggle-button {
+  background-color: #FFFFFF;
+  box-shadow: inset 0 -0.0625em 0.0625em 0.125em rgba(0, 0, 0, 0.1), inset 0 -0.125em 0.0625em rgba(0, 0, 0, 0.2), inset 0 0.1875em 0.0625em rgba(255, 255, 255, 1), 0 0.125em 0.125em rgba(0, 0, 0, 0.3);
+}
+
+.toggle-checkbox:checked + .toggle-container > .toggle-button {
+  left: 1.5625em;
+  background-color: #FFFFFF; /* White button in light mode */
+  box-shadow: inset 0 -0.0625em 0.0625em 0.125em rgba(0, 0, 0, 0.1), inset 0 -0.125em 0.0625em rgba(0, 0, 0, 0.2), inset 0 0.1875em 0.0625em rgba(255, 255, 255, 1), 0 0.125em 0.125em rgba(0, 0, 0, 0.3);
+}
+
+.toggle-button-circles-container {
+  display: grid;
+  grid-template-columns: repeat(3, min-content);
+  gap: 0.125em;
+  position: absolute;
+  margin: 0 auto;
+}
+
+.toggle-button-circle {
+  border-radius: 50%;
+  width: 0.125em;
+  height: 0.125em;
+  background-image: radial-gradient(circle at 50% 0, #888, #222);
+}
+
+.toggle-checkbox:checked + .toggle-container > .toggle-button .toggle-button-circle {
+  background-image: radial-gradient(circle at 50% 0, #f5f5f5, #c4c4c4);
+}
