@@ -4,33 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useMotionTemplate, useSpring, useInView } from "framer-motion";
 import { getCalApi } from "@calcom/embed-react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 
 const HeroLogo3D = dynamic<{ isDark: boolean }>(() => import("@/components/HeroLogo3D"), { ssr: false });
 import Folder from '@/components/Folder';
 import BorderGlow from '@/components/BorderGlow';
 import ThemeToggle from '@/components/ThemeToggle';
+import CustomCursor from '@/components/CustomCursor';
 
-function CustomCursor() {
-    const dotRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const onMouseMove = (e: MouseEvent) => {
-            if (dotRef.current) {
-                dotRef.current.style.transform = `translate3d(${e.clientX - 2}px, ${e.clientY - 2}px, 0)`;
-            }
-        };
-        window.addEventListener("mousemove", onMouseMove);
-        return () => window.removeEventListener("mousemove", onMouseMove);
-    }, []);
-
-    return (
-        <div className="pg-cursor-dot" ref={dotRef}>
-            <svg viewBox="0 0 171.27 171.27" fill="currentColor" className="w-5 h-5 -rotate-90 origin-center">
-                <path d="M171.27,0v91c0,44.33-35.94,80.27-80.27,80.27h-31.96v-59.04h59.04v-59.04h-59.04v59.04H0v-31.96C0,35.94,35.94,0,80.27,0h91Z" />
-            </svg>
-        </div>
-    );
-}
 
 const NAV_HEIGHT = 80;
 
@@ -223,7 +205,7 @@ function Hero({ isDark }: { isDark: boolean }) {
                     transition={{ duration: 0.8, delay: 0.3 }}
                     className="text-base md:text-lg text-[var(--muted)] max-w-lg mb-10 leading-relaxed"
                 >
-                    Brands get the full creative suite. Creators get the content engine. Elevating your digital presence with intention.
+                    Not an agency. Not a freelancer. A studio that treats your project like it's our own, and delivers like it.
                 </motion.p>
 
                 <motion.div
@@ -687,12 +669,10 @@ const workProjects = [
     { num: "03", name: "Neo Banking App", category: "Product UX", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2672&auto=format&fit=crop" },
 ];
 
-const workProjectsRow2 = [
-    { num: "04", name: "Solara Wellness", category: "Brand Identity", image: "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?q=80&w=2574&auto=format&fit=crop" },
-    { num: "05", name: "Forma Studio", category: "Motion Design", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2764&auto=format&fit=crop" },
-];
+
 
 function WorkSection() {
+    const router = useRouter();
     return (
         <section id="work" className="py-32">
             <div className="pg-inner space-y-12">
@@ -730,36 +710,12 @@ function WorkSection() {
                         ))}
                     </div>
 
-                    {/* 2-column card grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {workProjectsRow2.map((p) => (
-                            <div key={p.num} className="group relative h-[240px] sm:h-[300px] md:h-[360px] overflow-hidden rounded-2xl bg-[var(--border)] cursor-pointer">
-                                <img
-                                    src={p.image}
-                                    alt={p.name}
-                                    className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-                                />
-                                {/* Category tag — top left */}
-                                <div className="absolute top-4 left-4 z-20">
-                                    <span className="px-3 py-1.5 bg-white/10 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/20">
-                                        {p.category}
-                                    </span>
-                                </div>
-                                {/* Index — top right */}
-                                <span className="absolute top-4 right-4 z-20 text-white/40 text-xs font-mono">{p.num}</span>
-                                {/* Bottom gradient + title */}
-                                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent z-10 pointer-events-none" />
-                                <div className="absolute bottom-5 left-5 z-20">
-                                    <h3 className="text-white text-xl font-serif leading-tight">{p.name}</h3>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+
                 </div>
 
                 <div className="flex justify-center pt-8">
                     <motion.button
-                        onClick={() => scrollToId('faq')}
+                        onClick={() => router.push('/archive')}
                         whileHover={{
                             scale: 1.05,
                             rotateX: 12,
@@ -786,10 +742,10 @@ function WorkSection() {
    TESTIMONIALS
    ================================================================ */
 const TESTIMONIALS = [
-    { text: "Aova absolutely transformed our digital presence. They didn't just design a website, they built a machine that converts.", author: "L. Jenkins", brand: "Lumara" },
-    { text: "The editing quality and turnaround time are unmatched. We've seen a 30% increase in retention since working with Aova.", author: "A. Abdaal", brand: "Creator" },
-    { text: "Insane attention to detail. The brand identity they delivered gave us the confidence to scale aggressively.", author: "S. Rossi", brand: "Halo" },
-    { text: "Simply the best creative partner we've ever worked with. Fast, communicative, and constantly delivering heat.", author: "M. Chen", brand: "TechFlow" },
+    { text: "Aova absolutely transformed our digital presence. They didn't just design a website, they built a machine that converts.", author: "L. Jenkins", brand: "Founder of Lumara", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150&auto=format&fit=crop" },
+    { text: "The editing quality and turnaround time are unmatched. We've seen a 30% increase in retention since working with Aova.", author: "A. Abdaal", brand: "Creator", avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=150&auto=format&fit=crop" },
+    { text: "Insane attention to detail. The brand identity they delivered gave us the confidence to scale aggressively.", author: "S. Rossi", brand: "Founder of Halo", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=150&auto=format&fit=crop" },
+    { text: "Simply the best creative partner we've ever worked with. Fast, communicative, and constantly delivering heat.", author: "M. Chen", brand: "TechFlow", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150&auto=format&fit=crop" },
 ];
 
 function Testimonials() {
@@ -807,22 +763,41 @@ function Testimonials() {
 
                 <div className="flex gap-8 group-hover:[animation-play-state:paused] py-4" style={{ width: "max-content", animation: "scroll 40s linear infinite" }}>
                     {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
-                        <div key={i} className="w-[280px] sm:w-[340px] md:w-[500px] bg-[var(--surface)] border-2 border-[var(--border)] shadow-[0_4px_0_0_rgba(0,0,0,0.05)] p-6 sm:p-8 md:p-10 rounded-[24px] md:rounded-[32px] shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:border-[var(--border-hover)]">
-                            <div className="flex gap-1 mb-8 text-[#FF3366]">
+                        <div key={i} className="w-[320px] sm:w-[400px] md:w-[500px] flex flex-col bg-[var(--surface)] border-2 border-[var(--border)] shadow-[0_4px_0_0_rgba(0,0,0,0.05)] p-6 sm:p-8 md:p-10 rounded-[24px] md:rounded-[32px] shrink-0 transition-transform duration-300 hover:-translate-y-2 hover:border-[var(--border-hover)]">
+                            
+                            {/* Profile Header Section */}
+                            <div className="flex items-center justify-between mb-8">
+                                <div className="flex items-center gap-4">
+                                    <img 
+                                        src={t.avatar} 
+                                        alt={t.author} 
+                                        className="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover shrink-0 border border-[var(--border)]" 
+                                    />
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="font-bold tracking-tight text-lg md:text-xl text-[var(--text)] leading-none">{t.author}</span>
+                                        <span className="text-[var(--muted)] text-sm md:text-base leading-none">{t.brand}</span>
+                                    </div>
+                                </div>
+                                {/* Optional Right-Aligned Logo Placeholder */}
+                                <div className="w-10 h-10 md:w-12 md:h-12 text-[var(--muted)] opacity-40 flex items-center justify-center shrink-0">
+                                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                                        <circle cx="20" cy="20" r="18" stroke="currentColor" strokeWidth="4" />
+                                        <path d="M26 14L14 26" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+                                        <path d="M26 26V14H14" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            {/* Stars */}
+                            <div className="flex gap-1 mb-6 text-[#FF3366]">
                                 {[1, 2, 3, 4, 5].map(star => (
                                     <svg key={star} width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                                     </svg>
                                 ))}
                             </div>
-                            <p className="text-xl md:text-2xl font-serif text-[var(--text)] whitespace-normal mb-10 leading-snug">&ldquo;{t.text}&rdquo;</p>
-                            <div className="flex items-center gap-4 mt-auto">
-                                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#3366FF] to-[#00CC66] shrink-0" />
-                                <div className="flex flex-col">
-                                    <span className="font-bold text-lg text-[var(--text)]">{t.author}</span>
-                                    <span className="text-[var(--muted)] text-sm uppercase tracking-widest">{t.brand}</span>
-                                </div>
-                            </div>
+
+                            <p className="text-xl md:text-2xl font-serif text-[var(--text)] whitespace-normal leading-snug">&ldquo;{t.text}&rdquo;</p>
                         </div>
                     ))}
                 </div>
@@ -835,45 +810,76 @@ function Testimonials() {
    BUYING PROCESS
    ================================================================ */
 const BUYING_STEPS = [
-    { num: "01", title: "Discovery Call", desc: "A 15-minute chat to understand your brand, content goals, and technical requirements." },
-    { num: "02", title: "Strategy Proposal", desc: "We map out the execution plan, architecture, timeline, and exact cost. No hidden fees." },
-    { num: "03", title: "Execution Sprint", desc: "We craft the design or content systematically, seeking your feedback at key milestones." },
-    { num: "04", title: "Handoff", desc: "You receive clean code, final assets, and a growth roadmap ready for deployment." }
+    { num: "01", title: "Discovery Call", desc: "We get on a call, learn your world, and figure out exactly what you need. No pitch, no pressure, just clarity." },
+    { num: "02", title: "The Strategy", desc: "You get a clear plan: what we're building, how long it takes, and what it costs. Everything in writing before we touch a thing." },
+    { num: "03", title: "The Build", desc: "We build. You stay in the loop at every milestone. Fast, intentional, and built to your standard, not ours." },
+    { num: "04", title: "Handoff", desc: "Final assets, full ownership, and a roadmap for what's next. You walk away with everything you need to move." }
 ];
 
 function BuyingProcess() {
+    const containerRef = useRef<HTMLElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["0.2 1", "0.8 0.5"]
+    });
+    
+    // Smooth out the progress line
+    const scale = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
+
     return (
-        <section className="relative py-32 border-t border-[var(--border)] overflow-hidden" id="process">
+        <section ref={containerRef} className="relative py-32 border-t border-[var(--border)] overflow-hidden" id="process">
             {/* Decorative background block */}
             <div className="absolute top-1/2 left-0 -translate-y-1/2 w-72 h-72 bg-dots opacity-[0.08] -rotate-12 pointer-events-none -z-10" />
 
-            <div className="pg-inner">
+            <div className="pg-inner relative">
                 <div className="text-center mb-20">
                     <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">How it <span className="italic text-[#00CC66]">Works</span></h2>
                     <p className="text-[var(--muted)] text-lg max-w-xl mx-auto">We keep things simple, transparent, and completely focused on your success.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    {BUYING_STEPS.map((step, i) => (
-                        <motion.div
-                            key={step.num}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-50px" }}
-                            transition={{ duration: 0.6, delay: i * 0.1 }}
-                            className="relative p-8 rounded-3xl bg-[var(--surface)] border border-[var(--border)] shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
-                        >
-                            {/* Connecting line for desktop */}
-                            {i !== BUYING_STEPS.length - 1 && (
-                                <div className="hidden md:block absolute top-[52px] -right-[32px] w-[32px] h-[2px] bg-[var(--border)] z-0" />
-                            )}
-                            <div className="w-12 h-12 rounded-full bg-[var(--text)] text-[var(--surface)] flex items-center justify-center font-serif text-xl mb-6 relative z-10">
-                                {step.num}
+                <div className="relative w-full">
+                    {/* Horizontal Track Line (Desktop) */}
+                    <div className="hidden md:block absolute top-[27px] left-[10%] right-[10%] h-[2px] bg-[var(--border)] z-0 overflow-hidden">
+                        <motion.div className="h-full bg-[#00CC66] origin-left" style={{ scaleX: scale }} />
+                    </div>
+
+                    {/* Vertical Track Line (Mobile) */}
+                    <div className="block md:hidden absolute left-[27px] top-[24px] bottom-[24px] w-[2px] bg-[var(--border)] z-0 overflow-hidden">
+                        <motion.div className="w-full h-full bg-[#00CC66] origin-top" style={{ scaleY: scale }} />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-4 lg:gap-8 relative z-10 w-full">
+                        {BUYING_STEPS.map((step, i) => (
+                            <div key={step.num} className="flex flex-row md:flex-col items-start md:items-center relative w-full">
+                                {/* The node waypoint */}
+                                <motion.div 
+                                    initial={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg)', color: 'var(--muted)' }}
+                                    whileInView={{ borderColor: '#00CC66', backgroundColor: '#00CC66', color: '#111111' }}
+                                    viewport={{ margin: "-20%" }}
+                                    transition={{ duration: 0.6 }}
+                                    className="w-14 h-14 shrink-0 rounded-full border-2 md:border-4 shadow-sm flex items-center justify-center font-serif text-lg font-bold z-10 transition-colors md:mb-8 bg-[var(--surface)]"
+                                >
+                                    {step.num}
+                                </motion.div>
+
+                                {/* The content card */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-10%" }}
+                                    transition={{ duration: 0.6, delay: i * 0.1 }}
+                                    className="relative ml-6 md:ml-0 p-6 lg:p-8 rounded-3xl bg-[var(--surface)] border border-[var(--border)] shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 w-full text-left md:text-center shrink min-w-0"
+                                >
+                                    <h3 className="text-xl lg:text-2xl font-bold mb-3">{step.title}</h3>
+                                    <p className="text-[var(--muted)] text-sm leading-relaxed">{step.desc}</p>
+                                </motion.div>
                             </div>
-                            <h3 className="text-2xl font-serif mb-3">{step.title}</h3>
-                            <p className="text-[var(--muted)]">{step.desc}</p>
-                        </motion.div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
@@ -899,40 +905,44 @@ const FAQS = [
 function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boolean, onToggle: () => void }) {
     return (
         <BorderGlow
-            className="mb-4 w-full"
+            className="mb-4 w-full rounded-2xl group overflow-hidden"
             borderRadius={16}
-            backgroundColor="#0A0A0A"
+            backgroundColor="#0c0d0d"
             edgeSensitivity={30}
-            glowColor="341 100 60"
-            colors={['#FF3366', '#3366FF', '#FF9933']}
+            glowColor="0 0 100"
+            colors={['#ffffff', '#aaaaaa', '#555555']}
             animated={false}
         >
-            <div className={`p-6 transition-all duration-300 w-full`}>
-                <button
-                    onClick={onToggle}
-                    className="w-full flex items-center justify-between text-left focus:outline-none cursor-none"
-                >
-                    <span className={`text-xl md:text-2xl font-serif transition-colors ${isOpen ? "text-[#FF3366]" : "text-[var(--text)]"}`}>{q}</span>
-                    <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${isOpen ? "bg-[var(--text)] text-[var(--surface)] border-[var(--text)] rotate-45" : "border-[var(--border-hover)] text-[var(--muted)]"}`}>
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                            <line x1="6" y1="2" x2="6" y2="10" />
-                            <line x1="2" y1="6" x2="10" y2="6" />
-                        </svg>
-                    </span>
-                </button>
-                <AnimatePresence>
-                    {isOpen && (
-                        <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="overflow-hidden"
-                        >
-                            <p className="pt-4 text-[var(--muted)] text-lg max-w-2xl">{a}</p>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+            <div className={`p-6 transition-all duration-300 w-full rounded-2xl relative bg-[#0c0d0d]`} style={{ backgroundImage: "radial-gradient(circle 500px at 0% 0%, #202020 0%, #111 40%, #0c0d0d 100%)" }}>
+                <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+
+                <div className="relative z-10 w-full">
+                    <button
+                        onClick={onToggle}
+                        className="w-full flex items-center justify-between text-left focus:outline-none cursor-none"
+                    >
+                        <span className={`text-xl md:text-2xl font-serif transition-colors ${isOpen ? "text-white" : "text-white/60"}`}>{q}</span>
+                        <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${isOpen ? "bg-white text-black border-white rotate-45" : "border-white/20 text-white/40"}`}>
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                <line x1="6" y1="2" x2="6" y2="10" />
+                                <line x1="2" y1="6" x2="10" y2="6" />
+                            </svg>
+                        </span>
+                    </button>
+                    <AnimatePresence>
+                        {isOpen && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                className="overflow-hidden"
+                            >
+                                <p className="pt-4 text-white/50 text-lg max-w-2xl">{a}</p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
             </div>
         </BorderGlow>
     );
@@ -1189,54 +1199,81 @@ function FaqSection() {
                             </div>
 
                             {/* Booking Widget ─ below the folder */}
+                            <style>{`
+                                .bk-ray {
+                                    width: 250px;
+                                    height: 40px;
+                                    border-radius: 100px;
+                                    position: absolute;
+                                    background-color: #ffffff;
+                                    opacity: 0.15;
+                                    box-shadow: 0 0 50px #ffffff;
+                                    filter: blur(12px);
+                                    transform-origin: 0%;
+                                    top: -2%;
+                                    left: -2%;
+                                    transform: rotate(35deg);
+                                }
+                            `}</style>
                             <motion.div
                                 id="booking-widget"
                                 onMouseMove={handleMouseMove}
                                 onMouseLeave={handleMouseLeave}
-                                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.4)" }}
+                                whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.6)" }}
                                 transition={{ duration: 0.3 }}
-                                className="w-full rounded-[40px] p-8 md:p-12 overflow-hidden relative border border-white/[0.08] shadow-2xl bg-[#0A0A0A] group mt-8"
-                                style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: 1000 }}
+                                className="w-full rounded-[40px] p-[1px] relative shadow-2xl group mt-8 overflow-hidden bg-[#0c0d0d]"
+                                style={{ 
+                                    rotateX, 
+                                    rotateY, 
+                                    transformStyle: "preserve-3d", 
+                                    perspective: 1000
+                                }}
                             >
-                                {/* Sexy Premium Silver-to-Black Gradient Spotlight */}
-                                <div className="absolute inset-0 pointer-events-none z-0" style={{
-                                    background: 'radial-gradient(800px circle at 0% 0%, rgba(255, 255, 255, 0.12), transparent 60%)'
-                                }}></div>
-
-                                {/* Subtle corner highlight (top-left) */}
-                                <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-gradient-to-br from-white/[0.08] to-transparent pointer-events-none -z-1" />
-
-                                {/* Inner grain overlay */}
-                                <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
-
-                                {/* Pink Spotlight Hover Glow */}
-                                <motion.div
-                                    className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
-                                    style={{
-                                        background: useMotionTemplate`
-                                        radial-gradient(
-                                            600px circle at ${mouseX}px ${mouseY}px,
-                                            rgba(255, 51, 102, 0.15),
-                                            transparent 80%
-                                        )
-                                    `,
-                                    }}
+                                {/* Animated edge beam */}
+                                <div className="absolute inset-[-100%] animate-[spin_8s_linear_infinite] opacity-30 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none z-0" 
+                                    style={{ background: 'conic-gradient(from 0deg, transparent 0, transparent 75%, rgba(255,255,255,0.4) 100%)' }} 
                                 />
 
-                                <div className="relative z-10 flex flex-col h-full items-center text-center" style={{ transform: "translateZ(30px)" }}>
-                                    {/* Profile Avatar Circles */}
-                                    <div className="flex justify-center -space-x-6 mb-6">
-                                        <div className="w-[84px] h-[84px] rounded-full border-4 border-[#0A0A0A] overflow-hidden shadow-lg relative z-10">
-                                            <img src="/Kudy.png" alt="Profile" className="w-full h-full object-cover" />
-                                        </div>
-                                        <div className="w-[84px] h-[84px] rounded-full border-4 border-[#0A0A0A] overflow-hidden shadow-lg relative z-0">
-                                            <img src="/Noire.png" alt="Profile" className="w-full h-full object-cover" />
-                                        </div>
+                                {/* Main Inner Card Content */}
+                                <div className="relative w-full h-full rounded-[39px] p-8 md:p-12 overflow-hidden z-10" 
+                                    style={{ backgroundImage: "radial-gradient(circle 700px at 0% 0%, #303030 0%, #111111 40%, #0c0d0d 100%)" }}
+                                >
+                                    {/* Premium details from the cool card */}
+                                    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-[39px]">
+                                        <div className="bk-ray" />
                                     </div>
 
-                                    <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-10 w-full text-[#FF3366]">
-                                        Book a 30-min discovery call
-                                    </h3>
+                                    {/* Dynamic Hover Spotlight Glow */}
+                                    <motion.div
+                                        className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100 z-0"
+                                        style={{
+                                            background: useMotionTemplate`
+                                            radial-gradient(
+                                                600px circle at ${mouseX}px ${mouseY}px,
+                                                rgba(255, 255, 255, 0.1),
+                                                transparent 80%
+                                            )
+                                        `,
+                                        }}
+                                    />
+
+                                    {/* Inner grain overlay */}
+                                    <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+
+                                    <div className="relative z-10 flex flex-col h-full items-center text-center" style={{ transform: "translateZ(30px)" }}>
+                                        {/* Profile Avatar Circles */}
+                                        <div className="flex justify-center -space-x-6 mb-6">
+                                            <div className="w-[84px] h-[84px] rounded-full border-4 border-[#0c0d0d] overflow-hidden shadow-lg relative z-10 bg-[#0c0d0d]">
+                                                <img src="/Kudy.png" alt="Profile" className="w-full h-full object-cover" />
+                                            </div>
+                                            <div className="w-[84px] h-[84px] rounded-full border-4 border-[#0c0d0d] overflow-hidden shadow-lg relative z-0 bg-[#0c0d0d]">
+                                                <img src="/Noire.png" alt="Profile" className="w-full h-full object-cover" />
+                                            </div>
+                                        </div>
+
+                                        <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-10 w-full text-[#FF3366]">
+                                            <span className="bg-[#0c0d0d] md:bg-transparent md:backdrop-blur-none bg-opacity-70 backdrop-blur-md px-4 py-2 rounded-xl">Book a 30-min discovery call</span>
+                                        </h3>
 
                                     <motion.button
                                         data-cal-namespace=""
@@ -1259,7 +1296,7 @@ function FaqSection() {
                                     </motion.button>
 
                                     {/* Footer Email Note */}
-                                    <button onClick={handleCopy} className="group/email flex flex-col items-center justify-center w-full bg-[#FFFFFF]/5 rounded-[24px] py-8 transition-all duration-300 hover:bg-[#FFFFFF]/10 hover:shadow-lg border border-transparent hover:border-[#FF3366]/30">
+                                    <button onClick={handleCopy} className="group/email flex flex-col items-center justify-center w-full bg-[#0a0a0a] rounded-[24px] py-8 transition-all duration-300 hover:bg-[#111111] hover:shadow-lg border border-white/5 hover:border-[#FF3366]/30 relative z-20">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`mb-4 transition-colors duration-300 ${copied ? 'text-[#00CC66]' : 'text-white/50 group-hover/email:text-[#FF3366]'}`}>
                                             {copied ? (
                                                 <path d="M20 6L9 17l-5-5"></path>
@@ -1273,6 +1310,7 @@ function FaqSection() {
                                         <span className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-2 transition-colors">{copied ? 'Copied to clipboard' : 'Prefer to email?'}</span>
                                         <span className="text-lg md:text-xl font-serif text-white group-hover/email:text-[#FF3366] transition-colors">aovastudio@gmail.com</span>
                                     </button>
+                                </div>
                                 </div>
                             </motion.div>
 
@@ -1348,22 +1386,22 @@ function Footer() {
 
                 <div className="w-full flex flex-col md:flex-row items-center justify-between border-t border-white/10 pt-10 pb-4 gap-8">
                     {/* AOVASTUDIO.svg Logo (Left) */}
-                    <div className="flex items-center md:w-1/3 justify-center md:justify-start">
+                    <div className="flex items-center flex-1 justify-center md:justify-start">
                         <img src="/AOVASTUDIO.svg" alt="Aova Studio" className="h-5 md:h-7 w-auto invert opacity-90 transition-opacity hover:opacity-100" />
                     </div>
 
-                    {/* Centered Social Links */}
-                    <div className="flex gap-6 md:gap-8 text-[11px] md:text-sm text-white/50 uppercase tracking-widest font-medium flex-wrap justify-center md:w-1/3">
-                        <a href="#" className="hover:text-white transition-colors">Twitter</a>
-                        <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
-                        <a href="#" className="hover:text-white transition-colors">Instagram</a>
-                        <a href="#" className="hover:text-white transition-colors">Discord</a>
+                    {/* Centered Social Links (All next to each other on one row) */}
+                    <div className="flex gap-4 md:gap-8 text-[11px] md:text-sm text-white/50 uppercase tracking-widest font-medium justify-center shrink-0">
+                        <a href="#" className="hover:text-white transition-colors whitespace-nowrap">X</a>
+                        <a href="#" className="hover:text-white transition-colors whitespace-nowrap">Instagram</a>
+                        <a href="#" className="hover:text-white transition-colors whitespace-nowrap">LinkedIn</a>
+                        <a href="#" className="hover:text-white transition-colors whitespace-nowrap">Discord</a>
                     </div>
 
                     {/* Balanced Copyright block (Right) */}
-                    <div className="flex flex-col items-center md:items-end text-white/30 text-[10px] md:text-xs md:w-1/3 mt-2 md:mt-0">
-                        <span>&copy; 2026 Aova Design Studio.</span>
-                        <span>All rights reserved.</span>
+                    <div className="flex flex-col items-center md:items-end text-white/30 text-[10px] md:text-xs flex-1 mt-2 md:mt-0">
+                        <span className="whitespace-nowrap">&copy; 2026 Aova Design Studio.</span>
+                        <span className="whitespace-nowrap">All rights reserved.</span>
                     </div>
                 </div>
             </div>

@@ -1360,9 +1360,9 @@ function Footer() {
 
                     {/* Centered Social Links */}
                     <div className="flex gap-6 md:gap-8 text-[11px] md:text-sm text-white/50 uppercase tracking-widest font-medium flex-wrap justify-center md:w-1/3">
-                        <a href="#" className="hover:text-white transition-colors">Twitter</a>
-                        <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
+                        <a href="#" className="hover:text-white transition-colors">X</a>
                         <a href="#" className="hover:text-white transition-colors">Instagram</a>
+                        <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
                         <a href="#" className="hover:text-white transition-colors">Discord</a>
                     </div>
 
