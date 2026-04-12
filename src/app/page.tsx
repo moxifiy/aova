@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, createContext, useContext } from "react";
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useMotionTemplate, useSpring, useInView } from "framer-motion";
 import { getCalApi } from "@calcom/embed-react";
 import dynamic from "next/dynamic";
@@ -13,6 +13,208 @@ import ThemeToggle from '@/components/ThemeToggle';
 import CustomCursor from '@/components/CustomCursor';
 
 
+
+/* ================================================================
+   TRANSLATIONS
+   ================================================================ */
+type Lang = 'en' | 'cz';
+const LangContext = createContext<Lang>('en');
+const useT = () => T[useContext(LangContext)];
+
+const T = {
+  en: {
+    nav: { work: 'Work', services: 'Services', process: 'Process', book: 'Book' },
+    hero: {
+      prefix: 'Design studio for',
+      brands: 'brands',
+      creators: 'creators',
+      tagline: "Not an agency. Not a freelancer. A studio that treats your project like it's our own, and delivers like it.",
+      cta: 'Reserve your spot',
+    },
+    marquee: [
+      "Connecting selected creatives to selective brands.",
+      "Where the right creators find the right canvas.",
+      "Igniting brand potential with top-tier creative minds.",
+      "Bespoke matchmaking for the creative industry.",
+    ],
+    work: {
+      heading: 'Selected Work',
+      sub: 'Immersion, identity, and scale built for the next generation of creative businesses.',
+      archive: 'View Complete Archive',
+    },
+    services: {
+      heading: 'Who are we building for?',
+      creator: {
+        tabLabel: 'For Creators',
+        heroTitle: 'Content that grows. Channels that last.',
+        heroDesc: "AOVA handles the full creative pipeline for creators — from zero-retention editing to algorithmic growth strategy. You focus on the camera, we build the engine.",
+        cards: [
+          { title: "Shorts & Reels", desc: "High-retention vertical edits.", features: ["4 Videos / Month", "Hook Optimization", "Custom Motion Graphics"] },
+          { title: "YouTube Engine", desc: "Full long-form production.", features: ["2 Long Form Videos", "A/B Thumbnail Testing", "Title SEO", "4 Shorts Cut-downs"] },
+          { title: "Scale Partner", desc: "Total channel management.", features: ["4 Long Form Videos", "8 Shorts / Reels", "Weekly Strategy Calls", "Sponsorship Deck"] },
+        ],
+      },
+      brand: {
+        tabLabel: 'For Brands',
+        heroTitle: 'Design that converts. Presence that compounds.',
+        heroDesc: "AOVA builds brand infrastructure — not just visuals. We engineer systems that capture attention, drive action, and scale effortlessly as your business grows.",
+        cards: [
+          { title: "Identity Sprint", desc: "Your brand's visual foundation.", features: ["Logo System", "Brand Guidelines", "Typography & Color", "Social Assets"] },
+          { title: "Conversion Web", desc: "High-performance landing pages.", features: ["Figma Platform Design", "Framer / Next.js Build", "Copywriting Strategy", "SEO Setup"] },
+          { title: "Full Launch", desc: "End-to-end brand & digital.", features: ["Complete Identity System", "Website (Up to 8 pages)", "Motion Guidelines", "Pitch Deck Template"] },
+        ],
+      },
+      mostPopular: 'Most Popular',
+      getStarted: 'Get Started',
+    },
+    pricing: {
+      sendMessage: 'Send a Message',
+      bookCall: 'Book a Call',
+      startingFrom: 'Starting from',
+      tabs: [
+        { label: "Landing Page", title: "LANDING PAGE", features: ["Custom Wireframe", "Figma Design Source", "Responsive Design (Mobile & Tablet)", "Updates every 48 hours", "SEO Setup"], addons: [{ name: "Add Framer Dev", price: "+$2,799" }, { name: "Extra Pages", price: "+$999" }] },
+        { label: "Branding", title: "BRANDING", features: ["Logo Design (3 Concepts)", "Brand Guidelines", "Typography & Colors", "Social Media Kit"], addons: [{ name: "Brand Book Strategy", price: "+$1,200" }] },
+        { label: "Product Animation", title: "PRODUCT ANIMATION", features: ["3D Product Modeling", "Texturing & Lighting", "15-30s Loop Animation", "High-Res Rendering"], addons: [{ name: "Interactive WebGL", price: "+$3,500" }, { name: "Extra Angled Shots", price: "+$800" }] },
+        { label: "Mobile App Design", title: "MOBILE APP DESIGN", features: ["User Research & UX Strategy", "Wireframes & Flow", "High-Fidelity UI Design", "Interactive Prototype"], addons: [{ name: "Development Handoff Prep", price: "+$1,500" }, { name: "App Store Assets", price: "+$500" }] },
+      ],
+    },
+    testimonials: {
+      heading: 'Aova', accent: 'Love',
+      sub: "Don't just take our word for it. Trusted by industry leaders constantly moving the needle.",
+    },
+    process: {
+      heading: 'How it', accent: 'Works',
+      sub: 'We keep things simple, transparent, and completely focused on your success.',
+      steps: [
+        { num: "01", title: "Discovery Call", desc: "We get on a call, learn your world, and figure out exactly what you need. No pitch, no pressure, just clarity." },
+        { num: "02", title: "The Strategy", desc: "You get a clear plan: what we're building, how long it takes, and what it costs. Everything in writing before we touch a thing." },
+        { num: "03", title: "The Build", desc: "We build. You stay in the loop at every milestone. Fast, intentional, and built to your standard, not ours." },
+        { num: "04", title: "Handoff", desc: "Final assets, full ownership, and a roadmap for what's next. You walk away with everything you need to move." },
+      ],
+    },
+    faq: {
+      heading: 'Common', accent: 'Questions',
+      getToKnow: 'Get to know us!',
+      bookHeading: 'Book a 30-min discovery call',
+      bookCta: 'Book a call',
+      preferEmail: 'Prefer to email?',
+      copied: 'Copied to clipboard',
+      items: [
+        { q: "What types of projects do you take on?", a: "We work across brand identity, UI/UX design, design systems, motion graphics, video production, and web development. We're selective — we take on fewer clients so each one gets our full attention and craft." },
+        { q: "How long does a typical project take?", a: "Brand identity projects typically run 6–10 weeks. Web and product design engagements run 8–16 weeks. Video and motion work varies by scope, but most packages operate on a two-week sprint cadence." },
+        { q: "What is your pricing structure?", a: "We work on a project-fee basis for one-off work, and a sprint retainer model for ongoing clients. Either way, you know the full cost upfront — no hourly billing, no surprises." },
+        { q: "Do you work with early-stage brands?", a: "Yes. We have packages built specifically for founders and early-stage brands who need a strong foundation fast — brand identity, social kit, and motion assets — without the overhead of a full agency." },
+        { q: "Who will I actually be working with?", a: "Leif and Kudy run every engagement directly. You'll deal with the founders on strategy, creative direction, and reviews — not account managers or junior staff. A production team handles execution under our oversight." },
+        { q: "How does the sprint model work?", a: "We operate in two-week sprints. Each sprint starts with a scope call, we produce and deliver assets, then close with a review. Ongoing clients can book consecutive sprints at a locked retainer rate." },
+        { q: "What does onboarding look like?", a: "It starts with a 30–45 minute discovery call. From there we build a strategy blueprint, present it to you, confirm scope, and kick off the first sprint — typically within a week of signing." },
+        { q: "Can we work together on just one thing?", a: "Absolutely. You don't need a long-term commitment to start. We can suite a single project, deliver it, and go from there. A lot of our ongoing clients started with one sprint." },
+        { q: "What if I need revisions?", a: "Revisions are part of the process, not a gotcha. We build feedback rounds into every sprint. For larger scopes, we align on revision rounds upfront so there's never ambiguity." },
+        { q: "Do you handle distribution or posting?", a: "On the Creator Growth Engine side, yes — posting management and distribution strategy are available. On the Brand side, we'll give you distribution suggestions, but execution stays with your team." },
+      ],
+    },
+    footer: {
+      talkPrefix: "Let's t", talkExpand: "aaaaaa", talkSuffix: "lk",
+      startProject: 'Start a project',
+      allRights: 'All rights reserved.',
+    },
+  },
+  cz: {
+    nav: { work: 'Práce', services: 'Služby', process: 'Proces', book: 'Rezervovat' },
+    hero: {
+      prefix: 'Design studio pro',
+      brands: 'značky',
+      creators: 'tvůrce',
+      tagline: "Nejsme agentura. Nejsme freelancer. Jsme studio, které k vašemu projektu přistupuje jako ke svému vlastnímu.",
+      cta: 'Rezervujte místo',
+    },
+    marquee: [
+      "Propojujeme vybrané kreativce s vybranými značkami.",
+      "Kde správní tvůrci nacházejí správné plátno.",
+      "Zapalujeme potenciál značek s nejlepšími kreativci.",
+      "Matchmaking na míru pro kreativní průmysl.",
+    ],
+    work: {
+      heading: 'Vybrané projekty',
+      sub: 'Ponoření, identita a škálování pro příští generaci kreativních podniků.',
+      archive: 'Zobrazit celý archiv',
+    },
+    services: {
+      heading: 'Pro koho stavíme?',
+      creator: {
+        tabLabel: 'Pro tvůrce',
+        heroTitle: 'Obsah, který roste. Kanály, které vydrží.',
+        heroDesc: "AOVA zajišťuje kompletní kreativní produkci pro tvůrce — od střihu pro maximální retenci po algoritmickou strategii růstu. Vy se soustřeďte na kameru, my postavíme motor.",
+        cards: [
+          { title: "Shorts & Reels", desc: "Vertikální střihy pro maximální retenci.", features: ["4 videa / měsíc", "Optimalizace úvodního háčku", "Vlastní pohyblivá grafika"] },
+          { title: "YouTube Engine", desc: "Kompletní produkce dlouhých videí.", features: ["2 dlouhá videa", "A/B testování miniatur", "SEO názvů", "4 Shorts sestřihy"] },
+          { title: "Scale Partner", desc: "Kompletní správa kanálu.", features: ["4 dlouhá videa", "8 Shorts / Reels", "Týdenní strategické hovory", "Sponzorský balíček"] },
+        ],
+      },
+      brand: {
+        tabLabel: 'Pro značky',
+        heroTitle: 'Design, který konvertuje. Přítomnost, která se prohlubuje.',
+        heroDesc: "AOVA buduje brandovou infrastrukturu — nejen vizuály. Navrhujeme systémy, které přitahují pozornost, pohánějí akci a škálují bez námahy.",
+        cards: [
+          { title: "Identity Sprint", desc: "Vizuální základ vaší značky.", features: ["Logo systém", "Brand guidelines", "Typografie a barvy", "Social podklady"] },
+          { title: "Conversion Web", desc: "Výkonné landing pages.", features: ["Design v platformě Figma", "Framer / Next.js vývoj", "Strategie copywritingu", "SEO nastavení"] },
+          { title: "Full Launch", desc: "Kompletní brand a digitální řešení.", features: ["Kompletní identity systém", "Web (až 8 stránek)", "Motion guidelines", "Šablona pitch decku"] },
+        ],
+      },
+      mostPopular: 'Nejoblíbenější',
+      getStarted: 'Začít',
+    },
+    pricing: {
+      sendMessage: 'Poslat zprávu',
+      bookCall: 'Rezervovat hovor',
+      startingFrom: 'Začínající od',
+      tabs: [
+        { label: "Landing Page", title: "LANDING PAGE", features: ["Vlastní wireframe", "Figma design zdrojové soubory", "Responzivní design (mobil & tablet)", "Aktualizace každých 48 hodin", "SEO nastavení"], addons: [{ name: "Přidat Framer Dev", price: "+$2,799" }, { name: "Extra stránky", price: "+$999" }] },
+        { label: "Branding", title: "BRANDING", features: ["Logo design (3 koncepty)", "Brand guidelines", "Typografie a barvy", "Social media kit"], addons: [{ name: "Strategie brand booku", price: "+$1,200" }] },
+        { label: "Produktová animace", title: "PRODUKTOVÁ ANIMACE", features: ["3D modelování produktu", "Texturování a osvětlení", "15–30s smyčková animace", "Rendering ve vysokém rozlišení"], addons: [{ name: "Interaktivní WebGL", price: "+$3,500" }, { name: "Záběry z dalších úhlů", price: "+$800" }] },
+        { label: "Návrh mobilní aplikace", title: "NÁVRH MOBILNÍ APLIKACE", features: ["Uživatelský výzkum a UX strategie", "Wireframy a flow", "High-fidelity UI design", "Interaktivní prototyp"], addons: [{ name: "Příprava pro předání vývoji", price: "+$1,500" }, { name: "Podklady pro App Store", price: "+$500" }] },
+      ],
+    },
+    testimonials: {
+      heading: 'Aova', accent: 'Láska',
+      sub: 'Nemusíte nám věřit na slovo. Důvěřují nám lídři odvětví, kteří neustále posouvají hranice.',
+    },
+    process: {
+      heading: 'Jak to', accent: 'funguje',
+      sub: 'Udržujeme věci jednoduché, transparentní a zcela zaměřené na váš úspěch.',
+      steps: [
+        { num: "01", title: "Úvodní hovor", desc: "Zavoláme si, poznáme váš svět a přesně zjistíme, co potřebujete. Žádný prodejní tlak, jen jasnost." },
+        { num: "02", title: "Strategie", desc: "Dostanete jasný plán: co budujeme, jak dlouho to trvá a co to stojí. Vše písemně, než se do čehokoli pustíme." },
+        { num: "03", title: "Realizace", desc: "Stavíme. Jste v obraze při každém milníku. Rychle, záměrně a podle vašich standardů." },
+        { num: "04", title: "Předání", desc: "Finální podklady, plné vlastnictví a plán pro další kroky. Odcházíte se vším, co potřebujete." },
+      ],
+    },
+    faq: {
+      heading: 'Časté', accent: 'dotazy',
+      getToKnow: 'Poznejte nás!',
+      bookHeading: 'Rezervujte 30minutový úvodní hovor',
+      bookCta: 'Rezervovat hovor',
+      preferEmail: 'Preferujete e-mail?',
+      copied: 'Zkopírováno',
+      items: [
+        { q: "Jaké typy projektů přijímáte?", a: "Pracujeme na brand identity, UI/UX designu, design systémech, motion grafice, video produkci a webovém vývoji. Jsme selektivní — přijímáme méně klientů, aby každý dostal naši plnou pozornost a péči." },
+        { q: "Jak dlouho typický projekt trvá?", a: "Projekty brand identity trvají obvykle 6–10 týdnů. Web a product design 8–16 týdnů. Video a motion se liší rozsahem, ale většina balíčků funguje na dvoutýdenních sprintech." },
+        { q: "Jaká je vaše cenová struktura?", a: "Pracujeme na bázi projektového poplatku pro jednorázové práce a sprint retainer modelu pro průběžné klienty. Vždy znáte celkové náklady předem — žádné hodinové účtování, žádná překvapení." },
+        { q: "Spolupracujete s raně fázovými značkami?", a: "Ano. Máme balíčky přímo pro zakladatele a raně fázové značky, kteří potřebují silný základ rychle — brand identity, social kit a motion podklady — bez režie velké agentury." },
+        { q: "S kým budu skutečně pracovat?", a: "Leif a Kudy vedou každý projekt osobně. Budete jednat přímo se zakladateli ohledně strategie, kreativního směru a recenzí — ne s account manažery nebo juniorními pracovníky." },
+        { q: "Jak funguje sprint model?", a: "Pracujeme ve dvoutýdenních sprintech. Každý sprint začíná scope callem, produkujeme a dodáváme podklady, pak uzavíráme recenzí. Průběžní klienti mohou rezervovat po sobě jdoucí sprinty za uzamčenou retainer sazbu." },
+        { q: "Jak vypadá onboarding?", a: "Začíná 30–45minutovým discovery callem. Poté sestavíme strategický plán, představíme vám ho, potvrdíme rozsah a zahájíme první sprint — obvykle do týdne od podpisu." },
+        { q: "Můžeme spolupracovat jen na jedné věci?", a: "Rozhodně. Nepotřebujete dlouhodobý závazek pro začátek. Zvládneme jeden projekt, dodáme ho a pak uvidíme. Mnoho našich průběžných klientů začalo jedním sprintem." },
+        { q: "A co revize?", a: "Revize jsou součástí procesu, ne past. Zahrnujeme kola zpětné vazby do každého sprintu. U větších rozsahů se předem dohodujeme na kolech revizí, aby nedocházelo k nejasnostem." },
+        { q: "Zajišťujete distribuci nebo zveřejňování?", a: "Na straně Creator Growth Engine ano — správa zveřejňování a distribuční strategie jsou dostupné. Na straně Brand vám dáme doporučení pro distribuci, ale realizace zůstává na vašem týmu." },
+      ],
+    },
+    footer: {
+      talkPrefix: "Pojďme si popovíd", talkExpand: "aaaaaa", talkSuffix: "t",
+      startProject: 'Začít projekt',
+      allRights: 'Všechna práva vyhrazena.',
+    },
+  },
+};
 
 const NAV_HEIGHT = 80;
 
@@ -46,8 +248,29 @@ const NAV_EASE = [0.16, 1, 0.3, 1] as const;
 
 // Previously NavThemeIcon lived here, now using ThemeToggle
 
-function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => void }) {
+function LangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
+    return (
+        <div className="flex items-center rounded-full bg-black/[0.06] dark:bg-white/[0.07] p-0.5 gap-0.5">
+            {(['en', 'cz'] as const).map((l) => (
+                <button
+                    key={l}
+                    onClick={() => setLang(l)}
+                    className={`px-2 py-1 rounded-full text-[10px] font-semibold uppercase tracking-widest transition-all duration-200 ${
+                        lang === l
+                            ? 'bg-[var(--text)] text-[var(--surface)]'
+                            : 'text-[var(--muted)] hover:text-[var(--text)]'
+                    }`}
+                >
+                    {l}
+                </button>
+            ))}
+        </div>
+    );
+}
+
+function Navbar({ isDark, toggleDark, lang, setLang }: { isDark: boolean; toggleDark: () => void; lang: Lang; setLang: (l: Lang) => void }) {
     const [isAtTop, setIsAtTop] = useState(true);
+    const t = useT();
 
     useEffect(() => {
         const handleScroll = () => setIsAtTop(window.scrollY < 80);
@@ -75,61 +298,37 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
             <AnimatePresence mode="wait">
                 {isAtTop ? (
                     /* ── SPLIT STATE (at top) ── */
-                    <motion.div
-                        key="split"
-                        className="flex items-center justify-between px-6 md:px-10"
-                    >
-                        {/* Left pill — arrow (scroll to bottom) */}
-                        <motion.div
-                            layoutId="nav-left"
-                            style={pillStyle}
-                            className="flex items-center pointer-events-auto rounded-full backdrop-blur-xl p-1.5 shadow-lg"
-                        >
-                            <button
-                                onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
-                                className={iconCls}
-                                aria-label="Scroll to bottom"
-                            >
+                    <motion.div key="split" className="flex items-center justify-between px-6 md:px-10">
+                        {/* Left pill — arrow */}
+                        <motion.div layoutId="nav-left" style={pillStyle} className="flex items-center pointer-events-auto rounded-full backdrop-blur-xl p-1.5 shadow-lg">
+                            <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className={iconCls} aria-label="Scroll to bottom">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
                                 </svg>
                             </button>
                         </motion.div>
 
-                        {/* Center pill — nav links */}
-                        <motion.div
-                            layoutId="nav-center"
-                            style={pillStyle}
-                            className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg"
-                        >
-                            {NAV_LINKS.map(({ label, id }) => (
-                                <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{label}</button>
+                        {/* Center pill — nav links + lang toggle on right */}
+                        <motion.div layoutId="nav-center" style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg">
+                            {NAV_LINKS.map(({ id }) => (
+                                <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{t.nav[id as keyof typeof t.nav]}</button>
                             ))}
+                            <div className={divCls} />
+                            <LangToggle lang={lang} setLang={setLang} />
                         </motion.div>
 
                         {/* Right pill — book + theme */}
-                        <motion.div
-                            layoutId="nav-right"
-                            style={pillStyle}
-                            className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg"
-                        >
-                            <button onClick={() => scrollToId('faq')} className={bookCls}>Book</button>
+                        <motion.div layoutId="nav-right" style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg">
+                            <button onClick={() => scrollToId('faq')} className={bookCls}>{t.nav.book}</button>
                             <ThemeToggle isDark={isDark} onToggle={toggleDark} />
                         </motion.div>
                     </motion.div>
                 ) : (
                     /* ── MERGED STATE (scrolled) ── */
-                    <motion.div
-                        key="merged"
-                        className="flex justify-center"
-                    >
+                    <motion.div key="merged" className="flex justify-center">
                         <motion.div layoutId="nav-center" style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-xl">
                             <motion.div layoutId="nav-left" className="flex items-center">
-                                <button
-                                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                                    className={iconCls}
-                                    aria-label="Scroll to top"
-                                >
+                                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={iconCls} aria-label="Scroll to top">
                                     <svg style={{ transform: 'rotate(180deg)' }} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
                                     </svg>
@@ -137,12 +336,15 @@ function Navbar({ isDark, toggleDark }: { isDark: boolean; toggleDark: () => voi
                                 <div className={divCls} />
                             </motion.div>
 
-                            {NAV_LINKS.map(({ label, id }) => (
-                                <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{label}</button>
+                            {NAV_LINKS.map(({ id }) => (
+                                <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{t.nav[id as keyof typeof t.nav]}</button>
                             ))}
 
                             <motion.div layoutId="nav-right" className="flex items-center gap-1">
-                                <button onClick={() => scrollToId('faq')} className={bookCls}>Book</button>
+                                <div className={divCls} />
+                                <LangToggle lang={lang} setLang={setLang} />
+                                <div className={divCls} />
+                                <button onClick={() => scrollToId('faq')} className={bookCls}>{t.nav.book}</button>
                                 <ThemeToggle isDark={isDark} onToggle={toggleDark} />
                             </motion.div>
                         </motion.div>
@@ -165,6 +367,7 @@ const triggerBookingSpark = (e: React.MouseEvent) => {
 };
 
 function Hero({ isDark }: { isDark: boolean }) {
+    const t = useT();
     const { scrollYProgress } = useScroll();
     const y = useTransform(scrollYProgress, [0, 1], [0, 300]);
 
@@ -192,10 +395,10 @@ function Hero({ isDark }: { isDark: boolean }) {
                     transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
                     className="text-6xl md:text-8xl lg:text-[96px] leading-[0.92] tracking-[-0.03em] mb-8 text-[var(--text)]"
                 >
-                    <span className="font-black">Design studio for</span><br />
-                    <span className="font-serif italic text-[#FF3366]">brands</span>
+                    <span className="font-black">{t.hero.prefix}</span><br />
+                    <span className="font-serif italic text-[#FF3366]">{t.hero.brands}</span>
                     <span className="font-black"> &amp; </span>
-                    <span className="font-serif italic text-[#3366FF]">creators</span>
+                    <span className="font-serif italic text-[#3366FF]">{t.hero.creators}</span>
                     <span className="font-black">.</span>
                 </motion.h1>
 
@@ -205,7 +408,7 @@ function Hero({ isDark }: { isDark: boolean }) {
                     transition={{ duration: 0.8, delay: 0.3 }}
                     className="text-base md:text-lg text-[var(--muted)] max-w-lg mb-10 leading-relaxed"
                 >
-                    Not an agency. Not a freelancer. A studio that treats your project like it's our own, and delivers like it.
+                    {t.hero.tagline}
                 </motion.p>
 
                 <motion.div
@@ -228,7 +431,7 @@ function Hero({ isDark }: { isDark: boolean }) {
                         className="pg-btn pg-btn-primary text-base group shadow-xl transition-shadow duration-300"
                     >
                         <span style={{ transform: "translateZ(20px)" }} className="flex items-center gap-2">
-                            Reserve your spot
+                            {t.hero.cta}
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
@@ -241,22 +444,16 @@ function Hero({ isDark }: { isDark: boolean }) {
     );
 }
 
-const MARQUEE_ITEMS = [
-    "Connecting selected creatives to selective brands.",
-    "Where the right creators find the right canvas.",
-    "Igniting brand potential with top-tier creative minds.",
-    "Bespoke matchmaking for the creative industry.",
-];
-
 
 
 
 function Marquee() {
+    const t = useT();
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setIndex((prev) => (prev + 1) % MARQUEE_ITEMS.length);
+            setIndex((prev) => (prev + 1) % t.marquee.length);
         }, 11000); // 11 seconds delay
         return () => clearInterval(interval);
     }, []);
@@ -278,7 +475,7 @@ function Marquee() {
                             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                             className="absolute text-center w-full"
                         >
-                            {MARQUEE_ITEMS[index]}
+                            {t.marquee[index]}
                         </motion.div>
                     </AnimatePresence>
                 </div>
@@ -452,6 +649,7 @@ const SERVICES_DATA = {
 type AudienceType = 'creator' | 'brand';
 
 function InteractiveServices() {
+    const t = useT();
     const [audience, setAudience] = useState<AudienceType | null>(null);
 
     return (
@@ -459,7 +657,7 @@ function InteractiveServices() {
             <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-6xl font-serif tracking-tight mb-8">Who are we building for?</h2>
+                    <h2 className="text-4xl md:text-6xl font-serif tracking-tight mb-8">{t.services.heading}</h2>
 
                     <div className="inline-flex flex-col md:flex-row p-1.5 bg-[#111111] border border-white/10 rounded-[32px] md:rounded-full gap-2 relative z-10 w-full md:w-auto shadow-xl">
                         {(['creator', 'brand'] as AudienceType[]).map((type) => (
@@ -471,7 +669,7 @@ function InteractiveServices() {
                                     : 'hover:bg-white/5 text-white/50 hover:text-white'
                                     }`}
                             >
-                                {SERVICES_DATA[type].tabLabel}
+                                {t.services[type].tabLabel}
                             </button>
                         ))}
                     </div>
@@ -490,18 +688,20 @@ function InteractiveServices() {
                             <div className="pt-2 pb-8">
                                 <div className={`w-full p-8 md:p-16 rounded-[40px] border border-white/5 transition-colors duration-500 overflow-hidden relative mb-12 bg-[#0A0A0A] shadow-2xl ${SERVICES_DATA[audience].hero.color}`}>
                                     <div className="max-w-3xl relative z-10">
-                                        <h4 className={`text-4xl md:text-6xl font-serif mb-6 leading-tight ${SERVICES_DATA[audience].theme}`}>{SERVICES_DATA[audience].hero.title}</h4>
-                                        <p className="text-xl md:text-2xl text-white/70 font-medium leading-relaxed">{SERVICES_DATA[audience].hero.desc}</p>
+                                        <h4 className={`text-4xl md:text-6xl font-serif mb-6 leading-tight ${SERVICES_DATA[audience].theme}`}>{t.services[audience].heroTitle}</h4>
+                                        <p className="text-xl md:text-2xl text-white/70 font-medium leading-relaxed">{t.services[audience].heroDesc}</p>
                                     </div>
                                     <div className={`absolute -right-20 -bottom-20 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none ${SERVICES_DATA[audience].accent} opacity-[0.05]`} />
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    {SERVICES_DATA[audience].pricingCards.map((card, i) => (
-                                        <div key={i} className={`relative flex flex-col justify-between p-8 rounded-[32px] border bg-[#111111]/80 backdrop-blur-md shadow-lg transition-all duration-300 ${card.featured ? `border-white/30 -translate-y-2 ${SERVICES_DATA[audience].bgAccent}` : `border-white/5 hover:border-white/20 hover:-translate-y-1`}`}>
-                                            {card.featured && (
+                                    {t.services[audience].cards.map((card, i) => {
+                                        const meta = SERVICES_DATA[audience].pricingCards[i];
+                                        return (
+                                        <div key={i} className={`relative flex flex-col justify-between p-8 rounded-[32px] border bg-[#111111]/80 backdrop-blur-md shadow-lg transition-all duration-300 ${meta.featured ? `border-white/30 -translate-y-2 ${SERVICES_DATA[audience].bgAccent}` : `border-white/5 hover:border-white/20 hover:-translate-y-1`}`}>
+                                            {meta.featured && (
                                                 <div className={`absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-black text-xs font-bold uppercase tracking-widest ${SERVICES_DATA[audience].accent}`}>
-                                                    Most Popular
+                                                    {t.services.mostPopular}
                                                 </div>
                                             )}
                                             <div>
@@ -522,15 +722,16 @@ function InteractiveServices() {
 
                                             <div className="pt-8 border-t border-white/5 mt-auto">
                                                 <div className="flex items-end gap-2 mb-6">
-                                                    <span className="text-5xl font-serif text-white tracking-tight leading-none">{card.price}</span>
-                                                    <span className="text-white/40 text-sm font-bold uppercase pb-1 tracking-widest">{card.period}</span>
+                                                    <span className="text-5xl font-serif text-white tracking-tight leading-none">{meta.price}</span>
+                                                    <span className="text-white/40 text-sm font-bold uppercase pb-1 tracking-widest">{meta.period}</span>
                                                 </div>
-                                                <button className={`w-full py-4 rounded-2xl font-semibold transition-colors duration-300 ${card.featured ? `${SERVICES_DATA[audience].accent} text-black` : 'bg-white/5 text-white hover:bg-white/10'}`}>
-                                                    Get Started
+                                                <button className={`w-full py-4 rounded-2xl font-semibold transition-colors duration-300 ${meta.featured ? `${SERVICES_DATA[audience].accent} text-black` : 'bg-white/5 text-white hover:bg-white/10'}`}>
+                                                    {t.services.getStarted}
                                                 </button>
                                             </div>
                                         </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </motion.div>
@@ -542,8 +743,10 @@ function InteractiveServices() {
 }
 
 function PricingServices() {
+    const tr = useT();
     const [activeTab, setActiveTab] = useState(PRICING_TABS_DATA[0].id);
-    const data = PRICING_TABS_DATA.find(t => t.id === activeTab)!;
+    const tabIndex = PRICING_TABS_DATA.findIndex(t => t.id === activeTab);
+    const data = { ...PRICING_TABS_DATA[tabIndex], ...tr.pricing.tabs[tabIndex] };
     const [activeAddons, setActiveAddons] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
@@ -559,7 +762,7 @@ function PricingServices() {
             <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
             <div className="pg-inner">
                 <div className="flex flex-wrap justify-center gap-2 mb-12 relative z-10">
-                    {PRICING_TABS_DATA.map((tab) => (
+                    {PRICING_TABS_DATA.map((tab, i) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
@@ -568,7 +771,7 @@ function PricingServices() {
                                 : "bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--border)] border border-[var(--border)]"
                                 }`}
                         >
-                            {tab.label}
+                            {tr.pricing.tabs[i].label}
                         </button>
                     ))}
                 </div>
@@ -638,16 +841,16 @@ function PricingServices() {
                                     <h4 className="text-4xl font-serif italic drop-shadow-md">{data.title.toLowerCase()}</h4>
                                 </div>
                                 <div className="relative z-10">
-                                    <p className="text-xs font-bold uppercase tracking-widest text-white/70 mb-1">Starting from</p>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-white/70 mb-1">{tr.pricing.startingFrom}</p>
                                     <p className="text-6xl md:text-7xl font-black tracking-tighter drop-shadow-lg">{data.price}</p>
                                 </div>
                             </div>
 
                             <button className="w-full py-4 mt-2 rounded-[20px] bg-[var(--text)] text-[var(--surface)] text-lg font-bold shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-                                Send a Message
+                                {tr.pricing.sendMessage}
                             </button>
                             <button className="w-full py-4 rounded-[20px] bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-lg font-bold hover:bg-[var(--border)] transition-colors duration-300 shadow-sm">
-                                Book a Call
+                                {tr.pricing.bookCall}
                             </button>
                         </div>
                     </motion.div>
@@ -672,15 +875,14 @@ const workProjects = [
 
 
 function WorkSection() {
+    const t = useT();
     const router = useRouter();
     return (
         <section id="work" className="py-32">
             <div className="pg-inner space-y-12">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <h2 className="text-5xl md:text-7xl">Selected Work</h2>
-                    <p className="text-[var(--muted)] max-w-sm text-sm">
-                        Immersion, identity, and scale built for the next generation of creative businesses.
-                    </p>
+                    <h2 className="text-5xl md:text-7xl">{t.work.heading}</h2>
+                    <p className="text-[var(--muted)] max-w-sm text-sm">{t.work.sub}</p>
                 </div>
 
                 {/* Card grids — gap-4 between all rows and columns */}
@@ -728,7 +930,7 @@ function WorkSection() {
                         className="pg-btn pg-btn-primary group shadow-xl transition-shadow duration-300"
                     >
                         <span style={{ transform: "translateZ(20px)" }} className="flex items-center gap-2">
-                            View Complete Archive
+                            {t.work.archive}
                             <span className="group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
                         </span>
                     </motion.button>
@@ -749,11 +951,12 @@ const TESTIMONIALS = [
 ];
 
 function Testimonials() {
+    const t = useT();
     return (
         <section className="pt-16 pb-32 overflow-hidden bg-transparent text-[var(--text)] relative mt-0" id="testimonials">
             <div className="pg-inner mb-16 relative z-10">
-                <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">Aova <span className="italic text-[#FF3366]">Love</span></h2>
-                <p className="text-[var(--muted)] text-lg max-w-xl">Don&apos;t just take our word for it. Trusted by industry leaders constantly moving the needle.</p>
+                <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">{t.testimonials.heading} <span className="italic text-[#FF3366]">{t.testimonials.accent}</span></h2>
+                <p className="text-[var(--muted)] text-lg max-w-xl">{t.testimonials.sub}</p>
             </div>
 
             <div className="flex overflow-hidden relative w-full h-full group">
@@ -809,14 +1012,8 @@ function Testimonials() {
 /* ================================================================
    BUYING PROCESS
    ================================================================ */
-const BUYING_STEPS = [
-    { num: "01", title: "Discovery Call", desc: "We get on a call, learn your world, and figure out exactly what you need. No pitch, no pressure, just clarity." },
-    { num: "02", title: "The Strategy", desc: "You get a clear plan: what we're building, how long it takes, and what it costs. Everything in writing before we touch a thing." },
-    { num: "03", title: "The Build", desc: "We build. You stay in the loop at every milestone. Fast, intentional, and built to your standard, not ours." },
-    { num: "04", title: "Handoff", desc: "Final assets, full ownership, and a roadmap for what's next. You walk away with everything you need to move." }
-];
-
 function BuyingProcess() {
+    const t = useT();
     const containerRef = useRef<HTMLElement>(null);
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -837,8 +1034,8 @@ function BuyingProcess() {
 
             <div className="pg-inner relative">
                 <div className="text-center mb-20">
-                    <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">How it <span className="italic text-[#00CC66]">Works</span></h2>
-                    <p className="text-[var(--muted)] text-lg max-w-xl mx-auto">We keep things simple, transparent, and completely focused on your success.</p>
+                    <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">{t.process.heading} <span className="italic text-[#00CC66]">{t.process.accent}</span></h2>
+                    <p className="text-[var(--muted)] text-lg max-w-xl mx-auto">{t.process.sub}</p>
                 </div>
 
                 <div className="relative w-full">
@@ -853,7 +1050,7 @@ function BuyingProcess() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-4 lg:gap-8 relative z-10 w-full">
-                        {BUYING_STEPS.map((step, i) => (
+                        {t.process.steps.map((step, i) => (
                             <div key={step.num} className="flex flex-row md:flex-col items-start md:items-center relative w-full">
                                 {/* The node waypoint */}
                                 <motion.div 
@@ -889,19 +1086,6 @@ function BuyingProcess() {
 /* ================================================================
    FAQ
    ================================================================ */
-const FAQS = [
-    { q: "What types of projects do you take on?", a: "We work across brand identity, UI/UX design, design systems, motion graphics, video production, and web development. We're selective — we take on fewer clients so each one gets our full attention and craft." },
-    { q: "How long does a typical project take?", a: "Brand identity projects typically run 6–10 weeks. Web and product design engagements run 8–16 weeks. Video and motion work varies by scope, but most packages operate on a two-week sprint cadence." },
-    { q: "What is your pricing structure?", a: "We work on a project-fee basis for one-off work, and a sprint retainer model for ongoing clients. Either way, you know the full cost upfront — no hourly billing, no surprises." },
-    { q: "Do you work with early-stage brands?", a: "Yes. We have packages built specifically for founders and early-stage brands who need a strong foundation fast — brand identity, social kit, and motion assets — without the overhead of a full agency." },
-    { q: "Who will I actually be working with?", a: "Leif and Kudy run every engagement directly. You'll deal with the founders on strategy, creative direction, and reviews — not account managers or junior staff. A production team handles execution under our oversight." },
-    { q: "How does the sprint model work?", a: "We operate in two-week sprints. Each sprint starts with a scope call, we produce and deliver assets, then close with a review. Ongoing clients can book consecutive sprints at a locked retainer rate." },
-    { q: "What does onboarding look like?", a: "It starts with a 30–45 minute discovery call. From there we build a strategy blueprint, present it to you, confirm scope, and kick off the first sprint — typically within a week of signing." },
-    { q: "Can we work together on just one thing?", a: "Absolutely. You don't need a long-term commitment to start. We can suite a single project, deliver it, and go from there. A lot of our ongoing clients started with one sprint." },
-    { q: "What if I need revisions?", a: "Revisions are part of the process, not a gotcha. We build feedback rounds into every sprint. For larger scopes, we align on revision rounds upfront so there's never ambiguity." },
-    { q: "Do you handle distribution or posting?", a: "On the Creator Growth Engine side, yes — posting management and distribution strategy are available. On the Brand side, we'll give you distribution suggestions, but execution stays with your team." }
-];
-
 function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boolean, onToggle: () => void }) {
     return (
         <BorderGlow
@@ -949,6 +1133,7 @@ function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boo
 }
 
 function FaqSection() {
+    const t = useT();
     const [openIndices, setOpenIndices] = useState<number[]>([]);
     const [folderOpen, setFolderOpen] = useState(false);
     const [selectedMember, setSelectedMember] = useState<number | null>(null);
@@ -1118,10 +1303,10 @@ function FaqSection() {
                     {/* Left Column Component: FAQ */}
                     <div className="lg:col-span-7">
                         <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-16">
-                            Common <span className="italic text-[#00CC66]">Questions</span>
+                            {t.faq.heading} <span className="italic text-[#00CC66]">{t.faq.accent}</span>
                         </h2>
                         <div>
-                            {FAQS.map((faq, i) => (
+                            {t.faq.items.map((faq, i) => (
                                 <FaqItem
                                     key={i}
                                     q={faq.q}
@@ -1147,7 +1332,7 @@ function FaqSection() {
                                         }`}
                                     style={{ zIndex: 1, right: 'calc(50% + 140px)' }}
                                 >
-                                    <span className="font-serif italic text-3xl text-[#FF3366] whitespace-nowrap leading-tight">Get to know us!</span>
+                                    <span className="font-serif italic text-3xl text-[#FF3366] whitespace-nowrap leading-tight">{t.faq.getToKnow}</span>
                                     {/* Arrow sweeps from bottom-left (below text) curving right → toward folder */}
                                     <svg width="88" height="56" viewBox="0 0 110 70" fill="none" xmlns="http://www.w3.org/2000/svg" className="self-end mr-2">
                                         <path d="M8 8 Q20 65 82 58" stroke="#FF3366" strokeWidth="4" fill="none" strokeDasharray="6,5" strokeLinecap="round" />
@@ -1272,7 +1457,7 @@ function FaqSection() {
                                         </div>
 
                                         <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-10 w-full text-[#FF3366]">
-                                            <span className="bg-[#0c0d0d] md:bg-transparent md:backdrop-blur-none bg-opacity-70 backdrop-blur-md px-4 py-2 rounded-xl">Book a 30-min discovery call</span>
+                                            <span className="bg-[#0c0d0d] md:bg-transparent md:backdrop-blur-none bg-opacity-70 backdrop-blur-md px-4 py-2 rounded-xl">{t.faq.bookHeading}</span>
                                         </h3>
 
                                     <motion.button
@@ -1291,7 +1476,7 @@ function FaqSection() {
                                         className="w-full bg-white text-black font-semibold text-lg py-5 rounded-2xl shadow-xl transition-shadow duration-300 mb-8"
                                     >
                                         <span style={{ transform: "translateZ(20px)" }} className="block">
-                                            Book a call
+                                            {t.faq.bookCta}
                                         </span>
                                     </motion.button>
 
@@ -1307,7 +1492,7 @@ function FaqSection() {
                                                 </>
                                             )}
                                         </svg>
-                                        <span className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-2 transition-colors">{copied ? 'Copied to clipboard' : 'Prefer to email?'}</span>
+                                        <span className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-2 transition-colors">{copied ? t.faq.copied : t.faq.preferEmail}</span>
                                         <span className="text-lg md:text-xl font-serif text-white group-hover/email:text-[#FF3366] transition-colors">aovastudio@gmail.com</span>
                                     </button>
                                 </div>
@@ -1328,32 +1513,32 @@ function FaqSection() {
    FOOTER
    ================================================================ */
 function Footer() {
+    const t = useT();
     const [isHovered, setIsHovered] = useState(false);
 
     return (
         <footer className="relative bg-[#111111] text-white py-20 rounded-t-[40px] md:rounded-t-[80px] mt-20 overflow-hidden">
             <div className="absolute inset-0 bg-dots opacity-[0.05] pointer-events-none -z-10 mix-blend-overlay" />
             <div className="pg-inner flex flex-col items-center text-center">
-                <h2 className="text-6xl md:text-[120px] leading-none font-serif tracking-tight mb-12 text-[#FF3366] text-center">
-                    <div
+                <h2 className="text-6xl md:text-[120px] leading-none font-serif tracking-tight mb-12 text-[#FF3366] text-center pointer-events-none">
+                    <span
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}
-                        className="inline-flex items-baseline cursor-default"
+                        className="cursor-default pointer-events-auto"
+                        style={{ lineHeight: 0.8, display: "inline", padding: 0, verticalAlign: "baseline" }}
                     >
-                        Let&apos;s t
+                        {t.footer.talkPrefix}
                         <span className="inline-block relative">
-                            a
-                            {/* Absolutely-positioned overlay that expands to the right */}
+                            {t.footer.talkExpand[0]}
                             <motion.span
                                 initial={{ width: 0 }}
                                 animate={{ width: isHovered ? "auto" : 0 }}
                                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                                 className="overflow-hidden inline-flex whitespace-nowrap align-bottom absolute left-full top-0 h-full"
                             >
-                                aaaaaa
+                                {t.footer.talkExpand.slice(1)}
                             </motion.span>
                         </span>
-                        {/* Ghost span — invisible but pushes 'lk' rightward in layout */}
                         <motion.span
                             initial={{ width: 0 }}
                             animate={{ width: isHovered ? "auto" : 0 }}
@@ -1361,26 +1546,20 @@ function Footer() {
                             className="overflow-hidden inline-flex whitespace-nowrap align-bottom opacity-0 pointer-events-none select-none"
                             aria-hidden="true"
                         >
-                            aaaaaa
+                            {t.footer.talkExpand.slice(1)}
                         </motion.span>
-                        lk{isHovered ? '!' : '.'}
-                    </div>
+                        {t.footer.talkSuffix}{isHovered ? '!' : '.'}
+                    </span>
                 </h2>
                 <motion.button
                     onClick={triggerBookingSpark}
-                    whileHover={{
-                        scale: 1.05,
-                        rotateX: 12,
-                        rotateY: -8,
-                        y: -5,
-                        boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)"
-                    }}
+                    whileHover={{ scale: 1.05, rotateX: 12, rotateY: -8, y: -5, boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)" }}
                     whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
                     style={{ transformStyle: "preserve-3d", perspective: 1000 }}
                     className="pg-btn bg-white text-black hover:bg-[#FF3366] hover:text-white hover:border-[#FF3366] !text-lg !px-8 !py-4 mb-32 shadow-xl transition-colors duration-300"
                 >
                     <span style={{ transform: "translateZ(20px)" }}>
-                        Start a project
+                        {t.footer.startProject}
                     </span>
                 </motion.button>
 
@@ -1401,7 +1580,7 @@ function Footer() {
                     {/* Balanced Copyright block (Right) */}
                     <div className="flex flex-col items-center md:items-end text-white/30 text-[10px] md:text-xs flex-1 mt-2 md:mt-0">
                         <span className="whitespace-nowrap">&copy; 2026 Aova Design Studio.</span>
-                        <span className="whitespace-nowrap">All rights reserved.</span>
+                        <span className="whitespace-nowrap">{t.footer.allRights}</span>
                     </div>
                 </div>
             </div>
@@ -1411,8 +1590,8 @@ function Footer() {
 
 export default function HomePage() {
     const [isDark, setIsDark] = useState(false);
+    const [lang, setLang] = useState<Lang>('en');
 
-    // Initialize from system preference
     useEffect(() => {
         const mq = window.matchMedia("(prefers-color-scheme: dark)");
         setIsDark(mq.matches);
@@ -1430,9 +1609,10 @@ export default function HomePage() {
     }, [isDark]);
 
     return (
+        <LangContext.Provider value={lang}>
         <main className="relative">
             <CustomCursor />
-            <Navbar isDark={isDark} toggleDark={() => setIsDark(!isDark)} />
+            <Navbar isDark={isDark} toggleDark={() => setIsDark(!isDark)} lang={lang} setLang={setLang} />
             <Hero isDark={isDark} />
             <WorkSection />
             <InteractiveServices />
@@ -1444,5 +1624,6 @@ export default function HomePage() {
             <FaqSection />
             <Footer />
         </main>
+        </LangContext.Provider>
     );
 }
