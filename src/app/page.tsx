@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 
 const HeroLogo3D = dynamic<{ isDark: boolean }>(() => import("@/components/HeroLogo3D"), { ssr: false });
 import Folder from '@/components/Folder';
-import BorderGlow from '@/components/BorderGlow';
 import ThemeToggle from '@/components/ThemeToggle';
 import CustomCursor from '@/components/CustomCursor';
 
@@ -66,17 +65,6 @@ const T = {
       },
       mostPopular: 'Most Popular',
       getStarted: 'Get Started',
-    },
-    pricing: {
-      sendMessage: 'Send a Message',
-      bookCall: 'Book a Call',
-      startingFrom: 'Starting from',
-      tabs: [
-        { label: "Landing Page", title: "LANDING PAGE", features: ["Custom Wireframe", "Figma Design Source", "Responsive Design (Mobile & Tablet)", "Updates every 48 hours", "SEO Setup"], addons: [{ name: "Add Framer Dev", price: "+$2,799" }, { name: "Extra Pages", price: "+$999" }] },
-        { label: "Branding", title: "BRANDING", features: ["Logo Design (3 Concepts)", "Brand Guidelines", "Typography & Colors", "Social Media Kit"], addons: [{ name: "Brand Book Strategy", price: "+$1,200" }] },
-        { label: "Product Animation", title: "PRODUCT ANIMATION", features: ["3D Product Modeling", "Texturing & Lighting", "15-30s Loop Animation", "High-Res Rendering"], addons: [{ name: "Interactive WebGL", price: "+$3,500" }, { name: "Extra Angled Shots", price: "+$800" }] },
-        { label: "Mobile App Design", title: "MOBILE APP DESIGN", features: ["User Research & UX Strategy", "Wireframes & Flow", "High-Fidelity UI Design", "Interactive Prototype"], addons: [{ name: "Development Handoff Prep", price: "+$1,500" }, { name: "App Store Assets", price: "+$500" }] },
-      ],
     },
     testimonials: {
       heading: 'Aova', accent: 'Love',
@@ -163,17 +151,6 @@ const T = {
       mostPopular: 'Nejoblíbenější',
       getStarted: 'Začít',
     },
-    pricing: {
-      sendMessage: 'Poslat zprávu',
-      bookCall: 'Rezervovat hovor',
-      startingFrom: 'Začínající od',
-      tabs: [
-        { label: "Landing Page", title: "LANDING PAGE", features: ["Vlastní wireframe", "Figma design zdrojové soubory", "Responzivní design (mobil & tablet)", "Aktualizace každých 48 hodin", "SEO nastavení"], addons: [{ name: "Přidat Framer Dev", price: "+$2,799" }, { name: "Extra stránky", price: "+$999" }] },
-        { label: "Branding", title: "BRANDING", features: ["Logo design (3 koncepty)", "Brand guidelines", "Typografie a barvy", "Social media kit"], addons: [{ name: "Strategie brand booku", price: "+$1,200" }] },
-        { label: "Produktová animace", title: "PRODUKTOVÁ ANIMACE", features: ["3D modelování produktu", "Texturování a osvětlení", "15–30s smyčková animace", "Rendering ve vysokém rozlišení"], addons: [{ name: "Interaktivní WebGL", price: "+$3,500" }, { name: "Záběry z dalších úhlů", price: "+$800" }] },
-        { label: "Návrh mobilní aplikace", title: "NÁVRH MOBILNÍ APLIKACE", features: ["Uživatelský výzkum a UX strategie", "Wireframy a flow", "High-fidelity UI design", "Interaktivní prototyp"], addons: [{ name: "Příprava pro předání vývoji", price: "+$1,500" }, { name: "Podklady pro App Store", price: "+$500" }] },
-      ],
-    },
     testimonials: {
       heading: 'Aova', accent: 'Láska',
       sub: 'Nemusíte nám věřit na slovo. Důvěřují nám lídři odvětví, kteří neustále posouvají hranice.',
@@ -238,15 +215,35 @@ function scrollToId(id: string) {
     requestAnimationFrame(step);
 }
 
-const NAV_LINKS = [
-    { label: 'Work', id: 'work' },
-    { label: 'Services', id: 'services' },
-    { label: 'Process', id: 'process' },
-];
-
 const NAV_EASE = [0.16, 1, 0.3, 1] as const;
 
 // Previously NavThemeIcon lived here, now using ThemeToggle
+
+/* Crossfades text while keeping the button at the width of its longest option */
+function NavLabel({ en, cz }: { en: string; cz: string }) {
+    const lang = useContext(LangContext);
+    const text = lang === 'en' ? en : cz;
+    const spacer = en.length >= cz.length ? en : cz;
+    return (
+        <span className="relative inline-flex items-center justify-center">
+            {/* Invisible spacer holds the max width */}
+            <span className="invisible whitespace-nowrap" aria-hidden>{spacer}</span>
+            {/* Crossfading label */}
+            <AnimatePresence mode="wait">
+                <motion.span
+                    key={lang}
+                    className="absolute inset-0 flex items-center justify-center whitespace-nowrap"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.18 }}
+                >
+                    {text}
+                </motion.span>
+            </AnimatePresence>
+        </span>
+    );
+}
 
 function LangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
     return (
@@ -254,7 +251,7 @@ function LangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void 
             {(['en', 'cz'] as const).map((l) => (
                 <button
                     key={l}
-                    onClick={() => setLang(l)}
+                    onClick={() => setLang(lang === l ? (l === 'en' ? 'cz' : 'en') : l)}
                     className={`px-2 py-1 rounded-full text-[10px] font-semibold uppercase tracking-widest transition-all duration-200 ${
                         lang === l
                             ? 'bg-[var(--text)] text-[var(--surface)]'
@@ -270,7 +267,6 @@ function LangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void 
 
 function Navbar({ isDark, toggleDark, lang, setLang }: { isDark: boolean; toggleDark: () => void; lang: Lang; setLang: (l: Lang) => void }) {
     const [isAtTop, setIsAtTop] = useState(true);
-    const t = useT();
 
     useEffect(() => {
         const handleScroll = () => setIsAtTop(window.scrollY < 80);
@@ -300,7 +296,7 @@ function Navbar({ isDark, toggleDark, lang, setLang }: { isDark: boolean; toggle
                     /* ── SPLIT STATE (at top) ── */
                     <motion.div key="split" className="flex items-center justify-between px-6 md:px-10">
                         {/* Left pill — arrow */}
-                        <motion.div layoutId="nav-left" style={pillStyle} className="flex items-center pointer-events-auto rounded-full backdrop-blur-xl p-1.5 shadow-lg">
+                        <motion.div layoutId="nav-left" layoutDependency={isAtTop} style={pillStyle} className="flex items-center pointer-events-auto rounded-full backdrop-blur-xl p-1.5 shadow-lg">
                             <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} className={iconCls} aria-label="Scroll to bottom">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
@@ -309,25 +305,25 @@ function Navbar({ isDark, toggleDark, lang, setLang }: { isDark: boolean; toggle
                         </motion.div>
 
                         {/* Center pill — nav links + lang toggle on right */}
-                        <motion.div layoutId="nav-center" style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg">
-                            {NAV_LINKS.map(({ id }) => (
-                                <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{t.nav[id as keyof typeof t.nav]}</button>
-                            ))}
+                        <motion.div layoutId="nav-center" layoutDependency={isAtTop} style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg">
+                            <button onClick={() => scrollToId('work')} className={btnCls}><NavLabel en="Work" cz="Práce" /></button>
+                            <button onClick={() => scrollToId('services')} className={btnCls}><NavLabel en="Services" cz="Služby" /></button>
+                            <button onClick={() => scrollToId('process')} className={btnCls}><NavLabel en="Process" cz="Proces" /></button>
                             <div className={divCls} />
                             <LangToggle lang={lang} setLang={setLang} />
                         </motion.div>
 
                         {/* Right pill — book + theme */}
-                        <motion.div layoutId="nav-right" style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg">
-                            <button onClick={() => scrollToId('faq')} className={bookCls}>{t.nav.book}</button>
+                        <motion.div layoutId="nav-right" layoutDependency={isAtTop} style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-lg">
+                            <button onClick={() => scrollToId('faq')} className={bookCls}><NavLabel en="Book" cz="Rezervovat" /></button>
                             <ThemeToggle isDark={isDark} onToggle={toggleDark} />
                         </motion.div>
                     </motion.div>
                 ) : (
                     /* ── MERGED STATE (scrolled) ── */
                     <motion.div key="merged" className="flex justify-center">
-                        <motion.div layoutId="nav-center" style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-xl">
-                            <motion.div layoutId="nav-left" className="flex items-center">
+                        <motion.div layoutId="nav-center" layoutDependency={isAtTop} style={pillStyle} className="flex items-center gap-1 pointer-events-auto rounded-full backdrop-blur-xl px-2 py-1.5 shadow-xl">
+                            <motion.div layoutId="nav-left" layoutDependency={isAtTop} className="flex items-center">
                                 <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={iconCls} aria-label="Scroll to top">
                                     <svg style={{ transform: 'rotate(180deg)' }} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="12" y1="5" x2="12" y2="19" /><polyline points="19 12 12 19 5 12" />
@@ -336,15 +332,15 @@ function Navbar({ isDark, toggleDark, lang, setLang }: { isDark: boolean; toggle
                                 <div className={divCls} />
                             </motion.div>
 
-                            {NAV_LINKS.map(({ id }) => (
-                                <button key={id} onClick={() => scrollToId(id)} className={btnCls}>{t.nav[id as keyof typeof t.nav]}</button>
-                            ))}
+                            <button onClick={() => scrollToId('work')} className={btnCls}><NavLabel en="Work" cz="Práce" /></button>
+                            <button onClick={() => scrollToId('services')} className={btnCls}><NavLabel en="Services" cz="Služby" /></button>
+                            <button onClick={() => scrollToId('process')} className={btnCls}><NavLabel en="Process" cz="Proces" /></button>
 
-                            <motion.div layoutId="nav-right" className="flex items-center gap-1">
+                            <motion.div layoutId="nav-right" layoutDependency={isAtTop} className="flex items-center gap-1">
                                 <div className={divCls} />
                                 <LangToggle lang={lang} setLang={setLang} />
                                 <div className={divCls} />
-                                <button onClick={() => scrollToId('faq')} className={bookCls}>{t.nav.book}</button>
+                                <button onClick={() => scrollToId('faq')} className={bookCls}><NavLabel en="Book" cz="Rezervovat" /></button>
                                 <ThemeToggle isDark={isDark} onToggle={toggleDark} />
                             </motion.div>
                         </motion.div>
@@ -374,8 +370,8 @@ function Hero({ isDark }: { isDark: boolean }) {
     return (
         <section className="relative min-h-[100svh] flex flex-col items-start justify-center pt-32 pb-20 px-8 md:px-16 lg:px-24 overflow-hidden">
 
-            {/* Decorative ambient gradients */}
-            <div className={`absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[450px] md:h-[450px] lg:w-[600px] lg:h-[600px] bg-gradient-to-tr rounded-full blur-[100px] -z-10 animate-pulse pointer-events-none ${isDark ? 'from-[#FF3366]/5 to-[#3366FF]/5' : 'from-[#FF3366]/10 to-[#3366FF]/10'}`} />
+            {/* Decorative ambient gradients — sits behind hero heading */}
+            <div className={`absolute top-1/2 left-[38%] -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[450px] md:h-[450px] lg:w-[600px] lg:h-[600px] bg-gradient-to-tr rounded-full blur-[100px] -z-10 animate-pulse pointer-events-none ${isDark ? 'from-white/5 to-white/3' : 'from-white/80 to-white/20'}`} />
 
             {/* Interactive 3D glass logo element */}
             <HeroLogo3D isDark={isDark} />
@@ -393,13 +389,13 @@ function Hero({ isDark }: { isDark: boolean }) {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                    className="text-6xl md:text-8xl lg:text-[96px] leading-[0.92] tracking-[-0.03em] mb-8 text-[var(--text)]"
+                    className="text-6xl md:text-8xl lg:text-[96px] leading-[0.92] mb-8 text-[var(--text)]"
                 >
-                    <span className="font-black">{t.hero.prefix}</span><br />
-                    <span className="font-serif italic text-[#FF3366]">{t.hero.brands}</span>
-                    <span className="font-black"> &amp; </span>
-                    <span className="font-serif italic text-[#3366FF]">{t.hero.creators}</span>
-                    <span className="font-black">.</span>
+                    <span style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.06em', textTransform: 'none', marginLeft: '-0.09em' }}>{t.hero.prefix}</span><br />
+                    <span className="font-serif italic" style={{ letterSpacing: '-0.06em', display: 'inline-block', padding: '0 0.08em 0 0', margin: '0 -0.08em 0 0', background: 'linear-gradient(135deg, #7a7a7a 0%, #e0e0e0 45%, #888 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{t.hero.creators}</span>
+                    <span style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.06em', textTransform: 'none', margin: '0 0.08em' }}>&amp;</span>
+                    <span className="font-serif italic" style={{ letterSpacing: '-0.06em', display: 'inline-block', padding: '0 0.08em 0 0', margin: '0 -0.08em 0 0', background: 'linear-gradient(135deg, #888 0%, #e0e0e0 45%, #7a7a7a 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{t.hero.brands}</span>
+                    <span style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.06em', textTransform: 'none' }}>.</span>
                 </motion.h1>
 
                 <motion.p
@@ -424,7 +420,7 @@ function Hero({ isDark }: { isDark: boolean }) {
                             rotateX: 12,
                             rotateY: -8,
                             y: -5,
-                            boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)"
+                            boxShadow: "0 25px 50px -12px rgba(180, 180, 200, 0.45)"
                         }}
                         whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
                         style={{ transformStyle: "preserve-3d", perspective: 1000 }}
@@ -486,85 +482,6 @@ function Marquee() {
         </div>
     );
 }
-
-const PRICING_TABS_DATA = [
-    {
-        id: "landing-page",
-        label: "Landing Page",
-        title: "LANDING PAGE",
-        duration: "15-20 Days",
-        gradient: "from-[#FF3366] to-[#FF9933]",
-        price: "$5,149",
-        features: [
-            "Custom Wireframe",
-            "Figma Design Source",
-            "Responsive Design (Mobile & Tablet)",
-            "Updates every 48 hours",
-            "SEO Setup",
-        ],
-        addons: [
-            { name: "Add Framer Dev", price: "+$2,799" },
-            { name: "Extra Pages", price: "+$999" },
-        ],
-        tags: ["WebDesign", "Framer", "React", "NextJS"]
-    },
-    {
-        id: "branding",
-        label: "Branding",
-        title: "BRANDING",
-        duration: "10-15 Days",
-        gradient: "from-[#3366FF] to-[#33CCFF]",
-        price: "$3,499",
-        features: [
-            "Logo Design (3 Concepts)",
-            "Brand Guidelines",
-            "Typography & Colors",
-            "Social Media Kit",
-        ],
-        addons: [
-            { name: "Brand Book Strategy", price: "+$1,200" },
-        ],
-        tags: ["Identity", "Visuals", "Guidelines"]
-    },
-    {
-        id: "product-animation",
-        label: "Product Animation",
-        title: "PRODUCT ANIMATION",
-        duration: "14-25 Days",
-        gradient: "from-[#9933FF] to-[#FF33CC]",
-        price: "$4,299",
-        features: [
-            "3D Product Modeling",
-            "Texturing & Lighting",
-            "15-30s Loop Animation",
-            "High-Res Rendering",
-        ],
-        addons: [
-            { name: "Interactive WebGL", price: "+$3,500" },
-            { name: "Extra Angled Shots", price: "+$800" },
-        ],
-        tags: ["3D", "Spline", "Blender", "Motion"]
-    },
-    {
-        id: "mobile-app",
-        label: "Mobile App Design",
-        title: "MOBILE APP DESIGN",
-        duration: "20-30 Days",
-        gradient: "from-[#00CC66] to-[#a8ff78]",
-        price: "$6,999",
-        features: [
-            "User Research & UX Strategy",
-            "Wireframes & Flow",
-            "High-Fidelity UI Design",
-            "Interactive Prototype",
-        ],
-        addons: [
-            { name: "Development Handoff Prep", price: "+$1,500" },
-            { name: "App Store Assets", price: "+$500" },
-        ],
-        tags: ["iOS", "Android", "UIUX", "Figma"]
-    }
-];
 
 
 const SERVICES_DATA = {
@@ -657,14 +574,14 @@ function InteractiveServices() {
             <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-6xl font-serif tracking-tight mb-8">{t.services.heading}</h2>
+                    <h2 className="text-4xl md:text-6xl tracking-tight mb-8">{t.services.heading}</h2>
 
                     <div className="inline-flex flex-col md:flex-row p-1.5 bg-[#111111] border border-white/10 rounded-[32px] md:rounded-full gap-2 relative z-10 w-full md:w-auto shadow-xl">
                         {(['creator', 'brand'] as AudienceType[]).map((type) => (
                             <button
                                 key={type}
                                 onClick={() => setAudience(audience === type ? null : type)}
-                                className={`px-8 py-3.5 rounded-full text-lg md:text-xl font-serif transition-all duration-300 w-full md:w-auto ${audience === type
+                                className={`px-8 py-3.5 rounded-full text-lg md:text-xl transition-all duration-300 w-full md:w-auto ${audience === type
                                     ? `${SERVICES_DATA[type].accent} text-black font-semibold shadow-[0_0_20px_rgba(255,255,255,0.1)] scale-100`
                                     : 'hover:bg-white/5 text-white/50 hover:text-white'
                                     }`}
@@ -688,7 +605,7 @@ function InteractiveServices() {
                             <div className="pt-2 pb-8">
                                 <div className={`w-full p-8 md:p-16 rounded-[40px] border border-white/5 transition-colors duration-500 overflow-hidden relative mb-12 bg-[#0A0A0A] shadow-2xl ${SERVICES_DATA[audience].hero.color}`}>
                                     <div className="max-w-3xl relative z-10">
-                                        <h4 className={`text-4xl md:text-6xl font-serif mb-6 leading-tight ${SERVICES_DATA[audience].theme}`}>{t.services[audience].heroTitle}</h4>
+                                        <h4 className={`text-4xl md:text-6xl mb-6 leading-tight ${SERVICES_DATA[audience].theme}`}>{t.services[audience].heroTitle}</h4>
                                         <p className="text-xl md:text-2xl text-white/70 font-medium leading-relaxed">{t.services[audience].heroDesc}</p>
                                     </div>
                                     <div className={`absolute -right-20 -bottom-20 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none ${SERVICES_DATA[audience].accent} opacity-[0.05]`} />
@@ -705,7 +622,7 @@ function InteractiveServices() {
                                                 </div>
                                             )}
                                             <div>
-                                                <h4 className="text-2xl font-serif text-white mb-2">{card.title}</h4>
+                                                <h4 className="text-2xl text-white mb-2">{card.title}</h4>
                                                 <p className="text-sm text-white/50 font-medium mb-8 pb-8 border-b border-white/5">{card.desc}</p>
 
                                                 <ul className="space-y-4 mb-16">
@@ -722,7 +639,7 @@ function InteractiveServices() {
 
                                             <div className="pt-8 border-t border-white/5 mt-auto">
                                                 <div className="flex items-end gap-2 mb-6">
-                                                    <span className="text-5xl font-serif text-white tracking-tight leading-none">{meta.price}</span>
+                                                    <span className="text-5xl text-white tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>{meta.price}</span>
                                                     <span className="text-white/40 text-sm font-bold uppercase pb-1 tracking-widest">{meta.period}</span>
                                                 </div>
                                                 <button className={`w-full py-4 rounded-2xl font-semibold transition-colors duration-300 ${meta.featured ? `${SERVICES_DATA[audience].accent} text-black` : 'bg-white/5 text-white hover:bg-white/10'}`}>
@@ -742,123 +659,6 @@ function InteractiveServices() {
     );
 }
 
-function PricingServices() {
-    const tr = useT();
-    const [activeTab, setActiveTab] = useState(PRICING_TABS_DATA[0].id);
-    const tabIndex = PRICING_TABS_DATA.findIndex(t => t.id === activeTab);
-    const data = { ...PRICING_TABS_DATA[tabIndex], ...tr.pricing.tabs[tabIndex] };
-    const [activeAddons, setActiveAddons] = useState<Record<string, boolean>>({});
-
-    useEffect(() => {
-        setActiveAddons({});
-    }, [activeTab]);
-
-    const handleAddonToggle = (addonName: string) => {
-        setActiveAddons(prev => ({ ...prev, [addonName]: !prev[addonName] }));
-    };
-
-    return (
-        <section className="relative py-32" id="services">
-            <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
-            <div className="pg-inner">
-                <div className="flex flex-wrap justify-center gap-2 mb-12 relative z-10">
-                    {PRICING_TABS_DATA.map((tab, i) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`px-8 py-3 rounded-full text-base font-semibold transition-all duration-300 shadow-sm ${activeTab === tab.id
-                                ? "bg-[var(--text)] text-[var(--surface)] scale-105"
-                                : "bg-[var(--surface)] text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--border)] border border-[var(--border)]"
-                                }`}
-                        >
-                            {tr.pricing.tabs[i].label}
-                        </button>
-                    ))}
-                </div>
-
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={data.id}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                        className="bg-[var(--surface)] border border-[var(--border)] rounded-[32px] p-6 lg:p-10 shadow-[0_20px_40px_rgba(0,0,0,0.05)] flex flex-col lg:flex-row gap-10 relative z-10"
-                    >
-                        <div className="flex-1 flex flex-col justify-between">
-                            <div>
-                                <div className="flex items-center gap-4 mb-8">
-                                    <h3 className="text-4xl md:text-5xl font-black uppercase tracking-tight">{data.title}</h3>
-                                    <div className="px-3 py-1 rounded-full border border-[var(--border)] text-xs text-[var(--muted)] flex items-center gap-2 font-mono">
-                                        <span className="text-xl leading-none">⏱</span> {data.duration}
-                                    </div>
-                                </div>
-
-                                {data.addons && data.addons.length > 0 && (
-                                    <div className="mb-8 space-y-3">
-                                        {data.addons.map((addon) => (
-                                            <div key={addon.name} className="flex items-center justify-between p-4 rounded-2xl border border-[var(--border)] bg-[var(--bg)] shadow-sm">
-                                                <div className="flex items-center gap-4">
-                                                    <span className="font-bold text-[var(--text)] text-sm md:text-base">{addon.name}</span>
-                                                    <span className="text-[10px] uppercase font-bold text-[#FF3366] bg-[#FF3366]/10 px-2 py-0.5 rounded-sm tracking-widest">{addon.price}</span>
-                                                </div>
-                                                <button
-                                                    onClick={() => handleAddonToggle(addon.name)}
-                                                    className={`w-12 h-6 rounded-full transition-colors duration-300 relative ${activeAddons[addon.name] ? 'bg-[var(--text)]' : 'bg-[var(--border-hover)]'}`}
-                                                >
-                                                    <div className={`w-5 h-5 bg-[var(--surface)] rounded-full absolute top-0.5 transition-all duration-300 shadow-md ${activeAddons[addon.name] ? 'left-[26px] bg-white' : 'left-0.5'}`} />
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                <ul className="space-y-4 mb-8">
-                                    {data.features.map((feat, i) => (
-                                        <li key={i} className="flex items-center gap-3 text-base md:text-lg text-[var(--text)]">
-                                            <span className="w-6 h-6 shrink-0 rounded-full bg-[var(--text)] text-[var(--surface)] flex items-center justify-center text-sm">✓</span>
-                                            {feat}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            <div className="flex flex-wrap gap-2 mt-8">
-                                {data.tags.map(tag => (
-                                    <span key={tag} className="px-3 py-1 bg-[var(--border)] text-[var(--muted)] text-xs rounded-full font-mono tracking-widest uppercase">
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="w-full lg:w-[400px] shrink-0 flex flex-col gap-4">
-                            <div className={`w-full aspect-square rounded-[32px] bg-gradient-to-br ${data.gradient} p-8 flex flex-col justify-between text-white relative overflow-hidden shadow-2xl`}>
-                                <div className="absolute -bottom-10 -right-10 text-[180px] opacity-10 font-black leading-none drop-shadow-lg pointer-events-none select-none">A</div>
-
-                                <div className="relative z-10">
-                                    <p className="text-white text-xs font-bold tracking-[0.2em] uppercase mb-1">{data.label}</p>
-                                    <h4 className="text-4xl font-serif italic drop-shadow-md">{data.title.toLowerCase()}</h4>
-                                </div>
-                                <div className="relative z-10">
-                                    <p className="text-xs font-bold uppercase tracking-widest text-white/70 mb-1">{tr.pricing.startingFrom}</p>
-                                    <p className="text-6xl md:text-7xl font-black tracking-tighter drop-shadow-lg">{data.price}</p>
-                                </div>
-                            </div>
-
-                            <button className="w-full py-4 mt-2 rounded-[20px] bg-[var(--text)] text-[var(--surface)] text-lg font-bold shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
-                                {tr.pricing.sendMessage}
-                            </button>
-                            <button className="w-full py-4 rounded-[20px] bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] text-lg font-bold hover:bg-[var(--border)] transition-colors duration-300 shadow-sm">
-                                {tr.pricing.bookCall}
-                            </button>
-                        </div>
-                    </motion.div>
-                </AnimatePresence>
-            </div>
-        </section>
-    );
-}
 
 /* ================================================================
 
@@ -906,7 +706,7 @@ function WorkSection() {
                                 {/* Bottom gradient + title */}
                                 <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent z-10 pointer-events-none" />
                                 <div className="absolute bottom-5 left-5 z-20">
-                                    <h3 className="text-white text-xl font-serif leading-tight">{p.name}</h3>
+                                    <h3 className="text-white text-xl leading-tight">{p.name}</h3>
                                 </div>
                             </div>
                         ))}
@@ -923,7 +723,7 @@ function WorkSection() {
                             rotateX: 12,
                             rotateY: -8,
                             y: -5,
-                            boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)"
+                            boxShadow: "0 25px 50px -12px rgba(180, 180, 200, 0.45)"
                         }}
                         whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
                         style={{ transformStyle: "preserve-3d", perspective: 1000 }}
@@ -955,7 +755,7 @@ function Testimonials() {
     return (
         <section className="pt-16 pb-32 overflow-hidden bg-transparent text-[var(--text)] relative mt-0" id="testimonials">
             <div className="pg-inner mb-16 relative z-10">
-                <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">{t.testimonials.heading} <span className="italic text-[#FF3366]">{t.testimonials.accent}</span></h2>
+                <h2 className="text-5xl md:text-7xl tracking-tight mb-6">{t.testimonials.heading} <span className="font-serif italic text-[#FF3366]">{t.testimonials.accent}</span></h2>
                 <p className="text-[var(--muted)] text-lg max-w-xl">{t.testimonials.sub}</p>
             </div>
 
@@ -1000,7 +800,7 @@ function Testimonials() {
                                 ))}
                             </div>
 
-                            <p className="text-xl md:text-2xl font-serif text-[var(--text)] whitespace-normal leading-snug">&ldquo;{t.text}&rdquo;</p>
+                            <p className="text-xl md:text-2xl font-serif italic text-[var(--text)] whitespace-normal leading-snug">&ldquo;{t.text}&rdquo;</p>
                         </div>
                     ))}
                 </div>
@@ -1034,7 +834,7 @@ function BuyingProcess() {
 
             <div className="pg-inner relative">
                 <div className="text-center mb-20">
-                    <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-6">{t.process.heading} <span className="italic text-[#00CC66]">{t.process.accent}</span></h2>
+                    <h2 className="text-5xl md:text-7xl tracking-tight mb-6">{t.process.heading} <span className="font-serif italic text-[#00CC66]">{t.process.accent}</span></h2>
                     <p className="text-[var(--muted)] text-lg max-w-xl mx-auto">{t.process.sub}</p>
                 </div>
 
@@ -1058,7 +858,7 @@ function BuyingProcess() {
                                     whileInView={{ borderColor: '#00CC66', backgroundColor: '#00CC66', color: '#111111' }}
                                     viewport={{ margin: "-20%" }}
                                     transition={{ duration: 0.6 }}
-                                    className="w-14 h-14 shrink-0 rounded-full border-2 md:border-4 shadow-sm flex items-center justify-center font-serif text-lg font-bold z-10 transition-colors md:mb-8 bg-[var(--surface)]"
+                                    className="w-14 h-14 shrink-0 rounded-full border-2 md:border-4 shadow-sm flex items-center justify-center text-lg font-bold z-10 transition-colors md:mb-8 bg-[var(--surface)]"
                                 >
                                     {step.num}
                                 </motion.div>
@@ -1088,47 +888,35 @@ function BuyingProcess() {
    ================================================================ */
 function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boolean, onToggle: () => void }) {
     return (
-        <BorderGlow
-            className="mb-4 w-full rounded-2xl group overflow-hidden"
-            borderRadius={16}
-            backgroundColor="#0c0d0d"
-            edgeSensitivity={30}
-            glowColor="0 0 100"
-            colors={['#ffffff', '#aaaaaa', '#555555']}
-            animated={false}
-        >
-            <div className={`p-6 transition-all duration-300 w-full rounded-2xl relative bg-[#0c0d0d]`} style={{ backgroundImage: "radial-gradient(circle 500px at 0% 0%, #202020 0%, #111 40%, #0c0d0d 100%)" }}>
-                <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
-
-                <div className="relative z-10 w-full">
-                    <button
-                        onClick={onToggle}
-                        className="w-full flex items-center justify-between text-left focus:outline-none cursor-none"
-                    >
-                        <span className={`text-xl md:text-2xl font-serif transition-colors ${isOpen ? "text-white" : "text-white/60"}`}>{q}</span>
-                        <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${isOpen ? "bg-white text-black border-white rotate-45" : "border-white/20 text-white/40"}`}>
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                <line x1="6" y1="2" x2="6" y2="10" />
-                                <line x1="2" y1="6" x2="10" y2="6" />
-                            </svg>
-                        </span>
-                    </button>
-                    <AnimatePresence>
-                        {isOpen && (
-                            <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.3, ease: "easeInOut" }}
-                                className="overflow-hidden"
-                            >
-                                <p className="pt-4 text-white/50 text-lg max-w-2xl">{a}</p>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
+        <div className="mb-4 w-full rounded-2xl overflow-hidden border border-white/[0.08] hover:border-white/[0.15] transition-colors duration-300" style={{ backgroundImage: "radial-gradient(circle 500px at 0% 0%, #202020 0%, #111 40%, #0c0d0d 100%)" }}>
+            <div className="p-6 w-full">
+                <button
+                    onClick={onToggle}
+                    className="w-full flex items-center justify-between text-left focus:outline-none cursor-none"
+                >
+                    <span className={`text-xl md:text-2xl transition-colors ${isOpen ? "text-white" : "text-white/60"}`} style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}>{q}</span>
+                    <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all shrink-0 ml-4 ${isOpen ? "bg-white text-black border-white rotate-45" : "border-white/20 text-white/40"}`}>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                            <line x1="6" y1="2" x2="6" y2="10" />
+                            <line x1="2" y1="6" x2="10" y2="6" />
+                        </svg>
+                    </span>
+                </button>
+                <AnimatePresence>
+                    {isOpen && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                            className="overflow-hidden"
+                        >
+                            <p className="pt-4 text-white/50 text-lg max-w-2xl">{a}</p>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
-        </BorderGlow>
+        </div>
     );
 }
 
@@ -1266,7 +1054,7 @@ function FaqSection() {
                                                 </button>
                                             )}
                                             <img src={`https://i.pravatar.cc/200?u=${member.avatar}`} alt={member.name} className={`rounded-full border-4 border-white/20 shadow-xl object-cover mb-3 ${absD === 0 ? 'w-20 h-20' : 'w-14 h-14'}`} />
-                                            <h2 className={`font-serif font-bold text-white leading-tight ${absD === 0 ? 'text-2xl' : 'text-lg'}`}>{member.name}</h2>
+                                            <h2 className={`font-bold text-white leading-tight ${absD === 0 ? 'text-2xl' : 'text-lg'}`}>{member.name}</h2>
                                             <p className="text-white/70 text-xs font-semibold uppercase tracking-widest mt-0.5">{member.role}</p>
                                             {absD === 0 && <p className="text-white/50 text-[11px] mt-1 flex items-center gap-1"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" /><circle cx="12" cy="9" r="2.5" /></svg>{member.location}</p>}
                                         </div>
@@ -1302,8 +1090,8 @@ function FaqSection() {
 
                     {/* Left Column Component: FAQ */}
                     <div className="lg:col-span-7">
-                        <h2 className="text-5xl md:text-7xl font-serif tracking-tight mb-16">
-                            {t.faq.heading} <span className="italic text-[#00CC66]">{t.faq.accent}</span>
+                        <h2 className="text-5xl md:text-7xl tracking-tight mb-16">
+                            {t.faq.heading} <span className="font-serif italic text-[#00CC66]">{t.faq.accent}</span>
                         </h2>
                         <div>
                             {t.faq.items.map((faq, i) => (
@@ -1352,31 +1140,31 @@ function FaqSection() {
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=sarah_aova" alt="Sarah" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif text-[15px] font-medium text-white leading-none tracking-tight">Sarah</p>
+                                                <p className="text-[15px] font-medium text-white leading-none tracking-tight">Sarah</p>
                                             </div>,
                                             <div key="t2" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=marcus_aova" alt="Marcus" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif text-[15px] font-medium text-white leading-none tracking-tight">Marcus</p>
+                                                <p className="text-[15px] font-medium text-white leading-none tracking-tight">Marcus</p>
                                             </div>,
                                             <div key="t3" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=elena_aova" alt="Elena" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif text-[15px] font-medium text-white leading-none tracking-tight">Elena</p>
+                                                <p className="text-[15px] font-medium text-white leading-none tracking-tight">Elena</p>
                                             </div>,
                                             <div key="t4" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
                                                     <img src="/Kudy.png" alt="Kudy" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif text-[15px] font-medium text-white leading-none tracking-tight">Kudy</p>
+                                                <p className="text-[15px] font-medium text-white leading-none tracking-tight">Kudy</p>
                                             </div>,
                                             <div key="t5" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=amina_aova" alt="Amina" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif text-[15px] font-medium text-white leading-none tracking-tight">Amina</p>
+                                                <p className="text-[15px] font-medium text-white leading-none tracking-tight">Amina</p>
                                             </div>
                                         ]}
                                     />
@@ -1469,7 +1257,7 @@ function FaqSection() {
                                             rotateX: 12,
                                             rotateY: -8,
                                             y: -5,
-                                            boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)"
+                                            boxShadow: "0 25px 50px -12px rgba(180, 180, 200, 0.45)"
                                         }}
                                         whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
                                         style={{ transformStyle: "preserve-3d", perspective: 1000 }}
@@ -1493,7 +1281,7 @@ function FaqSection() {
                                             )}
                                         </svg>
                                         <span className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-2 transition-colors">{copied ? t.faq.copied : t.faq.preferEmail}</span>
-                                        <span className="text-lg md:text-xl font-serif text-white group-hover/email:text-[#FF3366] transition-colors">aovastudio@gmail.com</span>
+                                        <span className="text-lg md:text-xl text-white group-hover/email:text-[#FF3366] transition-colors" style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}>aovastudio@gmail.com</span>
                                     </button>
                                 </div>
                                 </div>
@@ -1520,7 +1308,7 @@ function Footer() {
         <footer className="relative bg-[#111111] text-white py-20 rounded-t-[40px] md:rounded-t-[80px] mt-20 overflow-hidden">
             <div className="absolute inset-0 bg-dots opacity-[0.05] pointer-events-none -z-10 mix-blend-overlay" />
             <div className="pg-inner flex flex-col items-center text-center">
-                <h2 className="text-6xl md:text-[120px] leading-none font-serif tracking-tight mb-12 text-[#FF3366] text-center pointer-events-none">
+                <h2 className="text-6xl md:text-[120px] leading-none tracking-tight mb-12 text-[#FF3366] text-center pointer-events-none">
                     <span
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}
@@ -1553,7 +1341,7 @@ function Footer() {
                 </h2>
                 <motion.button
                     onClick={triggerBookingSpark}
-                    whileHover={{ scale: 1.05, rotateX: 12, rotateY: -8, y: -5, boxShadow: "0 25px 50px -12px rgba(255, 51, 102, 0.25)" }}
+                    whileHover={{ scale: 1.05, rotateX: 12, rotateY: -8, y: -5, boxShadow: "0 25px 50px -12px rgba(180, 180, 200, 0.45)" }}
                     whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
                     style={{ transformStyle: "preserve-3d", perspective: 1000 }}
                     className="pg-btn bg-white text-black hover:bg-[#FF3366] hover:text-white hover:border-[#FF3366] !text-lg !px-8 !py-4 mb-32 shadow-xl transition-colors duration-300"
@@ -1616,7 +1404,6 @@ export default function HomePage() {
             <Hero isDark={isDark} />
             <WorkSection />
             <InteractiveServices />
-            <PricingServices />
 
             <Testimonials />
 

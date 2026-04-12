@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Outfit } from "next/font/google";
+import { Instrument_Serif, Outfit, Inclusive_Sans } from "next/font/google";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -12,6 +12,12 @@ const instrumentSerif = Instrument_Serif({
 const outfit = Outfit({
 	variable: "--font-outfit",
 	subsets: ["latin"],
+});
+
+const inclusiveSans = Inclusive_Sans({
+	variable: "--font-display",
+	subsets: ["latin"],
+	weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -76,7 +82,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${instrumentSerif.variable} ${outfit.variable} antialiased`}
+				className={`${instrumentSerif.variable} ${outfit.variable} ${inclusiveSans.variable} antialiased`}
 			>
 				<script
 					type="application/ld+json"
