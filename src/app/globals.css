@@ -18,6 +18,12 @@
 	--shadow-btn-hover: rgba(0, 0, 0, 0.1);
 	--marquee-bg: var(--text);
 	--marquee-text: var(--bg);
+
+	--booking-bg: #b8b8b8; /* Outer edge */
+	--booking-inner: #e2e2e2;
+	--booking-grad: radial-gradient(circle 700px at 0% 0%, #ffffff 0%, #eaeaea 40%, #d0d0d0 100%);
+	--booking-email-bg: #e0e0e0;
+	--booking-email-hover: #cfcfcf;
 }
 
 /* Dark Mode Overrides */
@@ -34,6 +40,12 @@ body.dark {
 	--marquee-bg: #1A1A1A;
 	--marquee-text: var(--text);
 
+	--booking-bg: #0c0d0d;
+	--booking-inner: #0c0d0d;
+	--booking-grad: radial-gradient(circle 700px at 0% 0%, #303030 0%, #111111 40%, #0c0d0d 100%);
+	--booking-email-bg: #0a0a0a;
+	--booking-email-hover: #111111;
+
 	color-scheme: dark;
 }
 
@@ -49,6 +61,28 @@ html {
 	*::before,
 	*::after {
 		cursor: none !important;
+	}
+}
+
+/* Custom Cursor */
+@media (pointer: fine) {
+	body {
+		cursor: none;
+	}
+
+	.pg-cursor-dot {
+		position: fixed;
+		top: 0;
+		left: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		pointer-events: none;
+		transform: translate3d(0, 0, 0);
+		z-index: 9999;
+		mix-blend-mode: exclusion;
+		color: white;
+		will-change: transform;
 	}
 }
 
@@ -120,28 +154,6 @@ a:not(.pg-btn) {
 ::selection {
 	background: var(--accent);
 	color: white;
-}
-
-/* Custom Cursor */
-@media (pointer: fine) {
-	body {
-		cursor: none;
-	}
-
-	.pg-cursor-dot {
-		position: fixed;
-		top: 0;
-		left: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		pointer-events: none;
-		transform: translate3d(0, 0, 0);
-		z-index: 9999;
-		mix-blend-mode: exclusion;
-		color: white;
-		will-change: transform;
-	}
 }
 
 /* ═══════════════════════════════════════════
@@ -267,44 +279,6 @@ a:not(.pg-btn) {
 /* ═══════════════════════════════════════════
    BOOK-A-CALL PAGE
    ═══════════════════════════════════════════ */
-
-/* Old cursor for book-a-call page */
-.cursor {
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: 9999;
-	pointer-events: none;
-}
-
-.cursor-dot {
-	width: 6px;
-	height: 6px;
-	background: var(--accent);
-	border-radius: 50%;
-	position: absolute;
-	transform: translate(-50%, -50%);
-	transition: transform 0.1s;
-}
-
-.cursor-ring {
-	width: 32px;
-	height: 32px;
-	border: 1px solid rgba(255, 51, 102, 0.4);
-	border-radius: 50%;
-	position: absolute;
-	transform: translate(-50%, -50%);
-	transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s,
-		border-color 0.3s;
-}
-
-body:has(a:hover) .cursor-ring,
-body:has(button:hover) .cursor-ring {
-	width: 48px;
-	height: 48px;
-	background: rgba(255, 51, 102, 0.06);
-	border-color: var(--accent);
-}
 
 /* Nav (book-a-call) */
 nav.site-nav {

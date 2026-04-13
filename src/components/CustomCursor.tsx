@@ -8,11 +8,16 @@ export default function CustomCursor() {
     useEffect(() => {
         const onMouseMove = (e: MouseEvent) => {
             if (dotRef.current) {
+                // Direct hardware-accelerated transform via sync hook
                 dotRef.current.style.transform = `translate3d(${e.clientX - 2}px, ${e.clientY - 2}px, 0)`;
             }
         };
-        window.addEventListener("mousemove", onMouseMove);
-        return () => window.removeEventListener("mousemove", onMouseMove);
+
+        window.addEventListener("mousemove", onMouseMove, { passive: true });
+
+        return () => {
+            window.removeEventListener("mousemove", onMouseMove);
+        };
     }, []);
 
     return (

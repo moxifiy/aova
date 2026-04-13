@@ -13,6 +13,7 @@ import CustomCursor from '@/components/CustomCursor';
 
 
 
+
 /* ================================================================
    TRANSLATIONS
    ================================================================ */
@@ -126,22 +127,22 @@ const T = {
       cta: 'Rezervujte místo',
     },
     marquee: [
-      "Propojujeme vybrané kreativce s vybranými značkami.",
-      "Kde správní tvůrci nacházejí správné plátno.",
-      "Zapalujeme potenciál značek s nejlepšími kreativci.",
-      "Matchmaking na míru pro kreativní průmysl.",
+      "Spojujeme výjimečné tvůrce s prémiovými značkami.",
+      "Místo, kde správní tvůrci nacházejí své publikum.",
+      "Akcelerujeme růst značek pomocí elitních kreativců.",
+      "Design na míru pro novou generaci byznysu.",
     ],
     work: {
       heading: 'Vybrané projekty',
-      sub: 'Ponoření, identita a škálování pro příští generaci kreativních podniků.',
+      sub: 'Identita a vizuální systémy pro novou generaci odvážných značek.',
       archive: 'Zobrazit celý archiv',
     },
     services: {
       heading: 'Pro koho stavíme?',
       creator: {
         tabLabel: 'Pro tvůrce',
-        heroTitle: 'Obsah, který roste. Kanály, které vydrží.',
-        heroDesc: "AOVA zajišťuje kompletní kreativní produkci pro tvůrce — od střihu pro maximální retenci po algoritmickou strategii růstu. Vy se soustřeďte na kameru, my postavíme motor.",
+        heroTitle: 'Obsah, který sbírá views. Kanály, které rostou.',
+        heroDesc: "AOVA zajišťuje kompletní vizuální produkci pro tvůrce — od střihu pro maximální retenci až po vizuální styl miniatur. Vy se soustředíte na obsah, my stavíme vizuál.",
         cards: [
           { title: "Starter Pack", desc: "Kompletní obsahový základ.", features: ["1-2x dlouhá videa", "6x krátká videa", "Základní repurposing (dlouhé → krátké)", "2 miniatury na video", "Základní směr vizuálu miniatur", "Mini obsahový plán (1-2 týdny)", "10-15 háčků", "Základní plán zveřejňování"] },
           { title: "YouTube Engine", desc: "Kompletní produkce a systém růstu.", features: ["4x dlouhá videa", "10-15 krátkých videí", "Kompletní systém repurposingu", "Střih pro retenci", "Přestrukturování narace", "Optimalizace háčků", "3–5 miniatur na video", "Systém miniatur (konzistence stylu)", "Iterace zaměřená na CTR", "Kompletní blueprint obsahové strategie", "Knihovna 30–50 háčků", "Obsahové formáty (opakovatelné struktury)", "Analýza konkurence", "Obsahový kalendář"] },
@@ -150,8 +151,8 @@ const T = {
       },
       brand: {
         tabLabel: 'Pro značky',
-        heroTitle: 'Design, který konvertuje. Přítomnost, která se prohlubuje.',
-        heroDesc: "AOVA buduje brandovou infrastrukturu — nejen vizuály. Navrhujeme systémy, které přitahují pozornost, pohánějí akci a škálují bez námahy.",
+        heroTitle: 'Design, který rezonuje. Přítomnost, která sílí.',
+        heroDesc: "AOVA buduje brandovou infrastrukturu — nejen pěkné logo. Navrhujeme vizuální systémy, které přitahují pozornost a působí prémiově na každém kroku.",
         cards: [
           { title: "Brand Identity", desc: "Existujete, teď podle toho vypadejte.", features: ["Logo systém (až 5 konceptů)", "Typografie a barvy", "Brand guidelines", "Social media kit", "Plná vlastnická práva"] },
           { title: "Brand in Motion", desc: "Vaše identita, živě.", features: ["Vše z Pack 01", "Animace loga (úvod + smyčka)", "Úvodní video", "Motion systém"] },
@@ -193,16 +194,16 @@ const T = {
       preferEmail: 'Preferujete e-mail?',
       copied: 'Zkopírováno',
       items: [
-        { q: "Jaké typy projektů přijímáte?", a: "Pracujeme na brand identity, UI/UX designu, design systémech, motion grafice, video produkci a webovém vývoji. Jsme selektivní — přijímáme méně klientů, aby každý dostal naši plnou pozornost a péči." },
-        { q: "Jak dlouho typický projekt trvá?", a: "Projekty brand identity trvají obvykle 6–10 týdnů. Web a product design 8–16 týdnů. Video a motion se liší rozsahem, ale většina balíčků funguje na dvoutýdenních sprintech." },
-        { q: "Jaká je vaše cenová struktura?", a: "Pracujeme na bázi projektového poplatku pro jednorázové práce a sprint retainer modelu pro průběžné klienty. Vždy znáte celkové náklady předem — žádné hodinové účtování, žádná překvapení." },
-        { q: "Spolupracujete s raně fázovými značkami?", a: "Ano. Máme balíčky přímo pro zakladatele a raně fázové značky, kteří potřebují silný základ rychle — brand identity, social kit a motion podklady — bez režie velké agentury." },
-        { q: "S kým budu skutečně pracovat?", a: "Leif a Kudy vedou každý projekt osobně. Budete jednat přímo se zakladateli ohledně strategie, kreativního směru a recenzí — ne s account manažery nebo juniorními pracovníky." },
-        { q: "Jak funguje sprint model?", a: "Pracujeme ve dvoutýdenních sprintech. Každý sprint začíná scope callem, produkujeme a dodáváme podklady, pak uzavíráme recenzí. Průběžní klienti mohou rezervovat po sobě jdoucí sprinty za uzamčenou retainer sazbu." },
-        { q: "Jak vypadá onboarding?", a: "Začíná 30–45minutovým discovery callem. Poté sestavíme strategický plán, představíme vám ho, potvrdíme rozsah a zahájíme první sprint — obvykle do týdne od podpisu." },
-        { q: "Můžeme spolupracovat jen na jedné věci?", a: "Rozhodně. Nepotřebujete dlouhodobý závazek pro začátek. Zvládneme jeden projekt, dodáme ho a pak uvidíme. Mnoho našich průběžných klientů začalo jedním sprintem." },
-        { q: "A co revize?", a: "Revize jsou součástí procesu, ne past. Zahrnujeme kola zpětné vazby do každého sprintu. U větších rozsahů se předem dohodujeme na kolech revizí, aby nedocházelo k nejasnostem." },
-        { q: "Zajišťujete distribuci nebo zveřejňování?", a: "Na straně Creator Growth Engine ano — správa zveřejňování a distribuční strategie jsou dostupné. Na straně Brand vám dáme doporučení pro distribuci, ale realizace zůstává na vašem týmu." },
+        { q: "Jaké typy projektů přijímáte?", a: "Tvoříme brand identity, UI/UX design, vizuální systémy, motion grafiku a komplexní weby. Jsme cíleně selektivní — pracujeme jen s několika klienty najednou, aby každý dostal maximální péči." },
+        { q: "Jak dlouho typický projekt trvá?", a: "Brand identita zabere obvykle 6–10 týdnů. Weby a produkty 8–16 týdnů. U obsahu a videa fungujeme formou pevných dvoutýdenních sprintů." },
+        { q: "Jaká je vaše cenová struktura?", a: "U jednorázových projektů fungujeme s předem stanovenou pevnou částkou. Pro dlouhodobé partnery nabízíme model 'sprint retainer'. Vždy tak předem víte přesnou cenu – žádná hodinová sazba a nečekané výdaje." },
+        { q: "Spolupracujete s mladými značkami?", a: "Ano, máme připravené balíčky přímo pro zakladatele, kteří potřebují profesionální základy opravdu rychle — brand identitu, sítě a motion podklady — aniž by museli platit režii velkých agentur." },
+        { q: "S kým budu reálně komunikovat?", a: "Na všech projektech se podílí přímo Leif a Kudy. Vyjednávání, strategii i kreativu tak řešíte se samotnými zakladateli, ne s juniorními account manažery." },
+        { q: "Jak funguje sprint model?", a: "Pracujeme ve dvoutýdenních cyklech. Začneme jasným zadáním, vytvoříme a odevzdáme podklady, a následně vše uzavřeme revizí. Dlouhodobí klienti si tyto sprinty často zamykají dopředu." },
+        { q: "Jak vypadá onboarding?", a: "Začíná krátkým 30minutovým úvodním hovorem. Poté vymyslíme plán, naceníme spolupráci a do týdne od schválení otevíráme první sprint." },
+        { q: "Můžeme spolupracovat jen na jednom videu/věci?", a: "Rozhodně. Nepotřebujeme se hned vázat na půl roku. Uděláme jeden projekt a na jeho základě uvidíme. Spousta našich dlouhodobých klientů začínala jedním malým sprintem." },
+        { q: "A co revize?", a: "Revize jsou běžnou součástí procesu. Zahrnujeme kola zpětné vazby do každého bloku práce. Abyste měli jistotu, počty možných revizí u velkých projektů předem striktně domlouváme." },
+        { q: "Řešíte i distribuci nebo vkládání na sítě?", a: "U Creator enginu můžeme nabídnout strategii a technickou správu příspěvků. Lidem z Brand sekce předáme doporučení na distribuci, ale samotná exekuce a klikání už zůstává na nich." },
       ],
     },
     footer: {
@@ -423,9 +424,9 @@ function Hero({ isDark }: { isDark: boolean }) {
                     className="text-6xl md:text-8xl lg:text-[96px] leading-[0.92] mb-8 text-[var(--text)]"
                 >
                     <span style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.06em', textTransform: 'none', marginLeft: '-0.09em' }}>{t.hero.prefix}</span><br />
-                    <span className="font-serif italic" style={{ letterSpacing: '-0.06em', display: 'inline-block', padding: '0 0.08em 0 0', margin: '0 -0.08em 0 0', background: 'linear-gradient(135deg, #7a7a7a 0%, #e0e0e0 45%, #888 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{t.hero.creators}</span>
+                    <span className="font-serif italic" style={{ letterSpacing: '-0.06em', display: 'inline-block', padding: '0 0.08em 0.12em 0', margin: '0 -0.08em -0.12em 0', backgroundImage: isDark ? 'linear-gradient(135deg, #7a7a7a 0%, #e0e0e0 45%, #888 100%)' : 'linear-gradient(135deg, #444 0%, #888 45%, #111 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{t.hero.creators}</span>
                     <span style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.06em', textTransform: 'none', margin: '0 0.08em' }}>&amp;</span>
-                    <span className="font-serif italic" style={{ letterSpacing: '-0.06em', display: 'inline-block', padding: '0 0.08em 0 0', margin: '0 -0.08em 0 0', background: 'linear-gradient(135deg, #888 0%, #e0e0e0 45%, #7a7a7a 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{t.hero.brands}</span>
+                    <span className="font-serif italic" style={{ letterSpacing: '-0.06em', display: 'inline-block', padding: '0 0.08em 0.12em 0', margin: '0 -0.08em -0.12em 0', backgroundImage: isDark ? 'linear-gradient(135deg, #888 0%, #e0e0e0 45%, #7a7a7a 100%)' : 'linear-gradient(135deg, #111 0%, #555 45%, #333 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{t.hero.brands}</span>
                     <span style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.06em', textTransform: 'none' }}>.</span>
                 </motion.h1>
 
@@ -555,15 +556,15 @@ const SERVICES_DATA = {
         ]
     },
     brand: {
-        theme: "text-[#E0E0E0]",
-        accent: "bg-[#E0E0E0]",
-        hoverAccent: "hover:bg-[#E0E0E0]/10",
-        bgAccent: "bg-[#E0E0E0]/10",
+        theme: "text-[var(--text)]",
+        accent: "bg-[var(--text)]",
+        hoverAccent: "hover:bg-[var(--text)]/10",
+        bgAccent: "bg-[var(--text)]/10",
         tabLabel: "For Brands",
         hero: {
             title: "Design that converts. Presence that compounds.",
             desc: "AOVA builds brand infrastructure — not just visuals. We engineer systems that capture attention, drive action, and scale effortlessly as your business grows.",
-            color: "bg-[#E0E0E0]/5 border-[#E0E0E0]/10",
+            color: "bg-[var(--text)]/5 border-[var(--text)]/10",
         },
         pricingCards: [
             {
@@ -620,7 +621,7 @@ function PricingCard({ meta, card, audience, t, onOpen, index }: any) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             onClick={() => onOpen(index)}
-            className={`group relative text-left flex flex-col p-8 rounded-[32px] overflow-visible transition-all duration-500 w-full bg-white/[0.03] hover:bg-white/[0.05] border backdrop-blur-2xl hover:shadow-[0_20px_40px_rgba(0,0,0,0.5)] hover:-translate-y-2 ${meta.featured ? `border-white/[0.12] z-10` : 'border-white/[0.05] z-0 hover:z-10'}`}
+            className={`group relative text-left flex flex-col p-8 rounded-[32px] overflow-visible transition-all duration-500 w-full bg-[var(--surface)] border hover:-translate-y-2 hover:shadow-xl ${meta.featured ? `border-[var(--text)] z-10` : 'border-[var(--border)] z-0 hover:z-10 shadow-sm'}`}
             style={{ isolation: 'isolate' }}
         >
             {/* === GLOW EFFECTS MASK === */}
@@ -628,19 +629,19 @@ function PricingCard({ meta, card, audience, t, onOpen, index }: any) {
                 {/* Base ambient glow for featured cards to be "eye catching" automatically */}
                 {meta.featured && (
                     <div 
-                        className="absolute inset-0 opacity-40 pointer-events-none mix-blend-screen" 
-                        style={{ background: `radial-gradient(ellipse closest-side at 50% 50%, ${audience === 'creator' ? 'rgba(255, 51, 102, 0.25)' : 'rgba(224, 224, 224, 0.25)'}, transparent 120%)` }} 
+                        className="absolute inset-0 pointer-events-none mix-blend-screen dark:mix-blend-screen" 
+                        style={{ background: `radial-gradient(ellipse closest-side at 50% 50%, ${audience === 'creator' ? 'rgba(255, 51, 102, 0.15)' : 'rgba(255, 255, 255, 0.08)'}, transparent 120%)` }} 
                     />
                 )}
 
                 {/* Interactive Spotlight Glow */}
                 <motion.div
-                    className="absolute inset-0 transition duration-300 mix-blend-screen"
+                    className="absolute inset-0 transition duration-300 mix-blend-screen dark:mix-blend-screen"
                     style={{
                         background: useMotionTemplate`
                             radial-gradient(
-                                500px circle at ${mouseX}px ${mouseY}px,
-                                ${audience === 'creator' ? 'rgba(255, 51, 102, 0.15)' : 'rgba(224, 224, 224, 0.15)'},
+                                250px circle at ${mouseX}px ${mouseY}px,
+                                ${audience === 'creator' ? 'rgba(255, 51, 102, 0.12)' : 'rgba(255, 255, 255, 0.08)'},
                                 transparent 100%
                             )
                         `,
@@ -651,20 +652,20 @@ function PricingCard({ meta, card, audience, t, onOpen, index }: any) {
 
             {/* STICKER: Floating 'Most Popular' badge so it doesn't break layout */}
             {meta.featured && (
-                <div className={`absolute -top-3 -right-3 md:-right-6 md:-top-4 rotate-[6deg] px-4 py-1.5 rounded-full text-black text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] shadow-xl z-20 ${SERVICES_DATA[audience as AudienceType].accent}`}>
-                    <span className="relative z-10">{t.services.mostPopular}</span>
+                <div className={`absolute -top-3 -right-3 md:-right-6 md:-top-4 rotate-[6deg] px-4 py-1.5 rounded-full text-white text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] shadow-xl z-20 ${SERVICES_DATA[audience as AudienceType].accent}`}>
+                    <span className="relative z-10 text-[var(--bg)]">{t.services.mostPopular}</span>
                     {/* Tiny tape/highlight effect physically on sticker */}
                     <div className="absolute inset-0 bg-white/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
             )}
 
             <div className="flex-1 relative z-10 w-full mb-8 pt-2">
-                <h4 className="text-2xl font-semibold text-white mb-2 leading-tight">{card.title}</h4>
-                <p className="text-sm text-white/50 mb-8">{card.desc}</p>
+                <h4 className="text-2xl font-semibold text-[var(--text)] mb-2 leading-tight">{card.title}</h4>
+                <p className="text-sm text-[var(--muted)] mb-8">{card.desc}</p>
 
                 <ul className="space-y-3">
                     {card.features.slice(0, 4).map((feat: string, idx: number) => (
-                        <li key={idx} className="flex items-start gap-3 text-white/70 text-sm">
+                        <li key={idx} className="flex items-start gap-3 text-[var(--text)] opacity-80 text-sm">
                             <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 ${SERVICES_DATA[audience as AudienceType].theme.replace('text-', 'bg-')}`} />
                             <span className="leading-snug">{feat}</span>
                         </li>
@@ -675,16 +676,16 @@ function PricingCard({ meta, card, audience, t, onOpen, index }: any) {
                 </ul>
             </div>
 
-            <div className="relative z-10 w-full pt-6 border-t border-white/[0.06] group-hover:border-white/[0.15] transition-colors flex items-end justify-between">
+            <div className="relative z-10 w-full pt-6 border-t border-[var(--border)] group-hover:border-[var(--text)] transition-colors flex items-end justify-between">
                 <div className="flex flex-col">
-                    <span className="text-white/30 text-[10px] font-bold uppercase tracking-widest mb-1">from</span>
+                    <span className="text-[var(--muted)] text-[10px] font-bold uppercase tracking-widest mb-1">from</span>
                     <div className="flex items-baseline gap-1.5">
-                        <span className="text-3xl text-white tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>{meta.price}</span>
-                        <span className="text-white/40 text-[11px] font-medium tracking-wide uppercase">{meta.period}</span>
+                        <span className="text-3xl text-[var(--text)] tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>{meta.price}</span>
+                        <span className="text-[var(--muted)] text-[11px] font-medium tracking-wide uppercase">{meta.period}</span>
                     </div>
                 </div>
                 
-                <div className={`w-12 h-12 rounded-[14px] bg-white/[0.06] border border-white/[0.1] flex items-center justify-center transition-all duration-300 group-hover:bg-white group-hover:border-white group-hover:text-black group-hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] ${meta.featured ? `text-${SERVICES_DATA[audience as AudienceType].theme.replace('text-', '')}` : 'text-white/50'}`}>
+                <div className={`w-12 h-12 rounded-[14px] bg-[var(--bg)] border border-[var(--border)] flex items-center justify-center transition-all duration-300 group-hover:bg-[var(--text)] group-hover:border-[var(--text)] group-hover:text-[var(--surface)] group-hover:shadow-lg ${meta.featured ? `text-${SERVICES_DATA[audience as AudienceType].theme.replace('text-', '')}` : 'text-[var(--muted)]'}`}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:-rotate-45">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>
@@ -718,15 +719,15 @@ function InteractiveServices() {
             <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
             <div className="pg-inner max-w-6xl mx-auto">
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-5xl font-medium tracking-tight mb-8" style={{ fontFamily: 'var(--font-display)' }}>{t.services.heading}</h2>
-                    <div className="inline-flex flex-col md:flex-row p-1.5 bg-[#080808] border border-white/10 rounded-[32px] md:rounded-full gap-2 relative w-full md:w-auto shadow-2xl">
+                    <h2 className="text-4xl md:text-5xl font-medium tracking-tight mb-8 text-[var(--text)]" style={{ fontFamily: 'var(--font-display)' }}>{t.services.heading}</h2>
+                    <div className="inline-flex flex-col md:flex-row p-1.5 bg-[var(--surface)] border border-[var(--border)] rounded-[32px] md:rounded-full gap-2 relative w-full md:w-auto shadow-sm">
                         {(['creator', 'brand'] as AudienceType[]).map((type) => (
                             <button
                                 key={type}
                                 onClick={() => handleTabClick(type)}
                                 className={`px-8 py-3 rounded-full text-sm md:text-base font-medium transition-all duration-500 w-full md:w-auto ${audience === type
-                                    ? `${SERVICES_DATA[type].accent} text-black shadow-lg`
-                                    : 'hover:bg-white/[0.06] text-white/50 hover:text-white'}`}
+                                    ? `${SERVICES_DATA[type].accent} text-[var(--bg)] shadow-lg`
+                                    : 'hover:bg-[var(--bg)] text-[var(--muted)] hover:text-[var(--text)]'}`}
                             >
                                 {t.services[type].tabLabel}
                             </button>
@@ -752,7 +753,7 @@ function InteractiveServices() {
                             >
                                 <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[100px] rounded-full blur-[80px] pointer-events-none opacity-20 ${SERVICES_DATA[audience as AudienceType].accent}`} />
                                 <h4 className={`text-2xl md:text-3xl font-serif italic mb-4 leading-tight ${SERVICES_DATA[audience as AudienceType].theme}`}>{t.services[audience].heroTitle}</h4>
-                                <p className="text-base text-white/40 leading-relaxed text-center">{t.services[audience].heroDesc}</p>
+                                <p className="text-base text-[var(--muted)] leading-relaxed text-center">{t.services[audience].heroDesc}</p>
                             </motion.div>
 
                             {/* Minimalist Glass Card Grid */}
@@ -899,7 +900,7 @@ function CustomServicesSection() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-4xl md:text-5xl font-medium mb-6 tracking-tight text-white" style={{ fontFamily: 'var(--font-display)' }}>
+                    <h2 className="text-4xl md:text-5xl font-medium mb-6 tracking-tight text-[var(--text)]" style={{ fontFamily: 'var(--font-display)' }}>
                         {data.heading}
                     </h2>
                     <p className="text-lg text-[var(--muted)] max-w-2xl mx-auto leading-relaxed">
@@ -917,9 +918,9 @@ function CustomServicesSection() {
                     {data.items.map((item: string, i: number) => (
                         <div 
                             key={i} 
-                            className="px-6 py-3 rounded-full bg-white/[0.02] backdrop-blur-md border border-white/[0.08] hover:border-white/[0.2] hover:bg-white/[0.06] hover:scale-[1.05] hover:z-10 transition-all duration-300 shadow-lg hover:shadow-2xl cursor-default group relative overflow-hidden"
+                            className="px-6 py-3 rounded-full bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--text)] hover:bg-[var(--bg)] hover:scale-[1.05] hover:z-10 transition-all duration-300 shadow-sm hover:shadow-xl cursor-default group relative overflow-hidden"
                         >
-                            <span className="relative z-10 text-white/70 font-medium text-sm md:text-base tracking-wide group-hover:text-white transition-colors">{item}</span>
+                            <span className="relative z-10 text-[var(--text)] opacity-70 font-medium text-sm md:text-base tracking-wide group-hover:opacity-100 transition-opacity">{item}</span>
                         </div>
                     ))}
                 </motion.div>
@@ -946,7 +947,7 @@ function CustomServicesSection() {
                             }, 450);
                         }
                     }}
-                    className="pg-btn bg-white text-black hover:bg-[#FF3366] hover:text-white hover:border-[#FF3366] !text-lg !px-8 !py-4 shadow-xl transition-colors duration-300"
+                    className="pg-btn bg-[var(--text)] text-[var(--surface)] hover:bg-[#FF3366] hover:text-white hover:border-[#FF3366] !text-lg !px-8 !py-4 shadow-xl transition-colors duration-300"
                 >
                     <span style={{ transform: "translateZ(20px)" }} className="block">
                         {data.cta}
@@ -1183,14 +1184,14 @@ function BuyingProcess() {
    ================================================================ */
 function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boolean, onToggle: () => void }) {
     return (
-        <div className="mb-4 w-full rounded-2xl overflow-hidden border border-white/[0.08] hover:border-white/[0.15] transition-colors duration-300" style={{ backgroundImage: "radial-gradient(circle 500px at 0% 0%, #202020 0%, #111 40%, #0c0d0d 100%)" }}>
+        <div className="mb-4 w-full rounded-2xl overflow-hidden border border-[var(--border)] hover:border-[var(--border-hover)] transition-colors duration-300 bg-[var(--surface)]">
             <div className="p-6 w-full">
                 <button
                     onClick={onToggle}
-                    className="w-full flex items-center justify-between text-left focus:outline-none cursor-none"
+                    className="w-full flex items-center justify-between text-left focus:outline-none cursor-pointer"
                 >
-                    <span className={`text-xl md:text-2xl transition-colors ${isOpen ? "text-white" : "text-white/60"}`} style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}>{q}</span>
-                    <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all shrink-0 ml-4 ${isOpen ? "bg-white text-black border-white rotate-45" : "border-white/20 text-white/40"}`}>
+                    <span className={`text-xl md:text-2xl transition-colors ${isOpen ? "text-[var(--text)]" : "text-[var(--muted)]"}`} style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}>{q}</span>
+                    <span className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all shrink-0 ml-4 ${isOpen ? "bg-[var(--text)] text-[var(--surface)] border-[var(--text)] rotate-45" : "border-[var(--border)] text-[var(--muted)]"}`}>
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                             <line x1="6" y1="2" x2="6" y2="10" />
                             <line x1="2" y1="6" x2="10" y2="6" />
@@ -1206,7 +1207,7 @@ function FaqItem({ q, a, isOpen, onToggle }: { q: string, a: string, isOpen: boo
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                             className="overflow-hidden"
                         >
-                            <p className="pt-4 text-white/50 text-lg max-w-2xl">{a}</p>
+                            <p className="pt-4 text-[var(--muted)] text-lg max-w-2xl">{a}</p>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -1444,34 +1445,34 @@ function FaqSection() {
                                         onCardClick={i => setSelectedMember(i)}
                                         items={[
                                             <div key="t1" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
-                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-sm ring-2 ring-[var(--border)] group-hover:ring-[var(--text)] transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=sarah_aova" alt="Sarah" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif italic text-[13px] text-white/80 leading-none tracking-wide">Sarah</p>
+                                                <p className="font-serif italic text-[13px] text-[var(--text)] opacity-80 leading-none tracking-wide">Sarah</p>
                                             </div>,
                                             <div key="t2" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
-                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-sm ring-2 ring-[var(--border)] group-hover:ring-[var(--text)] transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=marcus_aova" alt="Marcus" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif italic text-[13px] text-white/80 leading-none tracking-wide">Marcus</p>
+                                                <p className="font-serif italic text-[13px] text-[var(--text)] opacity-80 leading-none tracking-wide">Marcus</p>
                                             </div>,
                                             <div key="t3" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
-                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-sm ring-2 ring-[var(--border)] group-hover:ring-[var(--text)] transition-all duration-300">
                                                     <img src="/Noire.png" alt="Leif" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif italic text-[13px] text-white/80 leading-none tracking-wide">Leif</p>
+                                                <p className="font-serif italic text-[13px] text-[var(--text)] opacity-80 leading-none tracking-wide">Leif</p>
                                             </div>,
                                             <div key="t4" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
-                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-sm ring-2 ring-[var(--border)] group-hover:ring-[var(--text)] transition-all duration-300">
                                                     <img src="/Kudy.png" alt="Kudy" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif italic text-[13px] text-white/80 leading-none tracking-wide">Kudy</p>
+                                                <p className="font-serif italic text-[13px] text-[var(--text)] opacity-80 leading-none tracking-wide">Kudy</p>
                                             </div>,
                                             <div key="t5" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
-                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-sm ring-2 ring-[var(--border)] group-hover:ring-[var(--text)] transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=amina_aova" alt="Amina" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif italic text-[13px] text-white/80 leading-none tracking-wide">Amina</p>
+                                                <p className="font-serif italic text-[13px] text-[var(--text)] opacity-80 leading-none tracking-wide">Amina</p>
                                             </div>
                                         ]}
                                     />
@@ -1501,7 +1502,7 @@ function FaqSection() {
                                 onMouseLeave={handleMouseLeave}
                                 whileHover={{ scale: 1.02, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.6)" }}
                                 transition={{ duration: 0.3 }}
-                                className="w-full rounded-[40px] p-[1px] relative shadow-2xl group mt-8 overflow-hidden bg-[#0c0d0d]"
+                                className="w-full rounded-[40px] p-[1px] relative shadow-2xl group mt-8 overflow-hidden bg-[var(--booking-bg)]"
                                 style={{ 
                                     rotateX, 
                                     rotateY, 
@@ -1516,7 +1517,7 @@ function FaqSection() {
 
                                 {/* Main Inner Card Content */}
                                 <div className="relative w-full h-full rounded-[39px] p-8 md:p-12 overflow-hidden z-10" 
-                                    style={{ backgroundImage: "radial-gradient(circle 700px at 0% 0%, #303030 0%, #111111 40%, #0c0d0d 100%)" }}
+                                    style={{ backgroundImage: "var(--booking-grad)" }}
                                 >
                                     {/* Premium details from the cool card */}
                                     <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 rounded-[39px]">
@@ -1540,57 +1541,58 @@ function FaqSection() {
                                     {/* Inner grain overlay */}
                                     <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none z-0" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
 
-                                    <div className="relative z-10 flex flex-col h-full items-center text-center" style={{ transform: "translateZ(30px)" }}>
-                                        {/* Profile Avatar Circles */}
-                                        <div className="flex justify-center -space-x-6 mb-6">
-                                            <div className="w-[84px] h-[84px] rounded-full border-4 border-[#0c0d0d] overflow-hidden shadow-lg relative z-10 bg-[#0c0d0d]">
-                                                <img src="/Kudy.png" alt="Profile" className="w-full h-full object-cover" />
+                                    <div className="relative z-10 flex flex-col h-full items-center text-center w-full" style={{ transform: "translateZ(30px)" }}>
+                                        <div className="flex-1 flex flex-col items-center justify-center w-full">
+                                            <div className="flex justify-center -space-x-6 mb-6">
+                                                <div className="w-[84px] h-[84px] rounded-full border-4 border-[var(--booking-inner)] overflow-hidden shadow-lg relative z-10 bg-[var(--booking-inner)]">
+                                                    <img src="/Kudy.png" alt="Profile" className="w-full h-full object-cover" />
+                                                </div>
+                                                <div className="w-[84px] h-[84px] rounded-full border-4 border-[var(--booking-inner)] overflow-hidden shadow-lg relative z-0 bg-[var(--booking-inner)]">
+                                                    <img src="/Noire.png" alt="Profile" className="w-full h-full object-cover" />
+                                                </div>
                                             </div>
-                                            <div className="w-[84px] h-[84px] rounded-full border-4 border-[#0c0d0d] overflow-hidden shadow-lg relative z-0 bg-[#0c0d0d]">
-                                                <img src="/Noire.png" alt="Profile" className="w-full h-full object-cover" />
-                                            </div>
+
+                                            <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-6 w-full text-[#FF3366]">
+                                                <span className="bg-[var(--booking-inner)] md:bg-transparent md:backdrop-blur-none bg-opacity-70 backdrop-blur-md px-4 py-2 rounded-xl">{t.faq.bookHeading}</span>
+                                            </h3>
+
+                                            <motion.button
+                                                data-cal-namespace=""
+                                                data-cal-link="rick/get-rick-rolled"
+                                                data-cal-config='{"layout":"month_view"}'
+                                                whileHover={{
+                                                    scale: 1.05,
+                                                    rotateX: 12,
+                                                    rotateY: -8,
+                                                    y: -5,
+                                                    boxShadow: "0 25px 50px -12px rgba(180, 180, 200, 0.45)"
+                                                }}
+                                                whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
+                                                style={{ transformStyle: "preserve-3d", perspective: 1000 }}
+                                                className="w-full bg-[var(--text)] text-[var(--surface)] hover:bg-[var(--text)]/90 font-semibold text-lg py-5 rounded-2xl shadow-xl transition-all duration-300"
+                                            >
+                                                <span style={{ transform: "translateZ(20px)" }} className="block">
+                                                    {t.faq.bookCta}
+                                                </span>
+                                            </motion.button>
                                         </div>
 
-                                        <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-10 w-full text-[#FF3366]">
-                                            <span className="bg-[#0c0d0d] md:bg-transparent md:backdrop-blur-none bg-opacity-70 backdrop-blur-md px-4 py-2 rounded-xl">{t.faq.bookHeading}</span>
-                                        </h3>
-
-                                    <motion.button
-                                        data-cal-namespace=""
-                                        data-cal-link="rick/get-rick-rolled"
-                                        data-cal-config='{"layout":"month_view"}'
-                                        whileHover={{
-                                            scale: 1.05,
-                                            rotateX: 12,
-                                            rotateY: -8,
-                                            y: -5,
-                                            boxShadow: "0 25px 50px -12px rgba(180, 180, 200, 0.45)"
-                                        }}
-                                        whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
-                                        style={{ transformStyle: "preserve-3d", perspective: 1000 }}
-                                        className="w-full bg-white text-black font-semibold text-lg py-5 rounded-2xl shadow-xl transition-shadow duration-300 mb-8"
-                                    >
-                                        <span style={{ transform: "translateZ(20px)" }} className="block">
-                                            {t.faq.bookCta}
-                                        </span>
-                                    </motion.button>
-
-                                    {/* Footer Email Note */}
-                                    <button onClick={handleCopy} className="group/email flex flex-col items-center justify-center w-full bg-[#0a0a0a] rounded-[24px] py-8 transition-all duration-300 hover:bg-[#111111] hover:shadow-lg border border-white/5 hover:border-[#FF3366]/30 relative z-20">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`mb-4 transition-colors duration-300 ${copied ? 'text-[#FF3366]' : 'text-white/50 group-hover/email:text-[#FF3366]'}`}>
-                                            {copied ? (
-                                                <path d="M20 6L9 17l-5-5"></path>
-                                            ) : (
-                                                <>
-                                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                                                    <polyline points="22,6 12,13 2,6"></polyline>
-                                                </>
-                                            )}
-                                        </svg>
-                                        <span className="text-xs font-semibold text-white/50 uppercase tracking-widest mb-2 transition-colors">{copied ? t.faq.copied : t.faq.preferEmail}</span>
-                                        <span className="text-lg md:text-xl text-white group-hover/email:text-[#FF3366] transition-colors" style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}>aovastudio@gmail.com</span>
-                                    </button>
-                                </div>
+                                        {/* Footer Email Note */}
+                                        <button onClick={handleCopy} className="group/email flex flex-col items-center justify-center w-full bg-[var(--booking-email-bg)] rounded-[24px] py-8 mt-10 transition-all duration-300 hover:bg-[var(--booking-email-hover)] hover:shadow-lg border border-[var(--border)] hover:border-[#FF3366]/30 relative z-20 shrink-0">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={`mb-4 transition-colors duration-300 ${copied ? 'text-[#FF3366]' : 'text-[var(--muted)] group-hover/email:text-[#FF3366]'}`}>
+                                                {copied ? (
+                                                    <path d="M20 6L9 17l-5-5"></path>
+                                                ) : (
+                                                    <>
+                                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                                    </>
+                                                )}
+                                            </svg>
+                                            <span className="text-xs font-semibold text-[var(--muted)] uppercase tracking-widest mb-2 transition-colors">{copied ? t.faq.copied : t.faq.preferEmail}</span>
+                                            <span className="text-lg md:text-xl text-[var(--text)] group-hover/email:text-[#FF3366] transition-colors" style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.03em' }}>aovastudio@gmail.com</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </motion.div>
 
