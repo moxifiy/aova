@@ -568,23 +568,23 @@ type AudienceType = 'creator' | 'brand';
 function InteractiveServices() {
     const t = useT();
     const [audience, setAudience] = useState<AudienceType | null>(null);
+    const [openCard, setOpenCard] = useState<number | null>(null);
 
     return (
+        <>
         <section className="relative py-16" id="services-interactive">
             <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
             <div className="pg-inner">
                 <div className="text-center mb-8">
                     <h2 className="text-3xl md:text-5xl tracking-tight mb-5">{t.services.heading}</h2>
-
                     <div className="inline-flex flex-col md:flex-row p-1.5 bg-[#111111] border border-white/10 rounded-[32px] md:rounded-full gap-2 relative z-10 w-full md:w-auto shadow-xl">
                         {(['creator', 'brand'] as AudienceType[]).map((type) => (
                             <button
                                 key={type}
                                 onClick={() => setAudience(audience === type ? null : type)}
                                 className={`px-6 py-2.5 rounded-full text-sm md:text-base transition-all duration-300 w-full md:w-auto ${audience === type
-                                    ? `${SERVICES_DATA[type].accent} text-black font-semibold shadow-[0_0_20px_rgba(255,255,255,0.1)] scale-100`
-                                    : 'hover:bg-white/5 text-white/50 hover:text-white'
-                                    }`}
+                                    ? `${SERVICES_DATA[type].accent} text-black font-semibold`
+                                    : 'hover:bg-white/5 text-white/50 hover:text-white'}`}
                             >
                                 {t.services[type].tabLabel}
                             </button>
@@ -596,55 +596,62 @@ function InteractiveServices() {
                     {audience && (
                         <motion.div
                             key={audience}
-                            initial={{ opacity: 0, height: 0, y: 20 }}
-                            animate={{ opacity: 1, height: "auto", y: 0 }}
-                            exit={{ opacity: 0, height: 0, y: -10 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="overflow-hidden"
                         >
-                            {/* Hero banner — compact horizontal strip */}
-                            <div className={`w-full px-6 py-4 rounded-2xl border border-white/5 flex items-center gap-6 mb-4 bg-[#0A0A0A] ${SERVICES_DATA[audience].hero.color}`}>
-                                <h4 className={`text-lg md:text-xl font-semibold leading-tight shrink-0 ${SERVICES_DATA[audience].theme}`}>{t.services[audience].heroTitle}</h4>
-                                <p className="text-sm text-white/50 leading-snug border-l border-white/10 pl-6">{t.services[audience].heroDesc}</p>
+                            {/* Hero box */}
+                            <div className={`w-full p-8 md:p-12 rounded-[40px] border border-white/5 overflow-hidden relative mb-6 bg-[#0A0A0A] shadow-2xl ${SERVICES_DATA[audience].hero.color}`}>
+                                <div className="max-w-2xl relative z-10">
+                                    <h4 className={`text-3xl md:text-4xl mb-3 leading-tight ${SERVICES_DATA[audience].theme}`}>{t.services[audience].heroTitle}</h4>
+                                    <p className="text-base text-white/60 leading-relaxed">{t.services[audience].heroDesc}</p>
+                                </div>
+                                <div className={`absolute -right-20 -bottom-20 w-[400px] h-[400px] rounded-full blur-[100px] pointer-events-none ${SERVICES_DATA[audience].accent} opacity-[0.05]`} />
                             </div>
 
+                            {/* Simplified cards — click to open modal */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {t.services[audience].cards.map((card, i) => {
                                     const meta = SERVICES_DATA[audience].pricingCards[i];
                                     return (
-                                    <div key={i} className={`relative flex flex-col p-5 rounded-[20px] border bg-[#111111]/80 backdrop-blur-md shadow-lg transition-all duration-300 ${meta.featured ? `border-white/30 -translate-y-1 ${SERVICES_DATA[audience].bgAccent}` : `border-white/5 hover:border-white/20`}`}>
+                                    <button
+                                        key={i}
+                                        onClick={() => setOpenCard(i)}
+                                        className={`relative text-left flex flex-col p-6 rounded-[24px] border bg-[#111111] shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-white/20 group ${meta.featured ? `border-white/20 ${SERVICES_DATA[audience].bgAccent}` : 'border-white/5'}`}
+                                    >
                                         {meta.featured && (
                                             <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-black text-xs font-bold uppercase tracking-widest ${SERVICES_DATA[audience].accent}`}>
                                                 {t.services.mostPopular}
                                             </div>
                                         )}
-                                        <h4 className="text-base font-semibold text-white mb-0.5">{card.title}</h4>
-                                        <p className="text-xs text-white/40 mb-3 pb-3 border-b border-white/5">{card.desc}</p>
+                                        <h4 className="text-lg font-semibold text-white mb-1">{card.title}</h4>
+                                        <p className="text-xs text-white/40 mb-4">{card.desc}</p>
 
-                                        <ul className="grid grid-cols-2 gap-x-2 gap-y-1.5 mb-4 flex-1">
-                                            {card.features.map((feat, idx) => (
-                                                <li key={idx} className="flex items-start gap-1.5 text-white/60 text-[11px] leading-snug">
-                                                    <div className={`w-3 h-3 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${SERVICES_DATA[audience].bgAccent} ${SERVICES_DATA[audience].theme}`}>
-                                                        <svg width="6" height="6" viewBox="0 0 14 14" fill="none"><path d="M1 7l4 4 8-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                                    </div>
+                                        {/* Preview: first 4 features */}
+                                        <ul className="space-y-1.5 mb-5 flex-1">
+                                            {card.features.slice(0, 4).map((feat, idx) => (
+                                                <li key={idx} className="flex items-center gap-2 text-white/60 text-xs">
+                                                    <span className={`w-1 h-1 rounded-full shrink-0 ${SERVICES_DATA[audience].theme.replace('text-', 'bg-')}`} />
                                                     {feat}
                                                 </li>
                                             ))}
+                                            {card.features.length > 4 && (
+                                                <li className={`text-xs font-medium ${SERVICES_DATA[audience].theme} opacity-70`}>+{card.features.length - 4} more included</li>
+                                            )}
                                         </ul>
 
-                                        <div className="pt-3 border-t border-white/5">
-                                            <div className="flex items-end gap-1.5 mb-3">
-                                                <div className="flex flex-col">
-                                                    <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-0.5">from</span>
-                                                    <span className="text-3xl text-white tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>{meta.price}</span>
-                                                </div>
-                                                <span className="text-white/40 text-xs font-bold uppercase pb-0.5 tracking-widest">{meta.period}</span>
+                                        <div className="flex items-end justify-between pt-4 border-t border-white/5">
+                                            <div>
+                                                <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest block mb-0.5">from</span>
+                                                <span className="text-2xl text-white tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>{meta.price}</span>
+                                                <span className="text-white/40 text-xs ml-1">{meta.period}</span>
                                             </div>
-                                            <button className={`w-full py-2.5 rounded-lg font-semibold text-xs transition-colors duration-300 ${meta.featured ? `${SERVICES_DATA[audience].accent} text-black` : 'bg-white/5 text-white hover:bg-white/10'}`}>
-                                                {t.services.getStarted}
-                                            </button>
+                                            <span className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${meta.featured ? `${SERVICES_DATA[audience].accent} text-black` : 'bg-white/5 text-white group-hover:bg-white/10'}`}>
+                                                View details →
+                                            </span>
                                         </div>
-                                    </div>
+                                    </button>
                                     );
                                 })}
                             </div>
@@ -653,6 +660,77 @@ function InteractiveServices() {
                 </AnimatePresence>
             </div>
         </section>
+
+        {/* Card detail modal */}
+        <AnimatePresence>
+            {openCard !== null && audience && (() => {
+                const card = t.services[audience].cards[openCard];
+                const meta = SERVICES_DATA[audience].pricingCards[openCard];
+                return (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm"
+                        onClick={() => setOpenCard(null)}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.92, y: 24 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.92, y: 24 }}
+                            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                            onClick={(e) => e.stopPropagation()}
+                            className={`relative w-full max-w-lg bg-[#111111] rounded-[32px] border p-8 shadow-2xl max-h-[85vh] overflow-y-auto ${meta.featured ? 'border-white/20' : 'border-white/10'}`}
+                        >
+                            <button
+                                onClick={() => setOpenCard(null)}
+                                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                            >
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="white" strokeWidth="2" strokeLinecap="round"/></svg>
+                            </button>
+
+                            {meta.featured && (
+                                <div className={`inline-block px-3 py-0.5 rounded-full text-black text-xs font-bold uppercase tracking-widest mb-4 ${SERVICES_DATA[audience].accent}`}>
+                                    {t.services.mostPopular}
+                                </div>
+                            )}
+
+                            <h3 className={`text-2xl font-semibold mb-1 ${SERVICES_DATA[audience].theme}`}>{card.title}</h3>
+                            <p className="text-sm text-white/50 mb-6">{card.desc}</p>
+
+                            <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5 mb-8">
+                                {card.features.map((feat, idx) => (
+                                    <li key={idx} className="flex items-start gap-2 text-white/70 text-sm">
+                                        <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${SERVICES_DATA[audience].bgAccent} ${SERVICES_DATA[audience].theme}`}>
+                                            <svg width="8" height="8" viewBox="0 0 14 14" fill="none"><path d="M1 7l4 4 8-8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                        </div>
+                                        {feat}
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <div className="pt-5 border-t border-white/10">
+                                <div className="flex items-end gap-2 mb-4">
+                                    <div className="flex flex-col">
+                                        <span className="text-white/40 text-xs font-bold uppercase tracking-widest mb-1">from</span>
+                                        <span className="text-4xl text-white tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>{meta.price}</span>
+                                    </div>
+                                    <span className="text-white/40 text-sm font-bold uppercase pb-1">{meta.period}</span>
+                                </div>
+                                <button
+                                    onClick={() => { setOpenCard(null); scrollToId('faq'); }}
+                                    className={`w-full py-4 rounded-2xl font-semibold text-base transition-colors ${meta.featured ? `${SERVICES_DATA[audience].accent} text-black` : 'bg-white text-black hover:bg-white/90'}`}
+                                >
+                                    {t.services.getStarted}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                );
+            })()}
+        </AnimatePresence>
+        </>
     );
 }
 
@@ -1137,31 +1215,31 @@ function FaqSection() {
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=sarah_aova" alt="Sarah" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="text-[15px] font-medium text-white leading-none tracking-tight">Sarah</p>
+                                                <p className="font-serif italic text-[13px] text-white/80 leading-none tracking-wide">Sarah</p>
                                             </div>,
                                             <div key="t2" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=marcus_aova" alt="Marcus" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="text-[15px] font-medium text-white leading-none tracking-tight">Marcus</p>
+                                                <p className="font-serif italic text-[13px] text-white/80 leading-none tracking-wide">Marcus</p>
                                             </div>,
                                             <div key="t3" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=elena_aova" alt="Elena" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="text-[15px] font-medium text-white leading-none tracking-tight">Elena</p>
+                                                <p className="font-serif italic text-[13px] text-white/80 leading-none tracking-wide">Elena</p>
                                             </div>,
                                             <div key="t4" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
                                                     <img src="/Kudy.png" alt="Kudy" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="text-[15px] font-medium text-white leading-none tracking-tight">Kudy</p>
+                                                <p className="font-serif italic text-[13px] text-white/80 leading-none tracking-wide">Kudy</p>
                                             </div>,
                                             <div key="t5" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-lg ring-2 ring-white/20 group-hover:ring-white transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=amina_aova" alt="Amina" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="text-[15px] font-medium text-white leading-none tracking-tight">Amina</p>
+                                                <p className="font-serif italic text-[13px] text-white/80 leading-none tracking-wide">Amina</p>
                                             </div>
                                         ]}
                                     />
@@ -1305,7 +1383,7 @@ function Footer() {
         <footer className="relative bg-[#111111] text-white py-20 rounded-t-[40px] md:rounded-t-[80px] mt-20 overflow-hidden">
             <div className="absolute inset-0 bg-dots opacity-[0.05] pointer-events-none -z-10 mix-blend-overlay" />
             <div className="pg-inner flex flex-col items-center text-center">
-                <h2 className="text-6xl md:text-[120px] leading-none tracking-tight mb-12 text-[#FF3366] text-center pointer-events-none">
+                <h2 className="text-6xl md:text-[120px] leading-none font-serif italic tracking-tight mb-12 text-[#FF3366] text-center pointer-events-none">
                     <span
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}

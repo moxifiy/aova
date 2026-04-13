@@ -136,7 +136,7 @@ const Folder = ({ color = '#FF3366', size = 1, items = [], className = '', onOpe
                             </div>
                         ))}
                         <div className="folder__front shadow-2xl flex flex-col items-center justify-center p-6">
-                            <span className="text-white/40 font-serif font-black tracking-[0.2em] text-xl mb-4">TEAM</span>
+                            <span className="text-white/60 font-serif italic tracking-tight text-2xl mb-4">team</span>
                         </div>
                     </div>
                 </div>
