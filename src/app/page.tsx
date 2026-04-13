@@ -48,9 +48,9 @@ const T = {
         heroTitle: 'Content that grows. Channels that last.',
         heroDesc: "AOVA handles the full creative pipeline for creators — from zero-retention editing to algorithmic growth strategy. You focus on the camera, we build the engine.",
         cards: [
-          { title: "Shorts & Reels", desc: "High-retention vertical edits.", features: ["4 Videos / Month", "Hook Optimization", "Custom Motion Graphics"] },
-          { title: "YouTube Engine", desc: "Full long-form production.", features: ["2 Long Form Videos", "A/B Thumbnail Testing", "Title SEO", "4 Shorts Cut-downs"] },
-          { title: "Scale Partner", desc: "Total channel management.", features: ["4 Long Form Videos", "8 Shorts / Reels", "Weekly Strategy Calls", "Sponsorship Deck"] },
+          { title: "Starter Pack", desc: "Full-spectrum content foundation.", features: ["1-2x longform videos", "6x shortform", "Basic repurposing (long → shorts)", "2 thumbnails per video", "Basic thumbnail style direction", "Mini content plan (1-2 weeks)", "10-15 hooks", "Basic posting plan"] },
+          { title: "YouTube Engine", desc: "Full production & growth system.", features: ["4x longform videos", "10-15 shortform videos", "Full repurposing system", "Retention editing", "Narrative restructuring", "Hook optimization", "3–5 thumbnails per video", "Thumbnail system (style consistency)", "CTR-focused iteration", "Full content strategy blueprint", "30–50 hook library", "Content formats (repeatable structures)", "Competitor breakdown", "Content calendar"] },
+          { title: "Scale Partner", desc: "Full-stack channel domination.", features: ["2x longform videos", "15–25 shortform videos", "Advanced repurposing (multi-platform)", "A/B shortform hooks", "Full narrative restructuring", "Storytelling optimization", "Pacing + retention engineering", "Full thumbnail system", "Continuous iteration based on performance", "Social assets (banners, posts)", "Full strategy system (pillars, positioning, tone/style)", "50–100 hook library", "Distribution strategy (YT / IG / TikTok split)", "Analytics + optimization loop", "CTA strategy", "Content → lead → sale funnel"] },
         ],
       },
       brand: {
@@ -133,9 +133,9 @@ const T = {
         heroTitle: 'Obsah, který roste. Kanály, které vydrží.',
         heroDesc: "AOVA zajišťuje kompletní kreativní produkci pro tvůrce — od střihu pro maximální retenci po algoritmickou strategii růstu. Vy se soustřeďte na kameru, my postavíme motor.",
         cards: [
-          { title: "Shorts & Reels", desc: "Vertikální střihy pro maximální retenci.", features: ["4 videa / měsíc", "Optimalizace úvodního háčku", "Vlastní pohyblivá grafika"] },
-          { title: "YouTube Engine", desc: "Kompletní produkce dlouhých videí.", features: ["2 dlouhá videa", "A/B testování miniatur", "SEO názvů", "4 Shorts sestřihy"] },
-          { title: "Scale Partner", desc: "Kompletní správa kanálu.", features: ["4 dlouhá videa", "8 Shorts / Reels", "Týdenní strategické hovory", "Sponzorský balíček"] },
+          { title: "Starter Pack", desc: "Kompletní obsahový základ.", features: ["1-2x dlouhá videa", "6x krátká videa", "Základní repurposing (dlouhé → krátké)", "2 miniatury na video", "Základní směr vizuálu miniatur", "Mini obsahový plán (1-2 týdny)", "10-15 háčků", "Základní plán zveřejňování"] },
+          { title: "YouTube Engine", desc: "Kompletní produkce a systém růstu.", features: ["4x dlouhá videa", "10-15 krátkých videí", "Kompletní systém repurposingu", "Střih pro retenci", "Přestrukturování narace", "Optimalizace háčků", "3–5 miniatur na video", "Systém miniatur (konzistence stylu)", "Iterace zaměřená na CTR", "Kompletní blueprint obsahové strategie", "Knihovna 30–50 háčků", "Obsahové formáty (opakovatelné struktury)", "Analýza konkurence", "Obsahový kalendář"] },
+          { title: "Scale Partner", desc: "Kompletní dominance kanálu.", features: ["2x dlouhá videa", "15–25 krátkých videí", "Pokročilý repurposing (multi-platforma)", "A/B háčky pro krátká videa", "Kompletní přestrukturování narace", "Optimalizace vyprávění", "Inženýring tempa a retence", "Kompletní systém miniatur", "Průběžná iterace na základě výkonu", "Sociální podklady (bannery, příspěvky)", "Kompletní strategický systém (pilíře, positioning, tón/styl)", "Knihovna 50–100 háčků", "Distribuční strategie (YT / IG / TikTok split)", "Analytika + optimalizační smyčka", "Strategie CTA", "Obsah → lead → prodej"] },
         ],
       },
       brand: {
@@ -498,27 +498,27 @@ const SERVICES_DATA = {
         },
         pricingCards: [
             {
-                title: "Shorts & Reels",
-                desc: "High-retention vertical edits.",
-                features: ["4 Videos / Month", "Hook Optimization", "Custom Motion Graphics"],
-                price: "$1,200",
-                period: "/mo",
+                title: "Starter Pack",
+                desc: "Full-spectrum content foundation.",
+                features: ["1-2x longform videos", "6x shortform", "Basic repurposing (long → shorts)", "2 thumbnails per video", "Basic thumbnail style direction", "Mini content plan (1-2 weeks)", "10-15 hooks", "Basic posting plan"],
+                price: "$1,000",
+                period: "/2 weeks",
                 featured: false
             },
             {
                 title: "YouTube Engine",
-                desc: "Full long-form production.",
-                features: ["2 Long Form Videos", "A/B Thumbnail Testing", "Title SEO", "4 Shorts Cut-downs"],
-                price: "$2,500",
-                period: "/mo",
+                desc: "Full production & growth system.",
+                features: ["4x longform videos", "10-15 shortform videos", "Full repurposing system", "Retention editing", "Narrative restructuring", "Hook optimization", "3–5 thumbnails per video", "Thumbnail system (style consistency)", "CTR-focused iteration", "Full content strategy blueprint", "30–50 hook library", "Content formats (repeatable structures)", "Competitor breakdown", "Content calendar"],
+                price: "$2,000",
+                period: "/2 weeks",
                 featured: true
             },
             {
                 title: "Scale Partner",
-                desc: "Total channel management.",
-                features: ["4 Long Form Videos", "8 Shorts / Reels", "Weekly Strategy Calls", "Sponsorship Deck"],
-                price: "$4,500",
-                period: "/mo",
+                desc: "Full-stack channel domination.",
+                features: ["2x longform videos", "15–25 shortform videos", "Advanced repurposing (multi-platform)", "A/B shortform hooks", "Full narrative restructuring", "Storytelling optimization", "Pacing + retention engineering", "Full thumbnail system", "Continuous iteration based on performance", "Social assets (banners, posts)", "Full strategy system (pillars, positioning, tone/style)", "50–100 hook library", "Distribution strategy (YT / IG / TikTok split)", "Analytics + optimization loop", "CTA strategy", "Content → lead → sale funnel"],
+                price: "$3,500",
+                period: "/2 weeks",
                 featured: false
             }
         ]
@@ -570,18 +570,18 @@ function InteractiveServices() {
     const [audience, setAudience] = useState<AudienceType | null>(null);
 
     return (
-        <section className="relative py-32 px-6" id="services-interactive">
+        <section className="relative py-16" id="services-interactive">
             <div className="absolute inset-0 bg-dots opacity-[0.03] pointer-events-none -z-10" />
-            <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-6xl tracking-tight mb-8">{t.services.heading}</h2>
+            <div className="pg-inner">
+                <div className="text-center mb-8">
+                    <h2 className="text-3xl md:text-5xl tracking-tight mb-5">{t.services.heading}</h2>
 
                     <div className="inline-flex flex-col md:flex-row p-1.5 bg-[#111111] border border-white/10 rounded-[32px] md:rounded-full gap-2 relative z-10 w-full md:w-auto shadow-xl">
                         {(['creator', 'brand'] as AudienceType[]).map((type) => (
                             <button
                                 key={type}
                                 onClick={() => setAudience(audience === type ? null : type)}
-                                className={`px-8 py-3.5 rounded-full text-lg md:text-xl transition-all duration-300 w-full md:w-auto ${audience === type
+                                className={`px-6 py-2.5 rounded-full text-sm md:text-base transition-all duration-300 w-full md:w-auto ${audience === type
                                     ? `${SERVICES_DATA[type].accent} text-black font-semibold shadow-[0_0_20px_rgba(255,255,255,0.1)] scale-100`
                                     : 'hover:bg-white/5 text-white/50 hover:text-white'
                                     }`}
@@ -596,60 +596,57 @@ function InteractiveServices() {
                     {audience && (
                         <motion.div
                             key={audience}
-                            initial={{ opacity: 0, height: 0, y: 30 }}
+                            initial={{ opacity: 0, height: 0, y: 20 }}
                             animate={{ opacity: 1, height: "auto", y: 0 }}
-                            exit={{ opacity: 0, height: 0, y: -20 }}
-                            transition={{ duration: 0.5, ease: "easeOut" }}
-                            className="mt-16 overflow-hidden"
+                            exit={{ opacity: 0, height: 0, y: -10 }}
+                            transition={{ duration: 0.4, ease: "easeOut" }}
+                            className="overflow-hidden"
                         >
-                            <div className="pt-2 pb-8">
-                                <div className={`w-full p-8 md:p-16 rounded-[40px] border border-white/5 transition-colors duration-500 overflow-hidden relative mb-12 bg-[#0A0A0A] shadow-2xl ${SERVICES_DATA[audience].hero.color}`}>
-                                    <div className="max-w-3xl relative z-10">
-                                        <h4 className={`text-4xl md:text-6xl mb-6 leading-tight ${SERVICES_DATA[audience].theme}`}>{t.services[audience].heroTitle}</h4>
-                                        <p className="text-xl md:text-2xl text-white/70 font-medium leading-relaxed">{t.services[audience].heroDesc}</p>
-                                    </div>
-                                    <div className={`absolute -right-20 -bottom-20 w-[600px] h-[600px] rounded-full blur-[120px] pointer-events-none ${SERVICES_DATA[audience].accent} opacity-[0.05]`} />
-                                </div>
+                            {/* Hero banner — compact horizontal strip */}
+                            <div className={`w-full px-6 py-4 rounded-2xl border border-white/5 flex items-center gap-6 mb-4 bg-[#0A0A0A] ${SERVICES_DATA[audience].hero.color}`}>
+                                <h4 className={`text-lg md:text-xl font-semibold leading-tight shrink-0 ${SERVICES_DATA[audience].theme}`}>{t.services[audience].heroTitle}</h4>
+                                <p className="text-sm text-white/50 leading-snug border-l border-white/10 pl-6">{t.services[audience].heroDesc}</p>
+                            </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    {t.services[audience].cards.map((card, i) => {
-                                        const meta = SERVICES_DATA[audience].pricingCards[i];
-                                        return (
-                                        <div key={i} className={`relative flex flex-col justify-between p-8 rounded-[32px] border bg-[#111111]/80 backdrop-blur-md shadow-lg transition-all duration-300 ${meta.featured ? `border-white/30 -translate-y-2 ${SERVICES_DATA[audience].bgAccent}` : `border-white/5 hover:border-white/20 hover:-translate-y-1`}`}>
-                                            {meta.featured && (
-                                                <div className={`absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-black text-xs font-bold uppercase tracking-widest ${SERVICES_DATA[audience].accent}`}>
-                                                    {t.services.mostPopular}
-                                                </div>
-                                            )}
-                                            <div>
-                                                <h4 className="text-2xl text-white mb-2">{card.title}</h4>
-                                                <p className="text-sm text-white/50 font-medium mb-8 pb-8 border-b border-white/5">{card.desc}</p>
-
-                                                <ul className="space-y-4 mb-16">
-                                                    {card.features.map((feat, idx) => (
-                                                        <li key={idx} className="flex items-start gap-3 text-white/70 text-sm font-medium">
-                                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${SERVICES_DATA[audience].bgAccent} ${SERVICES_DATA[audience].theme}`}>
-                                                                <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M1 7l4 4 8-8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                                                            </div>
-                                                            {feat}
-                                                        </li>
-                                                    ))}
-                                                </ul>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {t.services[audience].cards.map((card, i) => {
+                                    const meta = SERVICES_DATA[audience].pricingCards[i];
+                                    return (
+                                    <div key={i} className={`relative flex flex-col p-5 rounded-[20px] border bg-[#111111]/80 backdrop-blur-md shadow-lg transition-all duration-300 ${meta.featured ? `border-white/30 -translate-y-1 ${SERVICES_DATA[audience].bgAccent}` : `border-white/5 hover:border-white/20`}`}>
+                                        {meta.featured && (
+                                            <div className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-black text-xs font-bold uppercase tracking-widest ${SERVICES_DATA[audience].accent}`}>
+                                                {t.services.mostPopular}
                                             </div>
+                                        )}
+                                        <h4 className="text-base font-semibold text-white mb-0.5">{card.title}</h4>
+                                        <p className="text-xs text-white/40 mb-3 pb-3 border-b border-white/5">{card.desc}</p>
 
-                                            <div className="pt-8 border-t border-white/5 mt-auto">
-                                                <div className="flex items-end gap-2 mb-6">
-                                                    <span className="text-5xl text-white tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>{meta.price}</span>
-                                                    <span className="text-white/40 text-sm font-bold uppercase pb-1 tracking-widest">{meta.period}</span>
+                                        <ul className="grid grid-cols-2 gap-x-2 gap-y-1.5 mb-4 flex-1">
+                                            {card.features.map((feat, idx) => (
+                                                <li key={idx} className="flex items-start gap-1.5 text-white/60 text-[11px] leading-snug">
+                                                    <div className={`w-3 h-3 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${SERVICES_DATA[audience].bgAccent} ${SERVICES_DATA[audience].theme}`}>
+                                                        <svg width="6" height="6" viewBox="0 0 14 14" fill="none"><path d="M1 7l4 4 8-8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                                    </div>
+                                                    {feat}
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        <div className="pt-3 border-t border-white/5">
+                                            <div className="flex items-end gap-1.5 mb-3">
+                                                <div className="flex flex-col">
+                                                    <span className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-0.5">from</span>
+                                                    <span className="text-3xl text-white tracking-tight leading-none" style={{ fontFamily: 'var(--font-display)' }}>{meta.price}</span>
                                                 </div>
-                                                <button className={`w-full py-4 rounded-2xl font-semibold transition-colors duration-300 ${meta.featured ? `${SERVICES_DATA[audience].accent} text-black` : 'bg-white/5 text-white hover:bg-white/10'}`}>
-                                                    {t.services.getStarted}
-                                                </button>
+                                                <span className="text-white/40 text-xs font-bold uppercase pb-0.5 tracking-widest">{meta.period}</span>
                                             </div>
+                                            <button className={`w-full py-2.5 rounded-lg font-semibold text-xs transition-colors duration-300 ${meta.featured ? `${SERVICES_DATA[audience].accent} text-black` : 'bg-white/5 text-white hover:bg-white/10'}`}>
+                                                {t.services.getStarted}
+                                            </button>
                                         </div>
-                                        );
-                                    })}
-                                </div>
+                                    </div>
+                                    );
+                                })}
                             </div>
                         </motion.div>
                     )}
