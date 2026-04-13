@@ -651,7 +651,7 @@ function PricingCard({ meta, card, audience, t, onOpen, index }: any) {
 
             {/* STICKER: Floating 'Most Popular' badge so it doesn't break layout */}
             {meta.featured && (
-                <div className={`absolute -top-3 -right-3 md:-right-6 md:-top-4 rotate-[6deg] px-4 py-1.5 rounded-full text-black text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] shadow-xl z-20 ${SERVICES_DATA[audience].accent}`}>
+                <div className={`absolute -top-3 -right-3 md:-right-6 md:-top-4 rotate-[6deg] px-4 py-1.5 rounded-full text-black text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] shadow-xl z-20 ${SERVICES_DATA[audience as AudienceType].accent}`}>
                     <span className="relative z-10">{t.services.mostPopular}</span>
                     {/* Tiny tape/highlight effect physically on sticker */}
                     <div className="absolute inset-0 bg-white/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -665,12 +665,12 @@ function PricingCard({ meta, card, audience, t, onOpen, index }: any) {
                 <ul className="space-y-3">
                     {card.features.slice(0, 4).map((feat: string, idx: number) => (
                         <li key={idx} className="flex items-start gap-3 text-white/70 text-sm">
-                            <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 ${SERVICES_DATA[audience].theme.replace('text-', 'bg-')}`} />
+                            <span className={`w-1.5 h-1.5 rounded-full shrink-0 mt-1.5 ${SERVICES_DATA[audience as AudienceType].theme.replace('text-', 'bg-')}`} />
                             <span className="leading-snug">{feat}</span>
                         </li>
                     ))}
                     {card.features.length > 4 && (
-                        <li className={`text-sm italic ${SERVICES_DATA[audience].theme} opacity-80 pl-4 mt-3`}>+{card.features.length - 4} more included</li>
+                        <li className={`text-sm italic ${SERVICES_DATA[audience as AudienceType].theme} opacity-80 pl-4 mt-3`}>+{card.features.length - 4} more included</li>
                     )}
                 </ul>
             </div>
@@ -684,7 +684,7 @@ function PricingCard({ meta, card, audience, t, onOpen, index }: any) {
                     </div>
                 </div>
                 
-                <div className={`w-12 h-12 rounded-[14px] bg-white/[0.06] border border-white/[0.1] flex items-center justify-center transition-all duration-300 group-hover:bg-white group-hover:border-white group-hover:text-black group-hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] ${meta.featured ? `text-${SERVICES_DATA[audience].theme.replace('text-', '')}` : 'text-white/50'}`}>
+                <div className={`w-12 h-12 rounded-[14px] bg-white/[0.06] border border-white/[0.1] flex items-center justify-center transition-all duration-300 group-hover:bg-white group-hover:border-white group-hover:text-black group-hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] ${meta.featured ? `text-${SERVICES_DATA[audience as AudienceType].theme.replace('text-', '')}` : 'text-white/50'}`}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:-rotate-45">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>
@@ -750,15 +750,15 @@ function InteractiveServices() {
                                 transition={{ delay: 0.2, duration: 0.5 }}
                                 className="max-w-2xl mx-auto text-center mb-16 relative"
                             >
-                                <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[100px] rounded-full blur-[80px] pointer-events-none opacity-20 ${SERVICES_DATA[audience].accent}`} />
-                                <h4 className={`text-2xl md:text-3xl font-serif italic mb-4 leading-tight ${SERVICES_DATA[audience].theme}`}>{t.services[audience].heroTitle}</h4>
+                                <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[100px] rounded-full blur-[80px] pointer-events-none opacity-20 ${SERVICES_DATA[audience as AudienceType].accent}`} />
+                                <h4 className={`text-2xl md:text-3xl font-serif italic mb-4 leading-tight ${SERVICES_DATA[audience as AudienceType].theme}`}>{t.services[audience].heroTitle}</h4>
                                 <p className="text-base text-white/40 leading-relaxed text-center">{t.services[audience].heroDesc}</p>
                             </motion.div>
 
                             {/* Minimalist Glass Card Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
                                 {t.services[audience].cards.map((card, i) => {
-                                    const meta = SERVICES_DATA[audience].pricingCards[i];
+                                    const meta = SERVICES_DATA[audience as AudienceType].pricingCards[i];
                                     return (
                                         <PricingCard key={i} meta={meta} card={card} audience={audience} t={t} onOpen={setOpenCard} index={i} />
                                     );
@@ -774,7 +774,7 @@ function InteractiveServices() {
         <AnimatePresence>
             {openCard !== null && audience && (() => {
                 const card = t.services[audience].cards[openCard];
-                const meta = SERVICES_DATA[audience].pricingCards[openCard];
+                const meta = SERVICES_DATA[audience as AudienceType].pricingCards[openCard];
                 return (
                     <motion.div
                         initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
@@ -797,7 +797,7 @@ function InteractiveServices() {
                             >
                             {/* Ambient modal glow */}
                             <div className="absolute -top-32 -left-32 w-64 h-64 bg-white/10 blur-[80px] rounded-full pointer-events-none" />
-                            <div className={`absolute -bottom-32 -right-32 w-64 h-64 blur-[100px] rounded-full pointer-events-none opacity-20 ${SERVICES_DATA[audience].accent}`} />
+                            <div className={`absolute -bottom-32 -right-32 w-64 h-64 blur-[100px] rounded-full pointer-events-none opacity-20 ${SERVICES_DATA[audience as AudienceType].accent}`} />
 
                             <button
                                 onClick={() => setOpenCard(null)}
@@ -808,18 +808,18 @@ function InteractiveServices() {
 
                             <div className="relative z-10">
                                 {meta.featured && (
-                                    <div className={`inline-block px-4 py-1 rounded-full text-black text-[10px] font-bold uppercase tracking-[0.2em] mb-6 ${SERVICES_DATA[audience].accent}`}>
+                                    <div className={`inline-block px-4 py-1 rounded-full text-black text-[10px] font-bold uppercase tracking-[0.2em] mb-6 ${SERVICES_DATA[audience as AudienceType].accent}`}>
                                         {t.services.mostPopular}
                                     </div>
                                 )}
 
-                                <h3 className={`text-4xl font-medium mb-3 tracking-tight ${SERVICES_DATA[audience].theme}`} style={{ fontFamily: 'var(--font-display)' }}>{card.title}</h3>
+                                <h3 className={`text-4xl font-medium mb-3 tracking-tight ${SERVICES_DATA[audience as AudienceType].theme}`} style={{ fontFamily: 'var(--font-display)' }}>{card.title}</h3>
                                 <p className="text-base text-white/50 mb-10 max-w-sm">{card.desc}</p>
 
                                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-12">
                                     {card.features.map((feat: string, idx: number) => (
                                         <li key={idx} className="flex items-start gap-3 text-white text-sm">
-                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-white/5 border border-white/10 ${SERVICES_DATA[audience].theme}`}>
+                                            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-white/5 border border-white/10 ${SERVICES_DATA[audience as AudienceType].theme}`}>
                                                 <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                                             </div>
                                             <span className="leading-snug opacity-80">{feat}</span>
@@ -837,7 +837,7 @@ function InteractiveServices() {
                                     </div>
                                     <button
                                         onClick={(e) => { setOpenCard(null); triggerBookingSpark(e); }}
-                                        className={`w-full py-5 rounded-[20px] font-medium text-lg transition-all duration-300 shadow-xl ${meta.featured ? `${SERVICES_DATA[audience].accent} text-black hover:scale-[1.02]` : 'bg-white text-black hover:bg-white/90 hover:scale-[1.02]'}`}
+                                        className={`w-full py-5 rounded-[20px] font-medium text-lg transition-all duration-300 shadow-xl ${meta.featured ? `${SERVICES_DATA[audience as AudienceType].accent} text-black hover:scale-[1.02]` : 'bg-white text-black hover:bg-white/90 hover:scale-[1.02]'}`}
                                     >
                                         {t.services.getStarted}
                                     </button>
