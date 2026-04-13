@@ -94,7 +94,7 @@ const T = {
     faq: {
       heading: 'Common', accent: 'Questions',
       getToKnow: 'Get to know us!',
-      bookHeading: 'Book a 30-min discovery call',
+      bookHeading: 'Book a 30-min\ndiscovery call',
       bookCta: 'Book a call',
       preferEmail: 'Prefer to email?',
       copied: 'Copied to clipboard',
@@ -189,7 +189,7 @@ const T = {
     faq: {
       heading: 'Časté', accent: 'dotazy',
       getToKnow: 'Poznejte nás!',
-      bookHeading: 'Rezervujte 30minutový úvodní hovor',
+      bookHeading: 'Rezervujte 30minutový\núvodní hovor',
       bookCta: 'Rezervovat hovor',
       preferEmail: 'Preferujete e-mail?',
       copied: 'Zkopírováno',
@@ -963,9 +963,9 @@ function CustomServicesSection() {
    PROJECTS
    ================================================================ */
 const workProjects = [
-    { num: "01", name: "O.R.C.A Systems", category: "Brand Identity", image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" },
-    { num: "02", name: "Vela Creative", category: "Web Design", image: "https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=2664&auto=format&fit=crop" },
-    { num: "03", name: "Neo Banking App", category: "Product UX", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2672&auto=format&fit=crop" },
+    { num: "01", name: "Placeholder", category: "Brand Identity", image: "/aovaplaceholder.png" },
+    { num: "02", name: "Placeholder", category: "Web Design", image: "/aovaplaceholder.png" },
+    { num: "03", name: "Placeholder", category: "Product UX", image: "/aovaplaceholder.png" },
 ];
 
 
@@ -1233,9 +1233,9 @@ function FaqSection() {
 
     const teamMembers = [
         {
-            name: 'Sarah', role: 'Creative Director', avatar: 'sarah_aova',
+            name: 'Vapor', role: 'Creative Director', avatar: '/vapor.webp',
             quote: '"Great design starts with a really good question."',
-            bio: 'Sarah leads the creative vision at AOVA, shaping the studio\'s aesthetic language across brand, digital, and motion work. With 10 years in the industry, she believes in restraint, intentionality, and work that resonates long after first glance.',
+            bio: 'Vapor leads the creative vision at AOVA, shaping the studio\'s aesthetic language across brand, digital, and motion work. With 10 years in the industry, she believes in restraint, intentionality, and work that resonates long after first glance.',
             skills: ['Brand Identity', 'Art Direction', 'Typography', 'Creative Strategy'],
             location: 'Amsterdam, NL',
         },
@@ -1259,6 +1259,13 @@ function FaqSection() {
             bio: 'Kudy creates the motion layer that gives AOVA\'s work its signature energy. From micro-interactions to full motion identities, he makes interfaces feel alive without overwhelming the underlying message.',
             skills: ['After Effects', 'CSS Animation', 'Lottie', 'Framer'],
             location: 'London, UK',
+        },
+        {
+            name: 'Filip', role: 'Creative', avatar: '/filip.jpg',
+            quote: '"Every detail matters when crafting an experience."',
+            bio: 'Filip brings a meticulous eye to every project, ensuring thoughtful execution from the underlying architecture down to the final pixels.',
+            skills: ['Design', 'Creative Direction'],
+            location: 'Prague, CZ',
         },
         {
             name: 'Amina', role: 'Brand Strategist', avatar: 'amina_aova',
@@ -1446,9 +1453,9 @@ function FaqSection() {
                                         items={[
                                             <div key="t1" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-sm ring-2 ring-[var(--border)] group-hover:ring-[var(--text)] transition-all duration-300">
-                                                    <img src="https://i.pravatar.cc/150?u=sarah_aova" alt="Sarah" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                                    <img src="/vapor.webp" alt="Vapor" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
-                                                <p className="font-serif italic text-[13px] text-[var(--text)] opacity-80 leading-none tracking-wide">Sarah</p>
+                                                <p className="font-serif italic text-[13px] text-[var(--text)] opacity-80 leading-none tracking-wide">Vapor</p>
                                             </div>,
                                             <div key="t2" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-sm ring-2 ring-[var(--border)] group-hover:ring-[var(--text)] transition-all duration-300">
@@ -1469,6 +1476,12 @@ function FaqSection() {
                                                 <p className="font-serif italic text-[13px] text-[var(--text)] opacity-80 leading-none tracking-wide">Kudy</p>
                                             </div>,
                                             <div key="t5" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
+                                                <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-sm ring-2 ring-[var(--border)] group-hover:ring-[var(--text)] transition-all duration-300">
+                                                    <img src="/filip.jpg" alt="Filip" className="w-full h-full object-cover object-[center_35%] filter grayscale group-hover:grayscale-0 transition-all duration-500" />
+                                                </div>
+                                                <p className="font-serif italic text-[13px] text-[var(--text)] opacity-80 leading-none tracking-wide">Filip</p>
+                                            </div>,
+                                            <div key="t6" className="flex flex-col items-center justify-center p-1 group pointer-events-auto cursor-pointer rounded-xl">
                                                 <div className="rounded-full overflow-hidden w-[52px] h-[52px] mb-2 shadow-sm ring-2 ring-[var(--border)] group-hover:ring-[var(--text)] transition-all duration-300">
                                                     <img src="https://i.pravatar.cc/150?u=amina_aova" alt="Amina" className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                                 </div>
@@ -1552,8 +1565,8 @@ function FaqSection() {
                                                 </div>
                                             </div>
 
-                                            <h3 className="text-4xl md:text-5xl font-serif font-medium leading-tight tracking-tight mb-6 w-full text-[#FF3366]">
-                                                <span className="bg-[var(--booking-inner)] md:bg-transparent md:backdrop-blur-none bg-opacity-70 backdrop-blur-md px-4 py-2 rounded-xl">{t.faq.bookHeading}</span>
+                                            <h3 className="text-4xl md:text-5xl font-serif font-medium leading-[1.1] tracking-tight mb-6 w-full text-[#FF3366]">
+                                                <span className="bg-[var(--booking-inner)] md:bg-transparent md:backdrop-blur-none bg-opacity-70 backdrop-blur-md px-4 py-2 rounded-xl inline-block whitespace-pre-line">{t.faq.bookHeading}</span>
                                             </h3>
 
                                             <motion.button

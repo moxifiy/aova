@@ -35,12 +35,16 @@ function LogoShape({ isDark }: { isDark: boolean }) {
 
     useEffect(() => {
         const onMouseMove = (e: MouseEvent) => {
+            // Only update rotation if the mouse is hovering within the hero section's physical area (first 100vh)
+            // This prevents off-screen calculations and cursor lag globally throughout the rest of the page.
+            if (e.pageY > window.innerHeight) return;
+
             const nx = (e.clientX / window.innerWidth) * 2 - 1;
             const ny = -(e.clientY / window.innerHeight) * 2 + 1;
             targetRot.current.x = (ny * Math.PI) / 8; // Gentle tilt up/down
             targetRot.current.y = (nx * Math.PI) / 6; // Gentle turn left/right
         };
-        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mousemove', onMouseMove, { passive: true });
         return () => window.removeEventListener('mousemove', onMouseMove);
     }, []);
 

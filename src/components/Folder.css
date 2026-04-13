@@ -20,6 +20,12 @@
     transform: translate(-50%, 2%);
 }
 
+/* Make Leif pop out higher and be on top when folder is hovered */
+.folder:not(.open):hover .paper:nth-child(3) {
+    transform: translate(-50%, -15%);
+    z-index: 20;
+}
+
 .folder:not(.open):hover .folder__front {
     transform: skew(15deg) scaleY(0.6);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);

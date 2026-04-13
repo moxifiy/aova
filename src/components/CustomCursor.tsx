@@ -6,17 +6,29 @@ export default function CustomCursor() {
     const dotRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const onMouseMove = (e: MouseEvent) => {
+        let mouseX = 0;
+        let mouseY = 0;
+        let rafId: number;
+
+        const updateCursor = () => {
             if (dotRef.current) {
-                // Direct hardware-accelerated transform via sync hook
-                dotRef.current.style.transform = `translate3d(${e.clientX - 2}px, ${e.clientY - 2}px, 0)`;
+                // Direct hardware-accelerated transform inside render loop
+                dotRef.current.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
             }
+            rafId = requestAnimationFrame(updateCursor);
+        };
+
+        const onMouseMove = (e: MouseEvent) => {
+            mouseX = e.clientX - 2;
+            mouseY = e.clientY - 2;
         };
 
         window.addEventListener("mousemove", onMouseMove, { passive: true });
+        rafId = requestAnimationFrame(updateCursor);
 
         return () => {
             window.removeEventListener("mousemove", onMouseMove);
+            cancelAnimationFrame(rafId);
         };
     }, []);
 
