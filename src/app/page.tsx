@@ -25,11 +25,55 @@ const T = {
   en: {
     nav: { work: 'Work', services: 'Services', process: 'Process', book: 'Book' },
     hero: {
-      prefix: 'Design studio for',
+      prefix: 'Design that helps',
       brands: 'brands',
       creators: 'creators',
-      tagline: "Not an agency. Not a freelancer. A studio that treats your project like it's our own, and delivers like it.",
-      cta: 'Reserve your spot',
+      suffix: ' grow.',
+      tagline: "AOVA builds brand systems, content visuals, and websites for creators and brands that want stronger presence, sharper trust, and visuals that actually support growth.",
+      cta: 'Start a project',
+      cta2: 'View our work',
+    },
+    capabilities: {
+      label: 'Capabilities',
+      heading: 'What we do',
+      sub: 'AOVA helps creators and brands grow through three core areas: brand, content, and web. Each one is built to strengthen presence, build trust, and support growth.',
+      cards: [
+        {
+          title: 'Brand',
+          desc: 'Identity systems, logos, and visual direction that make your business look clear, credible, and memorable.',
+          tags: ['Logos', 'Visual systems', 'Brand assets'],
+        },
+        {
+          title: 'Content',
+          desc: 'Social graphics, thumbnails, and campaign visuals designed to earn attention and keep your presence consistent.',
+          tags: ['Socials', 'Campaigns', 'Creator visuals'],
+        },
+        {
+          title: 'Web',
+          desc: 'Landing pages, websites, and digital design that present your brand properly and turn attention into action.',
+          tags: ['Landing pages', 'Websites', 'UI'],
+        },
+      ],
+    },
+    audience: {
+      label: 'Who we work with',
+      heading: 'Built for creators, brands, and businesses with something to grow.',
+      sub: 'We work with people and teams who need strong visuals to sharpen their presence, build trust, and move their brand forward.',
+      cards: [
+        {
+          title: 'Creators',
+          desc: 'For creators building a more polished, scalable presence through content, branding, and digital visuals.',
+        },
+        {
+          title: 'Brands',
+          desc: 'For brands that need sharper design across identity, campaigns, content, and digital touchpoints.',
+        },
+        {
+          title: 'Founder-led businesses',
+          desc: 'For founders and growing businesses that want clear, reliable design support across brand, content, and web.',
+        },
+      ],
+      note: 'We also support selected agencies on overflow and white-label work.',
     },
     marquee: [
       "Connecting selected creatives to selective brands.",
@@ -120,11 +164,55 @@ const T = {
   cz: {
     nav: { work: 'Práce', services: 'Služby', process: 'Proces', book: 'Rezervovat' },
     hero: {
-      prefix: 'Design studio pro',
-      brands: 'značky',
-      creators: 'tvůrce',
-      tagline: "Nejsme agentura. Nejsme freelancer. Jsme studio, které k vašemu projektu přistupuje jako ke svému vlastnímu.",
-      cta: 'Rezervujte místo',
+      prefix: 'Design, který pomáhá',
+      brands: 'značkám',
+      creators: 'tvůrcům',
+      suffix: ' růst.',
+      tagline: "AOVA staví značkové systémy, vizuály obsahu a weby pro tvůrce a značky, které chtějí silnější přítomnost, ostřejší důvěru a vizuály, které skutečně podporují růst.",
+      cta: 'Začít projekt',
+      cta2: 'Naše práce',
+    },
+    capabilities: {
+      label: 'Kapacity',
+      heading: 'Co děláme',
+      sub: 'AOVA pomáhá tvůrcům a značkám růst ve třech klíčových oblastech: brand, obsah a web. Každá je vytvořena tak, aby posílila přítomnost, budovala důvěru a podporovala růst.',
+      cards: [
+        {
+          title: 'Brand',
+          desc: 'Identita, loga a vizuální směr, které dělají vaše podnikání srozumitelným, důvěryhodným a zapamatovatelným.',
+          tags: ['Loga', 'Vizuální systémy', 'Brand assety'],
+        },
+        {
+          title: 'Obsah',
+          desc: 'Sociální grafika, miniatury a kampaňové vizuály vytvořené pro získání pozornosti a konzistentní přítomnost.',
+          tags: ['Sítě', 'Kampaně', 'Creator vizuály'],
+        },
+        {
+          title: 'Web',
+          desc: 'Landing pages, webové stránky a digitální design, které prezentují vaši značku správně a mění pozornost v akci.',
+          tags: ['Landing pages', 'Weby', 'UI'],
+        },
+      ],
+    },
+    audience: {
+      label: 'S kým spolupracujeme',
+      heading: 'Pro tvůrce, značky a firmy, které mají co růst.',
+      sub: 'Pracujeme s lidmi a týmy, kteří potřebují silné vizuály k vyostření své přítomnosti, budování důvěry a posunutí značky dál.',
+      cards: [
+        {
+          title: 'Tvůrci',
+          desc: 'Pro tvůrce, kteří budují uhlazenější a škálovatelnější přítomnost skrze obsah, branding a digitální vizuály.',
+        },
+        {
+          title: 'Značky',
+          desc: 'Pro značky, které potřebují ostřejší design napříč identitou, kampaněmi, obsahem a digitálními touchpointy.',
+        },
+        {
+          title: 'Founder-led byznysy',
+          desc: 'Pro zakladatele a rostoucí firmy, které chtějí jasnou a spolehlivou designovou podporu v brandu, obsahu a webu.',
+        },
+      ],
+      note: 'Podporujeme také vybrané agentury při overflow a white-label spolupracích.',
     },
     marquee: [
       "Spojujeme výjimečné tvůrce s prémiovými značkami.",
@@ -427,14 +515,14 @@ function Hero({ isDark }: { isDark: boolean }) {
                     <span className="font-serif italic" style={{ letterSpacing: '-0.06em', display: 'inline-block', padding: '0 0.08em 0.12em 0', margin: '0 -0.08em -0.12em 0', backgroundImage: isDark ? 'linear-gradient(135deg, #7a7a7a 0%, #e0e0e0 45%, #888 100%)' : 'linear-gradient(135deg, #444 0%, #888 45%, #111 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{t.hero.creators}</span>
                     <span style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.06em', textTransform: 'none', margin: '0 0.08em' }}>&amp;</span>
                     <span className="font-serif italic" style={{ letterSpacing: '-0.06em', display: 'inline-block', padding: '0 0.08em 0.12em 0', margin: '0 -0.08em -0.12em 0', backgroundImage: isDark ? 'linear-gradient(135deg, #888 0%, #e0e0e0 45%, #7a7a7a 100%)' : 'linear-gradient(135deg, #111 0%, #555 45%, #333 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{t.hero.brands}</span>
-                    <span style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.06em', textTransform: 'none' }}>.</span>
+                    <span style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.06em', textTransform: 'none' }}>{t.hero.suffix}</span>
                 </motion.h1>
 
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-base md:text-lg text-[var(--muted)] max-w-lg mb-10 leading-relaxed"
+                    className="text-base md:text-lg text-[var(--muted)] max-w-xl mb-10 leading-relaxed"
                 >
                     {t.hero.tagline}
                 </motion.p>
@@ -443,28 +531,36 @@ function Hero({ isDark }: { isDark: boolean }) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
-                    className="flex items-center gap-4 pointer-events-auto"
+                    className="flex flex-wrap items-center gap-3 pointer-events-auto"
                 >
+                    {/* Primary — strong, high conviction */}
                     <motion.button
                         onClick={triggerBookingSpark}
-                        whileHover={{
-                            scale: 1.05,
-                            rotateX: 12,
-                            rotateY: -8,
-                            y: -5,
-                            boxShadow: "0 25px 50px -12px rgba(180, 180, 200, 0.45)"
-                        }}
-                        whileTap={{ scale: 0.95, rotateX: 0, rotateY: 0 }}
-                        style={{ transformStyle: "preserve-3d", perspective: 1000 }}
-                        className="pg-btn pg-btn-primary text-base group shadow-xl transition-shadow duration-300"
+                        whileHover={{ y: -2 }}
+                        whileTap={{ scale: 0.97 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                        className="group relative inline-flex items-center gap-2.5 px-7 py-4 rounded-full bg-[var(--text)] text-[var(--surface)] text-[15px] font-semibold tracking-tight shadow-[0_8px_24px_-8px_rgba(0,0,0,0.35)] hover:shadow-[0_14px_36px_-10px_rgba(0,0,0,0.5)] transition-shadow duration-300"
                     >
-                        <span style={{ transform: "translateZ(20px)" }} className="flex items-center gap-2">
-                            {t.hero.cta}
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                        </span>
+                        {t.hero.cta}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-0.5">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </motion.button>
+
+                    {/* Secondary — subtle, elegant */}
+                    <motion.button
+                        onClick={() => scrollToId('work')}
+                        whileHover={{ y: -2 }}
+                        whileTap={{ scale: 0.97 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                        className="group inline-flex items-center gap-2 px-7 py-4 rounded-full bg-transparent text-[var(--text)] text-[15px] font-medium tracking-tight border border-[var(--border-hover)] hover:border-[var(--text)] hover:bg-[var(--text)]/[0.04] transition-colors duration-300"
+                    >
+                        {t.hero.cta2}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60 transition-all duration-300 group-hover:translate-x-0.5 group-hover:opacity-100">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
                     </motion.button>
                 </motion.div>
             </motion.div>
@@ -473,6 +569,319 @@ function Hero({ isDark }: { isDark: boolean }) {
 }
 
 
+/* ================================================================
+   CAPABILITIES — sits directly under hero
+   ================================================================ */
+
+// Brand preview — curated logo / monogram sample sheet
+function BrandPreview() {
+    const marks = [
+        { type: 'mono', label: 'Æ', font: 'serif' },
+        { type: 'word', label: 'NORTH' },
+        { type: 'mono', label: '◐', font: 'sans' },
+        { type: 'word', label: 'halo.' },
+        { type: 'mono', label: 'V', font: 'serif' },
+        { type: 'word', label: 'KIN' },
+    ];
+    return (
+        <div className="grid grid-cols-3 gap-px bg-[var(--border)] rounded-2xl overflow-hidden">
+            {marks.map((m, i) => (
+                <div
+                    key={i}
+                    className="aspect-[4/3] flex items-center justify-center bg-[var(--bg)] text-[var(--text)] transition-colors duration-500 group-hover:bg-[var(--surface)]"
+                >
+                    {m.type === 'mono' ? (
+                        <span
+                            className={m.font === 'serif' ? 'font-serif italic' : ''}
+                            style={{ fontSize: '28px', letterSpacing: '-0.04em', fontFamily: m.font === 'sans' ? 'var(--font-display)' : undefined }}
+                        >
+                            {m.label}
+                        </span>
+                    ) : (
+                        <span
+                            style={{ fontFamily: 'var(--font-display)', fontSize: '13px', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 600 }}
+                        >
+                            {m.label}
+                        </span>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+}
+
+// Content preview — stacked "thumbnail" composition
+function ContentPreview() {
+    return (
+        <div className="relative aspect-[5/4] rounded-2xl overflow-hidden bg-[var(--bg)] border border-[var(--border)]">
+            {/* back thumbnail */}
+            <div className="absolute inset-x-6 top-3 bottom-12 rounded-xl bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/5 transform rotate-[-3deg] opacity-60" />
+            {/* mid thumbnail */}
+            <div className="absolute inset-x-4 top-5 bottom-10 rounded-xl bg-gradient-to-br from-[#222] to-[#111] border border-white/5 transform rotate-[1.5deg] opacity-80" />
+            {/* front thumbnail */}
+            <div className="absolute inset-x-3 top-7 bottom-7 rounded-xl bg-[#0d0d0d] border border-white/10 overflow-hidden shadow-xl">
+                {/* thumbnail content */}
+                <div className="relative w-full h-full p-4 flex flex-col justify-between">
+                    {/* top row */}
+                    <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-white/40">Episode 04</span>
+                        <span className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
+                            <svg width="8" height="8" viewBox="0 0 8 8" fill="white" className="ml-0.5"><polygon points="1,0 7,4 1,8" /></svg>
+                        </span>
+                    </div>
+                    {/* big title */}
+                    <div>
+                        <h4
+                            className="text-white text-[26px] leading-[0.95] mb-1"
+                            style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.05em' }}
+                        >
+                            How great<br />
+                            <span className="font-serif italic" style={{ background: 'linear-gradient(135deg, #888, #e0e0e0, #7a7a7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>brands</span> sound.
+                        </h4>
+                        <div className="flex items-center gap-2 mt-2">
+                            <span className="text-[9px] text-white/50">2.4M views</span>
+                            <span className="w-0.5 h-0.5 rounded-full bg-white/30" />
+                            <span className="text-[9px] text-white/50">Trending</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Web preview — minimal browser frame mock
+function WebPreview() {
+    return (
+        <div className="aspect-[5/4] rounded-2xl overflow-hidden bg-[var(--bg)] border border-[var(--border)] flex flex-col">
+            {/* browser chrome */}
+            <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[var(--border)] bg-[var(--surface)]">
+                <span className="w-2 h-2 rounded-full bg-[var(--border-hover)]" />
+                <span className="w-2 h-2 rounded-full bg-[var(--border-hover)]" />
+                <span className="w-2 h-2 rounded-full bg-[var(--border-hover)]" />
+                <div className="ml-3 flex-1 h-4 rounded-full bg-[var(--bg)] border border-[var(--border)] flex items-center px-2.5">
+                    <span className="text-[8px] text-[var(--muted)]">aova.studio</span>
+                </div>
+            </div>
+            {/* page content */}
+            <div className="flex-1 p-5 flex flex-col justify-between bg-[var(--bg)]">
+                <div className="flex items-center justify-between">
+                    <span className="w-5 h-5 rounded-md bg-[var(--text)]" />
+                    <div className="flex gap-1.5">
+                        <span className="w-6 h-1 rounded-full bg-[var(--border-hover)]" />
+                        <span className="w-6 h-1 rounded-full bg-[var(--border-hover)]" />
+                        <span className="w-6 h-1 rounded-full bg-[var(--border-hover)]" />
+                    </div>
+                </div>
+                <div>
+                    <h4
+                        className="text-[var(--text)] text-[22px] leading-[0.9] mb-2"
+                        style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.05em' }}
+                    >
+                        Build that<br />
+                        <span className="font-serif italic">converts.</span>
+                    </h4>
+                    <div className="flex items-center gap-2 mt-3">
+                        <span className="text-[9px] px-2 py-1 rounded-full bg-[var(--text)] text-[var(--surface)] font-semibold">Get started</span>
+                        <span className="text-[9px] px-2 py-1 rounded-full border border-[var(--border-hover)] text-[var(--text)] font-medium">Learn more</span>
+                    </div>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
+                    <span className="h-1 rounded-full bg-[var(--border)]" />
+                    <span className="h-1 rounded-full bg-[var(--border)]" />
+                    <span className="h-1 rounded-full bg-[var(--border)]" />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function CapabilitiesSection() {
+    const t = useT();
+    const previews = [BrandPreview, ContentPreview, WebPreview];
+
+    return (
+        <section className="relative py-24 md:py-32" id="capabilities">
+            <div className="pg-inner">
+                {/* Header — editorial two-column */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 mb-14 md:mb-20">
+                    <div className="lg:col-span-6">
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                            className="flex items-center gap-2.5 mb-5"
+                        >
+                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--text)]/40" />
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">{t.capabilities.label}</span>
+                        </motion.div>
+                        <motion.h2
+                            initial={{ opacity: 0, y: 18 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.7, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+                            className="text-4xl md:text-6xl leading-[0.98] text-[var(--text)]"
+                            style={{ letterSpacing: '-0.04em' }}
+                        >
+                            {t.capabilities.heading}
+                        </motion.h2>
+                    </div>
+                    <div className="lg:col-span-5 lg:col-start-8 flex lg:items-end">
+                        <motion.p
+                            initial={{ opacity: 0, y: 14 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                            className="text-base md:text-[17px] text-[var(--muted)] leading-relaxed"
+                        >
+                            {t.capabilities.sub}
+                        </motion.p>
+                    </div>
+                </div>
+
+                {/* Capability cards — each carries a distinct preview */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {t.capabilities.cards.map((card, i) => {
+                        const Preview = previews[i];
+                        return (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 24 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: '-60px' }}
+                                transition={{ duration: 0.6, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                                className="group relative flex flex-col p-5 md:p-6 rounded-[28px] border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-hover)] transition-colors duration-500"
+                            >
+                                {/* Preview area — top */}
+                                <div className="mb-7">
+                                    <Preview />
+                                </div>
+
+                                {/* Title row */}
+                                <div className="flex items-baseline justify-between mb-2.5">
+                                    <h3
+                                        className="text-2xl md:text-[28px] text-[var(--text)] leading-none"
+                                        style={{ letterSpacing: '-0.04em' }}
+                                    >
+                                        {card.title}
+                                    </h3>
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]/70">
+                                        0{i + 1}
+                                    </span>
+                                </div>
+
+                                <p className="text-sm text-[var(--muted)] leading-relaxed mb-6">
+                                    {card.desc}
+                                </p>
+
+                                {/* Tag row — separated by middots, not pills */}
+                                <div className="mt-auto pt-5 border-t border-[var(--border)] text-[11px] font-medium text-[var(--muted)] flex items-center flex-wrap gap-x-2 gap-y-1">
+                                    {card.tags.map((tag, idx) => (
+                                        <span key={idx} className="flex items-center gap-2">
+                                            {idx > 0 && <span className="w-0.5 h-0.5 rounded-full bg-[var(--muted)]/40" />}
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            </div>
+        </section>
+    );
+}
+
+/* ================================================================
+   AUDIENCE — who we work with
+   ================================================================ */
+function AudienceSection() {
+    const t = useT();
+
+    return (
+        <section className="relative py-24 md:py-32 border-t border-[var(--border)]" id="audience">
+            <div className="pg-inner">
+                {/* Header */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 mb-14 md:mb-20">
+                    <div className="lg:col-span-6">
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                            className="flex items-center gap-2.5 mb-5"
+                        >
+                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--text)]/40" />
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">{t.audience.label}</span>
+                        </motion.div>
+                        <motion.h2
+                            initial={{ opacity: 0, y: 18 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.7, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+                            className="text-3xl md:text-5xl leading-[1.05] text-[var(--text)]"
+                            style={{ letterSpacing: '-0.04em' }}
+                        >
+                            {t.audience.heading}
+                        </motion.h2>
+                    </div>
+                    <div className="lg:col-span-5 lg:col-start-8 flex lg:items-end">
+                        <motion.p
+                            initial={{ opacity: 0, y: 14 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-80px' }}
+                            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                            className="text-base md:text-[17px] text-[var(--muted)] leading-relaxed"
+                        >
+                            {t.audience.sub}
+                        </motion.p>
+                    </div>
+                </div>
+
+                {/* Audience columns — divided list, more editorial than card-y */}
+                <div className="grid grid-cols-1 md:grid-cols-3 border-t border-[var(--border)]">
+                    {t.audience.cards.map((card, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 18 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: '-60px' }}
+                            transition={{ duration: 0.6, delay: 0.08 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                            className={`relative py-10 md:py-12 md:px-8 first:md:pl-0 last:md:pr-0 ${i > 0 ? 'border-t md:border-t-0 md:border-l border-[var(--border)]' : ''}`}
+                        >
+                            <div className="flex items-baseline gap-3 mb-4">
+                                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]/70">
+                                    0{i + 1}
+                                </span>
+                                <h3
+                                    className="text-2xl md:text-[28px] text-[var(--text)] leading-none"
+                                    style={{ letterSpacing: '-0.04em' }}
+                                >
+                                    {card.title}
+                                </h3>
+                            </div>
+                            <p className="text-sm text-[var(--muted)] leading-relaxed max-w-sm">
+                                {card.desc}
+                            </p>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* Footnote */}
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    className="mt-12 text-xs md:text-sm text-[var(--muted)]/70 italic font-serif border-t border-[var(--border)] pt-6"
+                >
+                    {t.audience.note}
+                </motion.p>
+            </div>
+        </section>
+    );
+}
 
 
 function Marquee() {
@@ -1724,6 +2133,8 @@ export default function HomePage() {
             <CustomCursor />
             <Navbar isDark={isDark} toggleDark={() => setIsDark(!isDark)} lang={lang} setLang={setLang} />
             <Hero isDark={isDark} />
+            <CapabilitiesSection />
+            <AudienceSection />
             <WorkSection />
             <InteractiveServices />
             <CustomServicesSection />
