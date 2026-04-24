@@ -703,36 +703,26 @@ function CapabilitiesSection() {
     return (
         <section className="relative py-24 md:py-32" id="capabilities">
             <div className="pg-inner">
-                {/* Header — editorial two-column */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 mb-14 md:mb-20">
-                    <div className="lg:col-span-6">
-                        <motion.div
-                            initial={{ opacity: 0, y: 12 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-80px' }}
-                            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                            className="flex items-center gap-2.5 mb-5"
-                        >
-                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--text)]/40" />
-                            <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">{t.capabilities.label}</span>
-                        </motion.div>
+                {/* Header — two-column, heading left / paragraph right, top-aligned */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 items-start gap-10 lg:gap-16 mb-14 md:mb-20">
+                    <div className="lg:col-span-5">
                         <motion.h2
                             initial={{ opacity: 0, y: 18 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-80px' }}
-                            transition={{ duration: 0.7, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
-                            className="text-4xl md:text-6xl leading-[0.98] text-[var(--text)]"
+                            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                            className="text-4xl md:text-5xl leading-[1.0] text-[var(--text)]"
                             style={{ letterSpacing: '-0.04em' }}
                         >
                             {t.capabilities.heading}
                         </motion.h2>
                     </div>
-                    <div className="lg:col-span-5 lg:col-start-8 flex lg:items-end">
+                    <div className="lg:col-span-6 lg:col-start-7 flex items-start pt-1">
                         <motion.p
                             initial={{ opacity: 0, y: 14 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-80px' }}
-                            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.7, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
                             className="text-base md:text-[17px] text-[var(--muted)] leading-relaxed"
                         >
                             {t.capabilities.sub}
@@ -753,29 +743,31 @@ function CapabilitiesSection() {
                                 transition={{ duration: 0.6, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                                 className="group relative flex flex-col p-5 md:p-6 rounded-[28px] border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-hover)] transition-colors duration-500"
                             >
-                                {/* Preview area — top */}
-                                <div className="mb-7">
-                                    <Preview />
+                                {/* Preview area — fixed height so title always starts at the same point */}
+                                <div className="mb-6 aspect-[5/4] w-full overflow-hidden rounded-2xl">
+                                    <div className="w-full h-full">
+                                        <Preview />
+                                    </div>
                                 </div>
 
-                                {/* Title row */}
-                                <div className="flex items-baseline justify-between mb-2.5">
-                                    <h3
-                                        className="text-2xl md:text-[28px] text-[var(--text)] leading-none"
-                                        style={{ letterSpacing: '-0.04em' }}
-                                    >
-                                        {card.title}
-                                    </h3>
-                                    <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]/70">
-                                        0{i + 1}
-                                    </span>
-                                </div>
+                                {/* Counter */}
+                                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]/60 mb-3">
+                                    0{i + 1}
+                                </span>
+
+                                {/* Title */}
+                                <h3
+                                    className="text-2xl md:text-[26px] text-[var(--text)] leading-none mb-3"
+                                    style={{ letterSpacing: '-0.04em' }}
+                                >
+                                    {card.title}
+                                </h3>
 
                                 <p className="text-sm text-[var(--muted)] leading-relaxed mb-6">
                                     {card.desc}
                                 </p>
 
-                                {/* Tag row — separated by middots, not pills */}
+                                {/* Tag row */}
                                 <div className="mt-auto pt-5 border-t border-[var(--border)] text-[11px] font-medium text-[var(--muted)] flex items-center flex-wrap gap-x-2 gap-y-1">
                                     {card.tags.map((tag, idx) => (
                                         <span key={idx} className="flex items-center gap-2">
