@@ -47,7 +47,7 @@ export default function ArchivePage() {
     return (
         <main className="relative min-h-[100svh] pb-32">
             <CustomCursor />
-            
+
             {/* Top Navigation & Tabs */}
             <nav className="fixed top-0 inset-x-0 z-50 p-4 md:p-6 flex flex-col md:flex-row justify-between items-center pointer-events-none gap-4">
                 <div className="pointer-events-auto w-full md:w-auto flex justify-between md:justify-start flex-none md:flex-1">

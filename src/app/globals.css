@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@theme {
+	--font-roboto: var(--font-roboto), sans-serif;
+	--font-figtree: var(--font-figtree), sans-serif;
+	--font-host: var(--font-host), sans-serif;
+}
+
 /* ═══════════════════════════════════════════
    DESIGN TOKENS
    ═══════════════════════════════════════════ */
@@ -558,3 +564,309 @@ body.dark ::-webkit-scrollbar-thumb:hover {
 		background-position: 200% 0;
 	}
 }
+
+/* ═══════════════════════════════════════════
+   V2 CUSTOM CURSOR OVERRIDES
+   ═══════════════════════════════════════════ */
+@media (pointer: fine) {
+	/* Override the global cursor: none to restore standard browser mouse pointer inside v2 */
+	.v2-root,
+	.v2-root * {
+		cursor: auto !important;
+	}
+
+	/* Clickable elements get the pointer hand cursor */
+	.v2-root a,
+	.v2-root button,
+	.v2-root [role="button"],
+	.v2-root a *,
+	.v2-root button * {
+		cursor: pointer !important;
+	}
+
+	/* Hide default system cursor when hovering over custom cursor zones in V2 */
+	.v2-root .cursor-none-v2,
+	.v2-root .cursor-none-v2 * {
+		cursor: none !important;
+	}
+}
+
+
+/* ═══════════════════════════════════════════
+   V2 TYPE SYSTEM (scoped — old site unaffected)
+   Clean neo-grotesque (Geist) everywhere + one upright serif moment.
+   ═══════════════════════════════════════════ */
+.v2-root {
+	--font-body: var(--font-host), sans-serif;
+	--font-head: var(--font-host), sans-serif;
+	--font-display: var(--font-host), sans-serif;
+	/* Apply the Host Grotesk font to the whole v2 subtree (declaration must live here,
+	   not just the variable, or children keep inheriting the old computed font) */
+	font-family: var(--font-host), sans-serif;
+}
+
+/* Fold display/body/mono all to the same clean host grotesk (no mono walls) */
+.v2-root .font-display,
+.v2-root .font-head,
+.v2-root .font-body,
+.v2-root .font-mono {
+	font-family: var(--font-host), sans-serif;
+}
+
+/* The single editorial serif moment — clean and UPRIGHT, never italic */
+.v2-root .font-serif {
+	font-family: var(--font-newsreader), Georgia, serif !important;
+	font-style: normal !important;
+}
+.v2-root .italic {
+	font-style: normal !important;
+}
+
+/* Logo Eye Blink Animation */
+@keyframes logo-eye-blink {
+	0% {
+		transform: scaleY(1);
+	}
+	2% {
+		transform: scaleY(0.02);
+	}
+	4% {
+		transform: scaleY(1.05);
+	}
+	6%, 60% {
+		transform: scaleY(1);
+	}
+	62% {
+		transform: scaleY(0.02);
+	}
+	64% {
+		transform: scaleY(1.05);
+	}
+	66%, 100% {
+		transform: scaleY(1);
+	}
+}
+
+.v2-root .animate-logo-eye-blink {
+	animation: logo-eye-blink 10s infinite cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Logo Eye Look Around Animation */
+/* Scaled to 10s total, finishes active part at 58% so it stays completely still for 4.2 seconds */
+@keyframes logo-eye-look {
+	0%, 1.38% { transform: translate(0px, 0px); }
+	2.77%, 7.77% { transform: translate(7px, 6px); }
+	8.88%, 14.44% { transform: translate(-7px, 8px); }
+	15.55%, 20.55% { transform: translate(0px, 0px); }
+	21.66%, 25.55% { transform: translate(0px, 26px); }
+	26.66%, 29.16% { transform: translate(0px, 0px); }
+	30.55%, 35.55% { transform: translate(7px, 6px); }
+	36.66%, 42.22% { transform: translate(-7px, 8px); }
+	43.33%, 48.33% { transform: translate(0px, 0px); }
+	49.44%, 53.33% { transform: translate(0px, 26px); }
+	54.44%, 100% { transform: translate(0px, 0px); }
+}
+
+.v2-root .animate-logo-eye-look {
+	animation: logo-eye-look 18s infinite cubic-bezier(0.25, 1, 0.5, 1);
+}
+.v2-root .flower-btn {
+  height: 4.5em;
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  text-decoration: none;
+}
+
+.v2-root .flower-wrapper {
+  height: 2em;
+  position: relative;
+  background: transparent;
+  display: flex;
+  align-items: center;
+}
+
+.v2-root .flower {
+  display: grid;
+  grid-template-columns: 1em 1em;
+  position: absolute;
+  opacity: 0;
+  scale: 0;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              scale 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  transform-origin: center;
+  z-index: 0;
+}
+
+.v2-root .flower1 {
+  top: -30px;
+  left: -10%;
+  transform: rotate(5deg);
+}
+
+.v2-root .flower2 {
+  bottom: -30px;
+  left: -2%;
+  transform: rotate(35deg);
+}
+
+.v2-root .flower3 {
+  bottom: -30px;
+  left: 15%;
+  transform: rotate(0deg);
+}
+
+.v2-root .flower4 {
+  top: -30px;
+  right: 15%;
+  transform: rotate(15deg);
+}
+
+.v2-root .flower5 {
+  top: -30px;
+  right: -2%;
+  transform: rotate(25deg);
+}
+
+.v2-root .flower6 {
+  bottom: -30px;
+  right: -10%;
+  transform: rotate(30deg);
+}
+
+.v2-root .flower-petal {
+  height: 1em;
+  width: 1em;
+  border-radius: 40% 70% / 7% 90%;
+  background: linear-gradient(#ff42a0, #ff94cb);
+  border: 0.5px solid #ffc2e3;
+  z-index: 0;
+}
+
+.v2-root .flower-petal.two {
+  transform: rotate(90deg);
+}
+
+.v2-root .flower-petal.three {
+  transform: rotate(270deg);
+}
+
+.v2-root .flower-petal.four {
+  transform: rotate(180deg);
+}
+
+.v2-root .flower-btn:hover .flower {
+  opacity: 1;
+  scale: 1.35;
+}
+
+/* "See for yourselves" down-chevron gentle bob */
+@keyframes v2-arrow-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+.v2-root .v2-arrow-bob {
+  animation: v2-arrow-bob 1.5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-root .v2-arrow-bob { animation: none; }
+}
+
+/* Playful wink for the ";)" in "See for yourselves" */
+@keyframes v2-wink {
+  0%   { transform: rotate(0deg) scale(1) translateY(0); }
+  35%  { transform: rotate(0deg) scale(1.4) translateY(-6px); }
+  70%  { transform: rotate(375deg) scale(1.05) translateY(0); }
+  100% { transform: rotate(360deg) scale(1) translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-root [class*="v2-wink"] { animation: none !important; }
+}
+
+.v2-root .flower-btn:hover div.flower1 {
+  animation: 15s linear 0s normal none infinite running flower1;
+}
+
+@keyframes flower1 {
+  0% {
+    transform: rotate(5deg);
+  }
+  100% {
+    transform: rotate(365deg);
+  }
+}
+
+.v2-root .flower-btn:hover div.flower2 {
+  animation: 13s linear 0s normal none infinite running flower2;
+}
+
+@keyframes flower2 {
+  0% {
+    transform: rotate(35deg);
+  }
+  100% {
+    transform: rotate(-325deg);
+  }
+}
+
+.v2-root .flower-btn:hover div.flower3 {
+  animation: 16s linear 0s normal none infinite running flower3;
+}
+
+@keyframes flower3 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.v2-root .flower-btn:hover div.flower4 {
+  animation: 17s linear 0s normal none infinite running flower4;
+}
+
+@keyframes flower4 {
+  0% {
+    transform: rotate(15deg);
+  }
+  100% {
+    transform: rotate(375deg);
+  }
+}
+
+.v2-root .flower-btn:hover div.flower5 {
+  animation: 20s linear 0s normal none infinite running flower5;
+}
+
+@keyframes flower5 {
+  0% {
+    transform: rotate(25deg);
+  }
+  100% {
+    transform: rotate(-335deg);
+  }
+}
+
+.v2-root .flower-btn:hover div.flower6 {
+  animation: 15s linear 0s normal none infinite running flower6;
+}
+
+@keyframes flower6 {
+  0% {
+    transform: rotate(30deg);
+  }
+  100% {
+    transform: rotate(390deg);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   PIXEL ARROW 3D EXTRUSION
+   ═══════════════════════════════════════════ */
+.v2-root .pixel-arrow-group:hover .pixel-arrow-3d-wrapper {
+	transform: rotateX(40deg) rotateY(-25deg);
+}
+

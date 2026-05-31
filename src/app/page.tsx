@@ -34,24 +34,28 @@ const T = {
       cta2: 'View our work',
     },
     capabilities: {
-      label: 'Capabilities',
       heading: 'What we do',
-      sub: 'AOVA helps creators and brands grow through three core areas: brand, content, and web. Each one is built to strengthen presence, build trust, and support growth.',
+      sub: 'AOVA helps creators and brands grow by building the strategy, visuals, content, and campaigns behind their online presence. From branding and graphics to videos, ads, and social content — everything is made to create attention, trust, and momentum.',
       cards: [
         {
+          title: 'Strategy',
+          desc: 'Creative direction, content planning, and campaign thinking that gives your brand a clear path instead of random visuals.',
+          tags: ['Direction', 'Planning', 'Positioning'],
+        },
+        {
           title: 'Brand',
-          desc: 'Identity systems, logos, and visual direction that make your business look clear, credible, and memorable.',
-          tags: ['Logos', 'Visual systems', 'Brand assets'],
+          desc: 'Logos, identity systems, and visual direction that make your brand look clear, credible, and memorable.',
+          tags: ['Logos', 'Identity', 'Brand assets'],
         },
         {
           title: 'Content',
-          desc: 'Social graphics, thumbnails, and campaign visuals designed to earn attention and keep your presence consistent.',
-          tags: ['Socials', 'Campaigns', 'Creator visuals'],
+          desc: 'Videos, social posts, thumbnails, and graphics built to keep your presence sharp, active, and consistent.',
+          tags: ['Videos', 'Socials', 'Graphics'],
         },
         {
-          title: 'Web',
-          desc: 'Landing pages, websites, and digital design that present your brand properly and turn attention into action.',
-          tags: ['Landing pages', 'Websites', 'UI'],
+          title: 'Campaigns',
+          desc: 'Ads, launch creatives, and promotional visuals designed to turn attention into action.',
+          tags: ['Ads', 'Promos', 'Launches'],
         },
       ],
     },
@@ -173,24 +177,28 @@ const T = {
       cta2: 'Naše práce',
     },
     capabilities: {
-      label: 'Kapacity',
       heading: 'Co děláme',
-      sub: 'AOVA pomáhá tvůrcům a značkám růst ve třech klíčových oblastech: brand, obsah a web. Každá je vytvořena tak, aby posílila přítomnost, budovala důvěru a podporovala růst.',
+      sub: 'AOVA pomáhá tvůrcům a značkám růst tím, že staví strategii, vizuály, obsah a kampaně, které stojí za jejich online přítomností. Od brandingu a grafiky po videa, reklamy a social content — všechno vzniká proto, aby vytvářelo pozornost, důvěru a momentum.',
       cards: [
         {
+          title: 'Strategie',
+          desc: 'Kreativní směr, plánování obsahu a kampaňové myšlení, které dají vaší značce jasnou cestu místo náhodných vizuálů.',
+          tags: ['Směr', 'Plánování', 'Positioning'],
+        },
+        {
           title: 'Brand',
-          desc: 'Identita, loga a vizuální směr, které dělají vaše podnikání srozumitelným, důvěryhodným a zapamatovatelným.',
-          tags: ['Loga', 'Vizuální systémy', 'Brand assety'],
+          desc: 'Loga, identitní systémy a vizuální směr, které dělají vaši značku srozumitelnou, důvěryhodnou a zapamatovatelnou.',
+          tags: ['Loga', 'Identita', 'Brand assety'],
         },
         {
           title: 'Obsah',
-          desc: 'Sociální grafika, miniatury a kampaňové vizuály vytvořené pro získání pozornosti a konzistentní přítomnost.',
-          tags: ['Sítě', 'Kampaně', 'Creator vizuály'],
+          desc: 'Videa, social posty, miniatury a grafika vytvořené tak, aby vaše přítomnost zůstala ostrá, aktivní a konzistentní.',
+          tags: ['Videa', 'Sítě', 'Grafika'],
         },
         {
-          title: 'Web',
-          desc: 'Landing pages, webové stránky a digitální design, které prezentují vaši značku správně a mění pozornost v akci.',
-          tags: ['Landing pages', 'Weby', 'UI'],
+          title: 'Kampaně',
+          desc: 'Reklamy, launch creatives a propagační vizuály navržené tak, aby měnily pozornost v akci.',
+          tags: ['Reklamy', 'Promo', 'Launches'],
         },
       ],
     },
@@ -570,8 +578,69 @@ function Hero({ isDark }: { isDark: boolean }) {
 
 
 /* ================================================================
-   CAPABILITIES — sits directly under hero
+   WHAT WE DO — sits directly under hero
    ================================================================ */
+
+// Strategy preview — creative brief / planning composition
+function StrategyPreview() {
+    return (
+        <div className="w-full h-full rounded-2xl overflow-hidden bg-[var(--bg)] border border-[var(--border)] p-4 flex flex-col">
+            <div className="flex items-center justify-between mb-3">
+                <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Brief — Q2</span>
+                <div className="flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-[var(--text)]/30" />
+                    <span className="w-1 h-1 rounded-full bg-[var(--text)]/30" />
+                    <span className="w-1 h-1 rounded-full bg-[var(--text)]/60" />
+                </div>
+            </div>
+            <h4
+                className="text-[var(--text)] text-[22px] leading-[0.95] mb-5"
+                style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.045em' }}
+            >
+                Calm, sharp,<br />
+                <span className="font-serif italic">credible.</span>
+            </h4>
+            <div className="grid grid-cols-3 gap-3 mt-auto">
+                {['Plan', 'Build', 'Ship'].map((label, i) => (
+                    <div key={i} className="space-y-1.5">
+                        <span className="text-[8px] font-semibold uppercase tracking-[0.18em] text-[var(--muted)]/70">{label}</span>
+                        <div className="space-y-1">
+                            <div className="h-0.5 rounded-full bg-[var(--border-hover)]" />
+                            <div className="h-0.5 rounded-full bg-[var(--border)] w-3/4" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+// Campaigns preview — bold launch creative
+function CampaignsPreview() {
+    return (
+        <div className="w-full h-full rounded-2xl overflow-hidden bg-[#0d0d0d] border border-white/10 flex flex-col">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-white/5">
+                <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-white/40">Launch — 04.05</span>
+                <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-white/40">Promo</span>
+            </div>
+            <div className="flex-1 flex flex-col items-center justify-center p-3 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.03] to-transparent" />
+                <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-white/40 mb-2 relative z-10">Coming soon</span>
+                <h4
+                    className="text-white text-[32px] leading-[0.85] text-center relative z-10"
+                    style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.06em' }}
+                >
+                    The next<br />
+                    <span className="font-serif italic" style={{ background: 'linear-gradient(135deg, #888, #e0e0e0, #7a7a7a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>chapter.</span>
+                </h4>
+            </div>
+            <div className="px-3 py-2 border-t border-white/5 flex items-center justify-between">
+                <span className="text-[8px] text-white/50">Brand activation</span>
+                <span className="text-[8px] px-2 py-0.5 rounded-full bg-white text-black font-bold uppercase tracking-wider">Get notified</span>
+            </div>
+        </div>
+    );
+}
 
 // Brand preview — curated logo / monogram sample sheet
 function BrandPreview() {
@@ -584,11 +653,11 @@ function BrandPreview() {
         { type: 'word', label: 'KIN' },
     ];
     return (
-        <div className="grid grid-cols-3 gap-px bg-[var(--border)] rounded-2xl overflow-hidden">
+        <div className="w-full h-full grid grid-cols-3 grid-rows-2 gap-px bg-[var(--border)] rounded-2xl overflow-hidden">
             {marks.map((m, i) => (
                 <div
                     key={i}
-                    className="aspect-[4/3] flex items-center justify-center bg-[var(--bg)] text-[var(--text)] transition-colors duration-500 group-hover:bg-[var(--surface)]"
+                    className="flex items-center justify-center bg-[var(--bg)] text-[var(--text)] transition-colors duration-500 group-hover:bg-[var(--surface)]"
                 >
                     {m.type === 'mono' ? (
                         <span
@@ -613,7 +682,7 @@ function BrandPreview() {
 // Content preview — stacked "thumbnail" composition
 function ContentPreview() {
     return (
-        <div className="relative aspect-[5/4] rounded-2xl overflow-hidden bg-[var(--bg)] border border-[var(--border)]">
+        <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[var(--bg)] border border-[var(--border)]">
             {/* back thumbnail */}
             <div className="absolute inset-x-6 top-3 bottom-12 rounded-xl bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/5 transform rotate-[-3deg] opacity-60" />
             {/* mid thumbnail */}
@@ -650,131 +719,82 @@ function ContentPreview() {
     );
 }
 
-// Web preview — minimal browser frame mock
-function WebPreview() {
-    return (
-        <div className="aspect-[5/4] rounded-2xl overflow-hidden bg-[var(--bg)] border border-[var(--border)] flex flex-col">
-            {/* browser chrome */}
-            <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[var(--border)] bg-[var(--surface)]">
-                <span className="w-2 h-2 rounded-full bg-[var(--border-hover)]" />
-                <span className="w-2 h-2 rounded-full bg-[var(--border-hover)]" />
-                <span className="w-2 h-2 rounded-full bg-[var(--border-hover)]" />
-                <div className="ml-3 flex-1 h-4 rounded-full bg-[var(--bg)] border border-[var(--border)] flex items-center px-2.5">
-                    <span className="text-[8px] text-[var(--muted)]">aova.studio</span>
-                </div>
-            </div>
-            {/* page content */}
-            <div className="flex-1 p-5 flex flex-col justify-between bg-[var(--bg)]">
-                <div className="flex items-center justify-between">
-                    <span className="w-5 h-5 rounded-md bg-[var(--text)]" />
-                    <div className="flex gap-1.5">
-                        <span className="w-6 h-1 rounded-full bg-[var(--border-hover)]" />
-                        <span className="w-6 h-1 rounded-full bg-[var(--border-hover)]" />
-                        <span className="w-6 h-1 rounded-full bg-[var(--border-hover)]" />
-                    </div>
-                </div>
-                <div>
-                    <h4
-                        className="text-[var(--text)] text-[22px] leading-[0.9] mb-2"
-                        style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.05em' }}
-                    >
-                        Build that<br />
-                        <span className="font-serif italic">converts.</span>
-                    </h4>
-                    <div className="flex items-center gap-2 mt-3">
-                        <span className="text-[9px] px-2 py-1 rounded-full bg-[var(--text)] text-[var(--surface)] font-semibold">Get started</span>
-                        <span className="text-[9px] px-2 py-1 rounded-full border border-[var(--border-hover)] text-[var(--text)] font-medium">Learn more</span>
-                    </div>
-                </div>
-                <div className="grid grid-cols-3 gap-1.5">
-                    <span className="h-1 rounded-full bg-[var(--border)]" />
-                    <span className="h-1 rounded-full bg-[var(--border)]" />
-                    <span className="h-1 rounded-full bg-[var(--border)]" />
-                </div>
-            </div>
-        </div>
-    );
-}
-
 function CapabilitiesSection() {
     const t = useT();
-    const previews = [BrandPreview, ContentPreview, WebPreview];
+    const previews = [StrategyPreview, BrandPreview, ContentPreview, CampaignsPreview];
 
     return (
         <section className="relative py-24 md:py-32" id="capabilities">
             <div className="pg-inner">
-                {/* Header — two-column, heading left / paragraph right, top-aligned */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 items-start gap-10 lg:gap-16 mb-14 md:mb-20">
-                    <div className="lg:col-span-5">
+                {/* Header — heading + paragraph sit together, balanced */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-14 md:mb-20 items-end">
+                    <div className="lg:col-span-7">
                         <motion.h2
                             initial={{ opacity: 0, y: 18 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-80px' }}
                             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                            className="text-4xl md:text-5xl leading-[1.0] text-[var(--text)]"
-                            style={{ letterSpacing: '-0.04em' }}
+                            className="text-5xl md:text-6xl lg:text-7xl leading-[0.95] text-[var(--text)]"
+                            style={{ letterSpacing: '-0.045em' }}
                         >
                             {t.capabilities.heading}
                         </motion.h2>
                     </div>
-                    <div className="lg:col-span-6 lg:col-start-7 flex items-start pt-1">
+                    <div className="lg:col-span-5">
                         <motion.p
                             initial={{ opacity: 0, y: 14 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-80px' }}
                             transition={{ duration: 0.7, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-                            className="text-base md:text-[17px] text-[var(--muted)] leading-relaxed"
+                            className="text-[15px] md:text-base text-[var(--muted)] leading-relaxed"
                         >
                             {t.capabilities.sub}
                         </motion.p>
                     </div>
                 </div>
 
-                {/* Capability cards — each carries a distinct preview */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {/* 4 cards — 2x2 grid, preview left / text right inside each card */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                     {t.capabilities.cards.map((card, i) => {
                         const Preview = previews[i];
                         return (
                             <motion.div
                                 key={i}
-                                initial={{ opacity: 0, y: 24 }}
+                                initial={{ opacity: 0, y: 22 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true, margin: '-60px' }}
-                                transition={{ duration: 0.6, delay: 0.1 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                                className="group relative flex flex-col p-5 md:p-6 rounded-[28px] border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-hover)] transition-colors duration-500"
+                                transition={{ duration: 0.6, delay: 0.08 + i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                                className="group relative flex flex-col sm:flex-row p-5 md:p-6 rounded-[28px] border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border-hover)] transition-colors duration-500 gap-5 sm:gap-6"
                             >
-                                {/* Preview area — fixed height so title always starts at the same point */}
-                                <div className="mb-6 aspect-[5/4] w-full overflow-hidden rounded-2xl">
-                                    <div className="w-full h-full">
-                                        <Preview />
-                                    </div>
+                                {/* Preview — fills left column, fixed aspect for consistency */}
+                                <div className="sm:w-[44%] shrink-0 aspect-[5/4] sm:aspect-auto sm:min-h-[200px]">
+                                    <Preview />
                                 </div>
 
-                                {/* Counter */}
-                                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]/60 mb-3">
-                                    0{i + 1}
-                                </span>
-
-                                {/* Title */}
-                                <h3
-                                    className="text-2xl md:text-[26px] text-[var(--text)] leading-none mb-3"
-                                    style={{ letterSpacing: '-0.04em' }}
-                                >
-                                    {card.title}
-                                </h3>
-
-                                <p className="text-sm text-[var(--muted)] leading-relaxed mb-6">
-                                    {card.desc}
-                                </p>
-
-                                {/* Tag row */}
-                                <div className="mt-auto pt-5 border-t border-[var(--border)] text-[11px] font-medium text-[var(--muted)] flex items-center flex-wrap gap-x-2 gap-y-1">
-                                    {card.tags.map((tag, idx) => (
-                                        <span key={idx} className="flex items-center gap-2">
-                                            {idx > 0 && <span className="w-0.5 h-0.5 rounded-full bg-[var(--muted)]/40" />}
-                                            {tag}
+                                {/* Text — right column, aligned consistently across cards */}
+                                <div className="flex flex-col flex-1 min-w-0">
+                                    <div className="flex items-baseline justify-between mb-3">
+                                        <h3
+                                            className="text-2xl md:text-[28px] text-[var(--text)] leading-none"
+                                            style={{ letterSpacing: '-0.04em' }}
+                                        >
+                                            {card.title}
+                                        </h3>
+                                        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--muted)]/60">
+                                            0{i + 1}
                                         </span>
-                                    ))}
+                                    </div>
+                                    <p className="text-sm text-[var(--muted)] leading-relaxed mb-5">
+                                        {card.desc}
+                                    </p>
+                                    <div className="mt-auto pt-4 border-t border-[var(--border)] text-[11px] font-medium text-[var(--muted)] flex items-center flex-wrap gap-x-2 gap-y-1">
+                                        {card.tags.map((tag, idx) => (
+                                            <span key={idx} className="flex items-center gap-2">
+                                                {idx > 0 && <span className="w-0.5 h-0.5 rounded-full bg-[var(--muted)]/40" />}
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
                             </motion.div>
                         );
@@ -2126,8 +2146,8 @@ export default function HomePage() {
             <Navbar isDark={isDark} toggleDark={() => setIsDark(!isDark)} lang={lang} setLang={setLang} />
             <Hero isDark={isDark} />
             <CapabilitiesSection />
-            <AudienceSection />
             <WorkSection />
+            <AudienceSection />
             <InteractiveServices />
             <CustomServicesSection />
 

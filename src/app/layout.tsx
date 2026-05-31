@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Outfit, Inclusive_Sans } from "next/font/google";
+import { Instrument_Serif, Outfit, Inclusive_Sans, Geist, Newsreader, Roboto, Figtree, Host_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -19,6 +19,38 @@ const inclusiveSans = Inclusive_Sans({
 	subsets: ["latin"],
 	weight: "400",
 });
+
+/* v2 clean type system — scoped to .v2-root in globals.css (old site keeps Outfit/Instrument) */
+const geist = Geist({
+	variable: "--font-geist",
+	subsets: ["latin"],
+});
+
+const newsreader = Newsreader({
+	variable: "--font-newsreader",
+	subsets: ["latin"],
+	style: ["normal"],
+});
+
+const roboto = Roboto({
+	variable: "--font-roboto",
+	subsets: ["latin"],
+	weight: ["400", "500", "700"],
+});
+
+const figtree = Figtree({
+	variable: "--font-figtree",
+	subsets: ["latin"],
+	weight: ["400", "500", "600", "700"],
+});
+
+const hostGrotesk = Host_Grotesk({
+	variable: "--font-host",
+	subsets: ["latin"],
+	weight: ["300", "400", "500", "600", "700", "800"],
+});
+
+
 
 export const metadata: Metadata = {
 	metadataBase: new URL("https://aova.studio"),
@@ -82,7 +114,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${instrumentSerif.variable} ${outfit.variable} ${inclusiveSans.variable} antialiased`}
+				className={`${instrumentSerif.variable} ${outfit.variable} ${inclusiveSans.variable} ${geist.variable} ${newsreader.variable} ${roboto.variable} ${figtree.variable} ${hostGrotesk.variable} antialiased`}
 			>
 				<script
 					type="application/ld+json"
