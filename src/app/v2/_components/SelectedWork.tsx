@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -62,6 +62,49 @@ const PROJECTS: ProjectItem[] = [
 
 export default function SelectedWork() {
     const containerRef = useRef<HTMLDivElement>(null);
+    const [winkPhase, setWinkPhase] = useState<"shown" | "gone" | "typing">("shown");
+    const [winkChars, setWinkChars] = useState(2);
+
+    // Click the ";)" → drops into the shared physics layer, then types itself back in once removed (5s)
+    const dropWink = (e: React.MouseEvent<HTMLSpanElement>) => {
+        if (winkPhase !== "shown") return;
+        const el = e.currentTarget;
+        const rect = el.getBoundingClientRect();
+        if (rect.width === 0) return;
+        const fontSize = window.getComputedStyle(el).fontSize;
+        setWinkPhase("gone");
+        window.dispatchEvent(
+            new CustomEvent("v2-drop", {
+                detail: {
+                    items: [
+                        {
+                            text: ";)",
+                            left: rect.left,
+                            top: rect.top,
+                            width: rect.width,
+                            height: rect.height,
+                            fontSize,
+                            color: "#0A0A0A",
+                            gentle: true,
+                            onRemoved: () => {
+                                setWinkPhase("typing");
+                                setWinkChars(0);
+                                let c = 0;
+                                const id = setInterval(() => {
+                                    c += 1;
+                                    setWinkChars(c);
+                                    if (c >= 2) {
+                                        clearInterval(id);
+                                        setWinkPhase("shown");
+                                    }
+                                }, 130);
+                            },
+                        },
+                    ],
+                },
+            })
+        );
+    };
 
     useEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
@@ -98,13 +141,16 @@ export default function SelectedWork() {
                 
                 {/* Section header */}
                 <div className="mb-16 md:mb-24">
-                    <h2 className="group/arrow text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight font-display text-balance uppercase flex items-center gap-3.5 cursor-default select-none">
+                    <h2 className="group/arrow text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight font-display text-balance uppercase flex items-center gap-3 cursor-default select-none">
                         <span>See for yourselves</span>
                         <span
-                            aria-hidden="true"
-                            className="v2-wink inline-block origin-center text-[#0A0A0A] group-hover/arrow:[animation:v2-wink_0.6s_cubic-bezier(0.34,1.56,0.64,1)]"
+                            onClick={dropWink}
+                            role="button"
+                            aria-label="Drop the wink"
+                            className={`v2-wink v2-clickable inline-block origin-center text-[#0A0A0A] ${winkPhase === "gone" ? "opacity-0 pointer-events-none" : "opacity-100"} group-hover/arrow:[animation:v2-wink_0.6s_cubic-bezier(0.34,1.56,0.64,1)]`}
                         >
-                            ;)
+                            {winkPhase === "gone" ? "" : winkPhase === "typing" ? ";)".slice(0, winkChars) : ";)"}
+                            {winkPhase === "typing" && <span className="v2-caret inline-block w-[0.08em] h-[0.7em] bg-current align-middle" />}
                         </span>
                     </h2>
                 </div>

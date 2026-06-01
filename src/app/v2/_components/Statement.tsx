@@ -3,87 +3,62 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import FallingWords, { type FallingWord } from "./FallingWords";
+
+const REVEAL_WORDS = [": DESIGN, ", "STRATEGY, ", "MOTION"];
+const REVEAL_STARTS = [0, REVEAL_WORDS[0].length, REVEAL_WORDS[0].length + REVEAL_WORDS[1].length];
+const REVEAL_TOTAL = REVEAL_WORDS.reduce((sum, w) => sum + w.length, 0);
 
 export default function Statement() {
-    const [threeWordsState, setThreeWordsState] = useState<"idle" | "visible" | "falling">("idle");
-    const [mounted, setMounted] = useState(false);
+    const [threeWordsState, setThreeWordsState] = useState<"idle" | "visible">("idle");
     const wordRefs = [
         useRef<HTMLSpanElement>(null),
         useRef<HTMLSpanElement>(null),
         useRef<HTMLSpanElement>(null)
     ];
-    const [fallingWords, setFallingWords] = useState<FallingWord[]>([]);
+    const [typedCount, setTypedCount] = useState(0);
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (threeWordsState === "visible") {
-                const wordsData = wordRefs.map((ref, idx) => {
-                    if (ref.current) {
-                        const rect = ref.current.getBoundingClientRect();
-                        return {
-                            text: idx === 0 ? ": DESIGN," : idx === 1 ? "STRATEGY," : "MOTION",
-                            left: rect.left,
-                            top: rect.top,
-                            width: rect.width,
-                            height: rect.height,
-                            fontSize: window.getComputedStyle(ref.current).fontSize,
-                        };
-                    }
-                    return null;
-                }).filter(Boolean) as any[];
-
-                if (wordsData.length === 3) {
-                    setFallingWords(wordsData);
-                    setThreeWordsState("falling");
-                }
-            }
-        };
-        window.addEventListener("scroll", handleScroll, { passive: true });
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [threeWordsState]);
-
-    // Helper for inline animation state (when visible or idle)
-    const getInlineAnimationState = (index: number) => {
-        if (threeWordsState === "falling") {
+    // Click the typed-out words to drop them into the shared physics layer (they fall on click, not on scroll)
+    const dropThree = () => {
+        if (threeWordsState !== "visible" || typedCount < REVEAL_TOTAL) return;
+        const items = wordRefs.map((ref, idx) => {
+            if (!ref.current) return null;
+            const rect = ref.current.getBoundingClientRect();
             return {
-                opacity: 0,
-                transition: { duration: 0 } // hide instantly so the fixed physics version can take over
+                text: idx === 0 ? ": DESIGN," : idx === 1 ? "STRATEGY," : "MOTION",
+                left: rect.left,
+                top: rect.top,
+                width: rect.width,
+                height: rect.height,
+                fontSize: window.getComputedStyle(ref.current).fontSize,
+                color: "#0A0A0A",
             };
+        }).filter(Boolean);
+
+        if (items.length === 3) {
+            window.dispatchEvent(new CustomEvent("v2-drop", { detail: { items } }));
+            setThreeWordsState("idle");
         }
-        if (threeWordsState === "visible") {
-            const delays = [0, 0.08, 0.16];
-            return {
-                opacity: 1,
-                x: 0,
-                y: 0,
-                rotate: 0,
-                transition: {
-                    duration: 0.5,
-                    ease: [0.16, 1, 0.3, 1] as [number, number, number, number], // smooth deceleration
-                    delay: delays[index]
-                }
-            };
-        }
-        return {
-            opacity: 0,
-            x: -15,
-            y: 0,
-            rotate: 0,
-            transition: {
-                duration: 0.3,
-                ease: [0.16, 1, 0.3, 1] as [number, number, number, number]
-            }
-        };
     };
+
+    // Typewriter reveal — types the words out character-by-character on hover
+    useEffect(() => {
+        if (threeWordsState !== "visible") {
+            setTypedCount(0);
+            return;
+        }
+        setTypedCount(0);
+        let c = 0;
+        const id = setInterval(() => {
+            c += 1;
+            setTypedCount(c);
+            if (c >= REVEAL_TOTAL) clearInterval(id);
+        }, 30);
+        return () => clearInterval(id);
+    }, [threeWordsState]);
 
     return (
         <>
-            <section className="bg-white text-[#0A0A0A] py-48 md:py-80 pl-4 md:pl-8 pr-6 md:pr-12 relative">
+            <section className="bg-white text-[#0A0A0A] py-40 md:py-64 pl-4 md:pl-8 pr-6 md:pr-12 relative">
             <div className="max-w-[1440px] mx-auto">
                 
                 {/* Main Headline */}
@@ -102,36 +77,29 @@ export default function Statement() {
                         <span className="relative inline-block group/three cursor-pointer">
                             <span 
                                 onMouseEnter={() => { setThreeWordsState("visible"); }}
-                                className="underline decoration-[#CCCCCC] decoration-2 underline-offset-[6px] transition-colors duration-300 hover:text-[#E0218A]"
+                                className="underline decoration-[#9A9A9A] decoration-[3px] underline-offset-[2px] transition-colors duration-300 hover:text-[#E0218A]"
                             >
                                 THREE
                             </span>
-                            {/* Staggered falling text container */}
-                            <span className="absolute left-[calc(100%+0.35em)] top-0 flex items-center gap-[0.25em] text-[#8A8A8A] font-display font-normal text-2xl md:text-4xl lg:text-5xl select-none whitespace-nowrap pointer-events-none z-10">
-                                <motion.span
-                                    ref={wordRefs[0]}
-                                    initial={{ opacity: 0, x: -15, y: 0, rotate: 0 }}
-                                    animate={getInlineAnimationState(0)}
-                                    className="inline-block"
-                                >
-                                    : DESIGN,
-                                </motion.span>
-                                <motion.span
-                                    ref={wordRefs[1]}
-                                    initial={{ opacity: 0, x: -15, y: 0, rotate: 0 }}
-                                    animate={getInlineAnimationState(1)}
-                                    className="inline-block"
-                                >
-                                    STRATEGY,
-                                </motion.span>
-                                <motion.span
-                                    ref={wordRefs[2]}
-                                    initial={{ opacity: 0, x: -15, y: 0, rotate: 0 }}
-                                    animate={getInlineAnimationState(2)}
-                                    className="inline-block"
-                                >
-                                    MOTION
-                                </motion.span>
+                            {/* Typewriter reveal — types out on hover (space after each comma); click the words to drop them */}
+                            <span
+                                onClick={dropThree}
+                                className="v2-clickable absolute left-[calc(100%+0.35em)] top-0 text-[#0A0A0A] font-display font-semibold text-lg md:text-2xl lg:text-[32px] tracking-tight leading-[1.05] select-none whitespace-nowrap z-10"
+                                style={{ pointerEvents: typedCount >= REVEAL_TOTAL ? "auto" : "none" }}
+                            >
+                                {REVEAL_WORDS.map((full, i) => {
+                                    const vis = Math.max(0, Math.min(full.length, typedCount - REVEAL_STARTS[i]));
+                                    const active = threeWordsState === "visible" && typedCount >= REVEAL_STARTS[i] && typedCount < REVEAL_STARTS[i] + full.length;
+                                    return (
+                                        <span key={i} ref={wordRefs[i]} className="inline-block whitespace-pre">
+                                            {full.slice(0, vis)}
+                                            {active && <span className="v2-caret inline-block w-[0.07em] h-[0.78em] bg-current align-middle" />}
+                                        </span>
+                                    );
+                                })}
+                                {threeWordsState === "visible" && typedCount >= REVEAL_TOTAL && (
+                                    <span className="v2-caret inline-block w-[0.07em] h-[0.78em] bg-current align-middle" />
+                                )}
                             </span>
                         </span><span className={`transition-opacity duration-300 ${threeWordsState === "visible" ? 'opacity-0' : 'opacity-1'}`}>,</span>
                         <br />
@@ -198,15 +166,6 @@ export default function Statement() {
 
             </div>
         </section>
-        {mounted && threeWordsState === "falling" && (
-            <FallingWords
-                words={fallingWords}
-                onDone={() => {
-                    setThreeWordsState("idle");
-                    setFallingWords([]);
-                }}
-            />
-        )}
         </>
     );
 }

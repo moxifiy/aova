@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const L=require\\('lenis'\\); console.log\\('lenis main resolves:', typeof \\(L.default||L\\)\\)\")"
+    ]
+  }
+}

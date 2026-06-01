@@ -1,145 +1,149 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
 import { useLanguage } from "./LanguageContext";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+const PINK = "#ff269d";
+const INK = "#0A0A0A";
+const linkCls =
+    "relative w-fit text-white after:absolute after:left-0 after:-bottom-0.5 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-white after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.16,1,0.3,1)] hover:after:scale-x-100";
+
 export default function Footer() {
     const { t } = useLanguage();
     const footerRef = useRef<HTMLElement>(null);
-    const wordmarkRef = useRef<HTMLHeadingElement>(null);
+    const textRef = useRef<HTMLDivElement>(null);
+    const circleRef = useRef<HTMLButtonElement>(null);
+    const eyeRef = useRef<SVGGElement>(null);
+    const year = new Date().getFullYear();
 
     useEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
-
-        if (wordmarkRef.current && footerRef.current) {
-            gsap.fromTo(
-                wordmarkRef.current,
-                { y: "50%", opacity: 0.1 },
-                {
-                    y: "0%",
-                    opacity: 1,
-                    ease: "power2.out",
-                    scrollTrigger: {
-                        trigger: footerRef.current,
-                        start: "top 95%",
-                        end: "bottom bottom",
-                        scrub: 1
-                    }
-                }
-            );
-        }
-
+        const text = textRef.current;
+        if (!text) return;
+        const tween = gsap.fromTo(
+            text,
+            { y: 40, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.7, ease: "power3.out", scrollTrigger: { trigger: text, start: "top 78%", toggleActions: "play none none none" } }
+        );
         return () => {
-            ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+            tween.scrollTrigger?.kill();
+            tween.kill();
         };
     }, []);
 
     const handleScrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        const l = (window as unknown as { lenis?: { scrollTo: (t: number, o?: object) => void } }).lenis;
+        if (l) l.scrollTo(0, { duration: 1.2 });
+        else window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    // 3D tilt of the back-to-top circle toward the cursor
+    const onTilt = (e: React.MouseEvent) => {
+        const el = circleRef.current;
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+        const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+        el.style.transform = `rotateX(${(-dy * 20).toFixed(1)}deg) rotateY(${(dx * 20).toFixed(1)}deg) scale(1.06)`;
+    };
+    const onTiltReset = () => {
+        if (circleRef.current) circleRef.current.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+    };
+
+    // The "O"/eye does a couple of quick, physics-like 3D spins on hover (fast → decelerate)
+    const spinningRef = useRef(false);
+    const onEyeSpin = () => {
+        const el = eyeRef.current;
+        if (!el || spinningRef.current) return;
+        spinningRef.current = true;
+        const anim = el.animate(
+            [
+                { transform: "perspective(620px) rotateY(0deg)" },
+                { transform: "perspective(620px) rotateY(720deg)" },
+            ],
+            { duration: 1150, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
+        );
+        anim.onfinish = () => { spinningRef.current = false; };
+        anim.oncancel = () => { spinningRef.current = false; };
     };
 
     return (
-        <footer 
-            ref={footerRef}
-            className="bg-[#E0218A] text-[#0A0A0A] pt-24 pb-12 px-6 md:px-12 relative overflow-hidden flex flex-col justify-between select-none"
-        >
-            <div className="max-w-[1440px] mx-auto w-full z-10">
-                
-                {/* Upper row: Let's make something + back to top */}
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-12 mb-20">
-                    <div>
-                        <span className="text-[10px] md:text-xs font-bold tracking-[0.25em] text-[#0A0A0A]/70 uppercase block mb-4 font-mono">
-                            // {t("CONNECT", "PROPOJENÍ")}
-                        </span>
-                        <h2 className="text-4xl md:text-6xl lg:text-7xl font-medium font-display tracking-tight leading-[1.0]" style={{ letterSpacing: "-0.04em" }}>
-                            {t("Let's make", "Pojďme něco")}<br />{t("something.", "vytvořit.")}
-                        </h2>
-                    </div>
+        <footer ref={footerRef} className="relative min-h-screen flex flex-col select-none text-white" style={{ backgroundColor: PINK }}>
+            <div className="max-w-[1440px] w-full mx-auto px-6 md:px-12 pt-14 md:pt-20 relative z-10">
+                <div className="flex items-start justify-between gap-8">
+                    <div ref={textRef} className="flex flex-wrap gap-10 md:gap-20 font-body">
+                        <div>
+                            <h4 className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/70 mb-3 font-mono">
+                                {t("Contact", "Kontakt")}
+                            </h4>
+                            <div className="flex flex-col gap-2 text-sm md:text-base font-medium">
+                                <a href="mailto:aovastudio@gmail.com" className={linkCls}>aovastudio@gmail.com</a>
+                                <a href="tel:+420739662744" className={linkCls}>+420 739 662 744</a>
+                                <a href="tel:+420777794340" className={linkCls}>+420 777 794 340</a>
+                            </div>
+                        </div>
 
-                    <button
-                        onClick={handleScrollToTop}
-                        className="self-start md:self-auto flex items-center gap-2 text-xs md:text-sm font-bold uppercase tracking-wider text-[#0A0A0A] hover:opacity-75 transition-opacity font-mono pb-1 border-b border-[#0A0A0A]"
-                        aria-label="Scroll back to top"
-                    >
-                        {t("Back to Top", "Zpět nahoru")} &uarr;
-                    </button>
-                </div>
+                        <div>
+                            <h4 className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/70 mb-3 font-mono">
+                                {t("Socials", "Sítě")}
+                            </h4>
+                            <div className="flex flex-col gap-2 text-sm md:text-base font-medium">
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={linkCls}>Instagram</a>
+                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className={linkCls}>Twitter / X</a>
+                                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className={linkCls}>LinkedIn</a>
+                            </div>
+                        </div>
 
-                {/* Middle row: Address / Social Links Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-12 border-t border-[#0A0A0A]/10/20 w-full text-sm font-body">
-                    
-                    {/* Column 1: Contacts */}
-                    <div>
-                        <h4 className="font-bold text-xs uppercase tracking-wider text-[#0A0A0A]/70 mb-4 font-mono">
-                            {t("Contact Us", "Kontaktujte Nás")}
-                        </h4>
-                        <div className="flex flex-col gap-3 font-medium">
-                            <a href="mailto:aovastudio@gmail.com" className="group/link flex items-center gap-1.5 hover:opacity-75 transition-opacity w-fit">
-                                <span className="transition-transform duration-300 transform group-hover/link:translate-x-1">&rarr;</span>
-                                <span>aovastudio@gmail.com</span>
-                            </a>
-                            <Link href="/v2/book-a-call" className="group/link flex items-center gap-1.5 hover:opacity-75 transition-opacity w-fit">
-                                <span className="transition-transform duration-300 transform group-hover/link:translate-x-1">&rarr;</span>
-                                <span>{t("Book a Strategizing Call", "Sjednat Konzultační Hovor")}</span>
-                            </Link>
+                        <div>
+                            <p className="text-sm md:text-base font-medium leading-relaxed text-white/90">
+                                {t("Aova Studio", "Aova Studio")}<br />
+                                {t("Brno, Czech Republic", "Brno, Česká Republika")}<br />
+                                &copy; {year} {t("Aova Studio. All rights reserved.", "Aova Studio. Všechna práva vyhrazena.")}
+                            </p>
                         </div>
                     </div>
 
-                    {/* Column 2: Socials */}
-                    <div>
-                        <h4 className="font-bold text-xs uppercase tracking-wider text-[#0A0A0A]/70 mb-4 font-mono">
-                            {t("Social Media", "Sociální Sítě")}
-                        </h4>
-                        <div className="flex flex-col gap-3 font-medium">
-                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="group/link flex items-center gap-1.5 hover:opacity-75 transition-opacity w-fit">
-                                <span className="transition-transform duration-300 transform group-hover/link:translate-x-1">&rarr;</span>
-                                <span>Instagram</span>
-                            </a>
-                            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="group/link flex items-center gap-1.5 hover:opacity-75 transition-opacity w-fit">
-                                <span className="transition-transform duration-300 transform group-hover/link:translate-x-1">&rarr;</span>
-                                <span>Twitter / X</span>
-                            </a>
-                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="group/link flex items-center gap-1.5 hover:opacity-75 transition-opacity w-fit">
-                                <span className="transition-transform duration-300 transform group-hover/link:translate-x-1">&rarr;</span>
-                                <span>LinkedIn</span>
-                            </a>
-                        </div>
+                    {/* Back to top — circle tilts in 3D toward the cursor */}
+                    <div className="shrink-0" style={{ perspective: "650px" }}>
+                        <button
+                            ref={circleRef}
+                            onClick={handleScrollToTop}
+                            onMouseMove={onTilt}
+                            onMouseLeave={onTiltReset}
+                            aria-label="Back to top"
+                            className="w-28 h-28 md:w-36 md:h-36 rounded-full bg-[#0A0A0A] flex items-center justify-center"
+                            style={{ transformStyle: "preserve-3d", transition: "transform 250ms cubic-bezier(0.16,1,0.3,1)", willChange: "transform" }}
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" className="w-16 h-16 md:w-[5.5rem] md:h-[5.5rem]" style={{ transform: "translateZ(22px)" }}>
+                                <path d="M12 20V4M12 4l-7 7M12 4l7 7" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </button>
                     </div>
-
-                    {/* Column 3: Studio Coordinates */}
-                    <div>
-                        <h4 className="font-bold text-xs uppercase tracking-wider text-[#0A0A0A]/70 mb-4 font-mono">
-                            {t("Studio Coordinates", "Souřadnice Studia")}
-                        </h4>
-                        <p className="font-medium text-[#0A0A0A]/80 leading-relaxed">
-                            {t("Aova Studio Europe", "Aova Studio Evropa")}<br />
-                            {t("Prague, Czech Republic", "Praha, Česká Republika")}<br />
-                            Est. 2024 / &copy; {new Date().getFullYear()} {t("All Rights Reserved.", "Všechna práva vyhrazena.")}
-                        </p>
-                    </div>
-
                 </div>
-
             </div>
 
-            {/* Bottom Saturated Explosion: Absolute Massive Width-Bleed Wordmark */}
-            <div className="w-full mt-24 md:mt-32 overflow-hidden border-t border-[#0A0A0A]/10/20 pt-4 pointer-events-none select-none">
-                <h1 
-                    ref={wordmarkRef}
-                    className="text-[18vw] md:text-[20vw] lg:text-[22vw] text-[#0A0A0A] font-bold tracking-tight text-center leading-[0.75] font-display uppercase will-change-transform"
-                    style={{ letterSpacing: "-0.07em" }}
-                >
-                    AOVA
-                </h1>
+            {/* Bottom: full-width AOVA wordmark — sticky; only the "O" tilts in 3D on hover */}
+            <div
+                className="mt-auto sticky bottom-0 z-20 w-full px-4 md:px-8 pb-4 md:pb-6"
+                style={{ backgroundColor: PINK }}
+            >
+                <svg viewBox="0 0 647.07 125.95" className="w-full h-auto block" aria-label="AOVA">
+                    {/* V */}
+                    <path fill={INK} d="M505.06,6.15l-54.65,115.77c-.41.87-1.29,1.43-2.26,1.43h-55.09c-.97,0-1.85-.56-2.26-1.43L336.14,6.15c-.78-1.66.43-3.57,2.26-3.57h37.84c.98,0,1.86.57,2.27,1.46l38.32,83.36c.41.89,1.29,1.46,2.27,1.46h1.76c.98,0,1.86-.57,2.27-1.46L461.46,4.04c.41-.89,1.29-1.46,2.27-1.46h39.07c1.83,0,3.04,1.91,2.26,3.57Z" />
+                    {/* A (left) */}
+                    <path fill={INK} d="M114.51,4.02l54.65,115.77c.78,1.66-.43,3.57-2.26,3.57h-39.07c-.98,0-1.86-.57-2.27-1.46l-38.32-83.36c-.41-.89-1.29-1.46-2.27-1.46h-1.76c-.98,0-1.86.57-2.27,1.46l-38.32,83.36c-.41.89-1.29,1.46-2.27,1.46H2.5c-1.83,0-3.04-1.91-2.26-3.57L54.9,4.02c.41-.87,1.29-1.43,2.26-1.43h55.09c.97,0,1.85.56,2.26,1.43Z" />
+                    {/* O + eye — tilts in 3D */}
+                    <g ref={eyeRef} onMouseEnter={onEyeSpin} style={{ transformBox: "fill-box", transformOrigin: "center" }}>
+                        <path fill={INK} d="M252.66,0c-49.58,0-81.81,18.12-81.81,62.97s32.23,62.98,81.81,62.98,81.8-18.12,81.8-62.98S302.24,0,252.66,0ZM234.18,38.09c5.41-1.25,11.61-1.86,18.48-1.86.17,0,.33,0,.49.01v.27c0,6.05-4.9,10.96-10.96,10.96-4.18,0-7.82-2.35-9.66-5.81-.76-1.43.07-3.21,1.65-3.57ZM252.66,89.72c-25.78,0-42.14-8.63-42.14-26.75,0-8.67,3.75-15.17,10.48-19.58,1.69-1.11,3.9.11,3.9,2.13v.05c0,15.33,12.43,27.76,27.75,27.76s27.76-12.43,27.76-27.76v-.12c-.01-1.99,2.16-3.25,3.83-2.17,6.81,4.42,10.56,10.95,10.56,19.69,0,18.12-16.11,26.75-42.14,26.75Z" />
+                        <path fill="#fff" d="M253.15,36.24v.27c0,6.05-4.9,10.96-10.96,10.96-4.18,0-7.82-2.35-9.66-5.81-.76-1.43.07-3.21,1.65-3.57,5.41-1.25,11.61-1.86,18.48-1.86.17,0,.33,0,.49.01Z" />
+                        <path fill="#fff" d="M294.8,62.97c0,18.12-16.11,26.75-42.14,26.75s-42.14-8.63-42.14-26.75c0-8.67,3.75-15.17,10.48-19.58,1.69-1.11,3.9.11,3.9,2.13v.05c0,15.33,12.43,27.76,27.75,27.76s27.76-12.43,27.76-27.76v-.12c-.01-1.99,2.16-3.25,3.83-2.17,6.81,4.42,10.56,10.95,10.56,19.69Z" />
+                    </g>
+                    {/* A (right) */}
+                    <path fill={INK} d="M644.56,123.36h-39.07c-.98,0-1.86-.57-2.27-1.46l-38.32-83.36c-.41-.89-1.29-1.46-2.27-1.46h-1.76c-.98,0-1.86.57-2.27,1.46l-38.32,83.36c-.41.89-1.29,1.46-2.27,1.46h-37.84c-1.83,0-3.04-1.91-2.26-3.57l54.66-115.77c.41-.87,1.29-1.43,2.26-1.43h55.09c.97,0,1.85.56,2.26,1.43l54.65,115.77c.78,1.66-.43,3.57-2.26,3.57Z" />
+                </svg>
             </div>
-
         </footer>
     );
 }
-

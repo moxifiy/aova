@@ -44,19 +44,18 @@ export default function CTA() {
 
                 {/* Oversized Statement */}
                 <h2
-                    className="cta-animate text-4xl md:text-6xl lg:text-7xl font-normal tracking-tight font-display mb-10 max-w-[900px] leading-[0.95]"
+                    className="cta-animate text-4xl md:text-6xl lg:text-7xl font-normal tracking-tight font-display mb-12 max-w-[1200px] leading-[1.0] uppercase"
                     style={{ letterSpacing: "-0.045em" }}
                 >
-                    Have a vision? Let&rsquo;s architect it together.
+                    Have a vision?<br />Let&rsquo;s architect it together.
                 </h2>
 
-                {/* Custom Bespoke Button with Signature Fuchsia Hover Accent */}
+                {/* Primary pill button — matches the studio button (no flowers) */}
                 <Link
                     href="/v2/contact"
-                    className="cta-animate transition-all duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] hover:scale-[1.02] text-sm md:text-base font-semibold px-10 py-5 inline-flex items-center gap-3 font-body bg-[#0A0A0A] text-white border border-[#0A0A0A] hover:bg-transparent hover:text-[#0A0A0A]"
+                    className="cta-animate inline-block font-host font-normal text-sm md:text-[15px] px-8 py-3.5 bg-[#2C2C2C] rounded-full transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] hover:bg-[#1A1A1A]"
                 >
-                    <span>Start a Project</span>
-                    <span className="text-lg">&rarr;</span>
+                    <span className="text-white">CONTACT US</span>
                 </Link>
 
             </div>

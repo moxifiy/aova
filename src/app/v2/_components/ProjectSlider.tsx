@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Project {
@@ -50,24 +49,6 @@ const PROJECTS: Project[] = [
 export default function ProjectSlider() {
     const [index, setIndex] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-    // Dynamic framer motion slide variants (swipe right animation)
-    const slideVariants = {
-        enter: {
-            x: "100%",
-            opacity: 0.95
-        },
-        center: {
-            x: "0%",
-            opacity: 1,
-            zIndex: 1
-        },
-        exit: {
-            x: "-100%",
-            opacity: 0.95,
-            zIndex: 0
-        }
-    };
 
     // Auto-swipe every 6 seconds to give videos/images more focus
     useEffect(() => {
@@ -120,45 +101,19 @@ export default function ProjectSlider() {
                 aria-label="Navigate Slide"
             />
 
-            {/* The Big Screen Slide Container */}
+            {/* Background video */}
             <div className="absolute inset-0 w-full h-full">
-                <AnimatePresence initial={false} mode="popLayout">
-                    <motion.div
-                        key={currentProject.id}
-                        variants={slideVariants}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{
-                            x: { type: "spring", stiffness: 120, damping: 20 },
-                            opacity: { duration: 0.3 }
-                        }}
-                        className="absolute inset-0 w-full h-full"
-                    >
-                        {/* Slide Media (Video or Image) */}
-                        {currentProject.video ? (
-                            <video
-                                src={currentProject.video}
-                                autoPlay
-                                muted
-                                loop
-                                playsInline
-                                preload="metadata"
-                                className="object-cover w-full h-full brightness-[0.6] md:brightness-[0.7] transition-transform duration-500 scale-[1.01]"
-                            />
-                        ) : (
-                            <Image
-                                src={currentProject.image}
-                                alt={currentProject.title}
-                                fill
-                                priority
-                                className="object-cover brightness-[0.6] md:brightness-[0.7] transition-transform duration-500 scale-[1.01]"
-                            />
-                        )}
-                        {/* Elegant overlay gradient to ensure text contrast */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/85 via-[#0A0A0A]/20 to-[#0A0A0A]/40 pointer-events-none" />
-                    </motion.div>
-                </AnimatePresence>
+                <video
+                    src="/no-outro.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    className="object-cover w-full h-full brightness-[0.65] md:brightness-[0.75]"
+                />
+                {/* Elegant overlay gradient to ensure text contrast */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A]/85 via-[#0A0A0A]/20 to-[#0A0A0A]/40 pointer-events-none" />
             </div>
 
             {/* Bottom Content Row: Left Project details, Right Pagination */}
