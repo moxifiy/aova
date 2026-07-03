@@ -1,13 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BrandDNA from "./BrandDNA";
+import { useLanguage } from "./LanguageContext";
 
-const COLUMNS = [
-    { label: "CLARITY", src: "/clarity.svg", scale: 0.9, desc: "You stop guessing who you are. Your brand finally knows what it stands for." },
-    { label: "PRESENCE", src: "/presence.svg", scale: 0.95, desc: "Attention turns into trust. A site and identity that earn the second look." },
-    { label: "MEMORY", src: "/memory.svg", scale: 0.9, desc: "People remember you. An identity system that holds up everywhere." },
-    { label: "EASE", src: "/ease.svg", scale: 1.12, desc: "Interfaces that feel effortless. Products people actually want to use." },
+interface ColumnDef {
+    label: string;
+    src: string;
+    scale: number;
+    desc: string;
+}
+
+const ICONS = [
+    { src: "/clarity.svg", scale: 0.9 },
+    { src: "/presence.svg", scale: 0.95 },
+    { src: "/memory.svg", scale: 0.9 },
+    { src: "/ease.svg", scale: 1.12 },
 ];
 
 const FUCHSIA = "#E0218A";
@@ -55,7 +63,7 @@ function Column({
     index,
     onActive,
 }: {
-    col: typeof COLUMNS[number];
+    col: ColumnDef;
     index: number;
     onActive: (i: number | null) => void;
 }) {
@@ -77,6 +85,7 @@ function Column({
 
     const startFloat = useCallback(() => {
         phaseRef.current = "float";
+        cancelAnimationFrame(rafRef.current); // never run two loops
         const stage = stageRef.current;
         const icon = iconRef.current;
         if (!stage || !icon) return;
@@ -90,15 +99,15 @@ function Column({
             if (mouse.current.inside) {
                 const cx = r.left + r.width / 2;
                 const cy = r.top + r.height / 2;
-                tx = clamp((mouse.current.x - cx) * 0.45, -r.width * 0.18, r.width * 0.18);
-                ty = clamp((mouse.current.y - cy) * 0.45, -r.height * 0.16, r.height * 0.16);
+                tx = clamp((mouse.current.x - cx) * 0.22, -r.width * 0.09, r.width * 0.09);
+                ty = clamp((mouse.current.y - cy) * 0.22, -r.height * 0.08, r.height * 0.08);
             }
             const thetaY = t * (0.5 + index * 0.06) + index * 1.9;
             const dX = Math.sin(t * (0.28 + index * 0.05) + index * 1.3) * 5;
             const dY = Math.sin(thetaY) * 14;
             const rot = Math.cos(thetaY) * rotAmp.current;
-            floatPos.current.x += (tx - floatPos.current.x) * 0.08;
-            floatPos.current.y += (ty - floatPos.current.y) * 0.08;
+            floatPos.current.x += (tx - floatPos.current.x) * 0.05;
+            floatPos.current.y += (ty - floatPos.current.y) * 0.05;
             icon.style.transform = `translate(${(floatPos.current.x + dX).toFixed(2)}px, ${(floatPos.current.y + dY).toFixed(2)}px) rotate(${rot.toFixed(2)}deg) scale(${col.scale})`;
             paint(icon);
             rafRef.current = requestAnimationFrame(loop);
@@ -109,7 +118,23 @@ function Column({
 
     useEffect(() => {
         startFloat();
+        // Pause the float loop while the column is off-screen — saves main-thread
+        // work during scrolling without changing any visible behaviour.
+        const stage = stageRef.current;
+        let io: IntersectionObserver | null = null;
+        if (stage && "IntersectionObserver" in window) {
+            io = new IntersectionObserver(
+                ([entry]) => {
+                    if (phaseRef.current !== "float") return;
+                    if (entry.isIntersecting) startFloat();
+                    else cancelAnimationFrame(rafRef.current);
+                },
+                { rootMargin: "120px" }
+            );
+            io.observe(stage);
+        }
         return () => {
+            io?.disconnect();
             cancelAnimationFrame(rafRef.current);
             cleanupRef.current();
         };
@@ -151,19 +176,19 @@ function Column({
         const Matter: any = (await import("matter-js")).default;
         const { Engine, Bodies, Composite, Body } = Matter;
         const engine = Engine.create();
-        engine.gravity.y = 1.1;
+        engine.gravity.y = 0.6;
         engine.positionIterations = 12;
         engine.velocityIterations = 12;
 
         const wt = 300;
         const body = Bodies.rectangle(W / 2 + offX + floatPos.current.x, H / 2 + offY + floatPos.current.y, bodyW, bodyH, {
-            restitution: 0.35,
+            restitution: 0.25,
             friction: 0.4,
-            frictionAir: 0.012,
+            frictionAir: 0.03,
             chamfer: { radius: Math.min(8, halfH * 0.4, halfW * 0.4) },
         });
         bodyRef.current = body;
-        Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.25);
+        Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.1);
 
         const walls = [
             Bodies.rectangle(W / 2, H + wt / 2, W + wt * 2, wt, { isStatic: true }),
@@ -174,6 +199,7 @@ function Column({
         Composite.add(engine.world, [body, ...walls]);
 
         let raf = 0;
+        let stillFrames = 0;
         const sync = () => {
             Engine.update(engine, 1000 / 60);
             const mgn = 6;
@@ -186,6 +212,11 @@ function Column({
             // sync the icon box so the artwork lands exactly on the body
             icon.style.transform = `translate(${(body.position.x - offX - W / 2).toFixed(2)}px, ${(body.position.y - offY - H / 2).toFixed(2)}px) rotate(${body.angle}rad) scale(${col.scale})`;
             paint(icon);
+            // Once the body has fully settled, stop stepping the engine — the icon
+            // keeps its final transform and click-to-reset still works from style.
+            if (body.speed < 0.05 && Math.abs(body.angularVelocity) < 0.002) stillFrames += 1;
+            else stillFrames = 0;
+            if (stillFrames > 45) return;
             raf = requestAnimationFrame(sync);
         };
         raf = requestAnimationFrame(sync);
@@ -253,23 +284,63 @@ function Column({
 }
 
 export default function WhatThisChanges() {
+    const { t } = useLanguage();
     const [active, setActive] = useState<number | null>(null);
+
+    const COLUMNS: ColumnDef[] = useMemo(
+        () => [
+            {
+                ...ICONS[0],
+                label: t("CLARITY", "JASNOST"),
+                desc: t(
+                    "You stop guessing who you are. Your brand finally knows what it stands for.",
+                    "Přestanete hádat, kdo jste. Vaše značka konečně ví, za čím stojí."
+                ),
+            },
+            {
+                ...ICONS[1],
+                label: t("PRESENCE", "PREZENCE"),
+                desc: t(
+                    "Attention turns into trust. A site and identity that earn the second look.",
+                    "Pozornost se mění v důvěru. Web a identita, které si zaslouží druhý pohled."
+                ),
+            },
+            {
+                ...ICONS[2],
+                label: t("MEMORY", "PAMĚŤ"),
+                desc: t(
+                    "People remember you. An identity system that holds up everywhere.",
+                    "Lidé si vás zapamatují. Systém identity, který obstojí všude."
+                ),
+            },
+            {
+                ...ICONS[3],
+                label: t("EASE", "LEHKOST"),
+                desc: t(
+                    "Interfaces that feel effortless. Products people actually want to use.",
+                    "Rozhraní, která působí bez námahy. Produkty, které lidé opravdu chtějí používat."
+                ),
+            },
+        ],
+        [t]
+    );
 
     useEffect(() => {
         if (typeof window === "undefined") return;
         import("matter-js"); // preload physics
-        COLUMNS.forEach((c) => measureIcon(c.src)); // precompute exact bounds
+        ICONS.forEach((c) => measureIcon(c.src)); // precompute exact bounds
     }, []);
 
     return (
         <div>
             <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight font-display leading-[1.05] max-w-[680px] mb-8 md:mb-12 uppercase">
-                What working with us actually changes.
+                {t("What working with us actually changes.", "Co se s námi doopravdy změní.")}
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-4">
+            {/* Full-bleed: break out of the padded container so the icons reach both edges */}
+            <div className="relative left-1/2 w-screen -translate-x-1/2 grid grid-cols-1 md:grid-cols-4">
                 {COLUMNS.map((col, i) => (
-                    <Column key={col.label} col={col} index={i} onActive={setActive} />
+                    <Column key={col.src} col={col} index={i} onActive={setActive} />
                 ))}
             </div>
 

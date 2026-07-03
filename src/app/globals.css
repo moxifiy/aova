@@ -1,9 +1,43 @@
 @import "tailwindcss";
 
 @theme {
-	--font-roboto: var(--font-roboto), sans-serif;
-	--font-figtree: var(--font-figtree), sans-serif;
 	--font-host: var(--font-host), sans-serif;
+}
+
+/* Deter casual dragging/saving of studio media on the new site */
+.v2-root img,
+.v2-root video {
+	-webkit-user-drag: none;
+	user-select: none;
+}
+
+/* Minimal volume slider for the video player */
+.aova-vol {
+	-webkit-appearance: none;
+	appearance: none;
+	height: 2px;
+	border-radius: 9999px;
+	outline: none;
+	cursor: pointer;
+}
+.aova-vol::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 10px;
+	height: 10px;
+	border-radius: 9999px;
+	background: #fff;
+	border: none;
+}
+.aova-vol::-moz-range-thumb {
+	width: 10px;
+	height: 10px;
+	border-radius: 9999px;
+	background: #fff;
+	border: none;
+}
+.aova-vol::-moz-range-track {
+	background: transparent;
 }
 
 /* ═══════════════════════════════════════════

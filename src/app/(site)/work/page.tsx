@@ -5,88 +5,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../_components/LanguageContext";
-
-interface ProjectItem {
-    id: number;
-    client: string;
-    title: string;
-    image: string;
-    category: "Branding" | "Web" | "UI/UX" | "Editorial";
-    tags: string[];
-}
-
-const ALL_PROJECTS: ProjectItem[] = [
-    {
-        id: 1,
-        client: "Orca Compute Systems",
-        title: "Establishing institutional credibility for deep tech ecosystems.",
-        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop",
-        category: "Branding",
-        tags: ["Identity", "Design System", "3D Art"]
-    },
-    {
-        id: 2,
-        client: "Vela Architecture",
-        title: "Reimagining architectural portfolios as breathing visual spaces.",
-        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1000&auto=format&fit=crop",
-        category: "Web",
-        tags: ["Interactive UX", "React Redesign", "Lenis Scroll"]
-    },
-    {
-        id: 3,
-        client: "Vapor Frontier",
-        title: "Pioneering fluid digital campaigns for web3 design platforms.",
-        image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop",
-        category: "Branding",
-        tags: ["Campaign", "3D Design", "Visual Assets"]
-    },
-    {
-        id: 4,
-        client: "Noire Magazine",
-        title: "Elevating print editorial standards for independent visual artists.",
-        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1000&auto=format&fit=crop",
-        category: "Editorial",
-        tags: ["Typography", "Grid Systems", "Book Design"]
-    },
-    {
-        id: 5,
-        client: "Kudy Motion Studio",
-        title: "Crafting fluid vector aesthetics for creative agency reels.",
-        image: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1000&auto=format&fit=crop",
-        category: "UI/UX",
-        tags: ["Vector Art", "Interface Design", "Prototyping"]
-    },
-    {
-        id: 6,
-        client: "Amina Digital",
-        title: "Bridging architectural styling with corporate web excellence.",
-        image: "https://images.unsplash.com/photo-1586075010923-2dd45e9b2d4f?q=80&w=1000&auto=format&fit=crop",
-        category: "Web",
-        tags: ["Development", "Svelte Config", "Animations"]
-    }
-];
+import { CASE_STUDIES } from "./projects";
 
 export default function WorkPage() {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
+    const L = lang === "EN" ? "en" : "cz";
     const [filter, setFilter] = useState<"All" | "Branding" | "Web" | "UI/UX" | "Editorial">("All");
 
-    const filteredProjects = ALL_PROJECTS.filter(
+    const filteredProjects = CASE_STUDIES.filter(
         (project) => filter === "All" || project.category === filter
     );
 
     return (
-        <main className="bg-white text-[#0A0A0A] pt-32 md:pt-40 pb-24 px-6 md:px-12 min-h-screen">
+        <main className="bg-[#0A0A0A] text-white pt-32 md:pt-40 pb-24 md:pb-36 px-6 md:px-12 min-h-screen">
             <div className="max-w-[1440px] mx-auto">
-                
-                {/* Header & Eyebrow */}
-
 
                 <h1 className="text-5xl md:text-7xl font-normal font-display tracking-tight mb-12 max-w-[800px] leading-[0.95]" style={{ letterSpacing: "-0.045em" }}>
-                    {t("Selected Projects", "Vybrané Projekty")}
+                    {t("Selected Projects", "Vybrané projekty")}
                 </h1>
 
                 {/* Filter Pills */}
-                <div className="flex flex-wrap items-center gap-2 mb-16 md:mb-24">
+                <div className="flex flex-wrap items-center gap-2 mb-16 md:mb-20">
                     {(["All", "Branding", "Web", "UI/UX", "Editorial"] as const).map((cat) => {
                         const isActive = filter === cat;
                         return (
@@ -96,7 +35,7 @@ export default function WorkPage() {
                                 className={`text-xs font-semibold uppercase tracking-wider px-5 py-2.5 rounded-full border transition-all duration-300 font-body ${
                                     isActive
                                         ? "bg-[#E0218A] text-white border-[#E0218A]"
-                                        : "bg-transparent text-[#8A8A8A] border-[#0A0A0A]/10 hover:border-[#0A0A0A]/30 hover:text-[#0A0A0A]"
+                                        : "bg-transparent text-white/50 border-white/15 hover:border-white/40 hover:text-white"
                                 }`}
                             >
                                 {t(cat, cat === "All" ? "Vše" : cat)}
@@ -105,54 +44,49 @@ export default function WorkPage() {
                     })}
                 </div>
 
-                {/* Portfolio Index Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-x-12 md:gap-y-16">
+                {/* Two-up editorial grid — sharp corners, hover reveals project info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                     <AnimatePresence mode="popLayout">
-                        {filteredProjects.map((project, idx) => (
+                        {filteredProjects.map((project) => (
                             <motion.div
                                 layout
-                                key={project.id}
+                                key={project.slug}
                                 initial={{ opacity: 0, scale: 0.98 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.98 }}
                                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                                className="group flex flex-col justify-start cursor-none-v2"
                             >
-                                {/* Media cover */}
-                                <div className="relative aspect-[3/2] w-full overflow-hidden bg-[#0A0A0A]/5 border border-[#0A0A0A]/10">
+                                {/* Custom cursor lives on the image only */}
+                                <Link
+                                    href={`/work/${project.slug}`}
+                                    className="group relative block aspect-[4/3] w-full overflow-hidden cursor-none-v2"
+                                >
                                     <Image
-                                        src={project.image}
-                                        alt={project.title}
+                                        src={project.hero}
+                                        alt={`${project.client} — ${project.title.en}`}
                                         fill
-                                        sizes="(max-width: 768px) 100vw, 33vw"
-                                        className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                                        sizes="(max-width: 768px) 100vw, 50vw"
+                                        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
                                     />
-                                    {/* Hover fuchsia accent outline */}
-                                    <div className="absolute inset-0 border-0 group-hover:border-4 border-[#E0218A] transition-all duration-300 pointer-events-none" />
-                                </div>
 
-                                {/* Text information */}
-                                <div className="mt-5 max-w-[450px]">
-                                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                                        <span className="text-[10px] font-bold text-[#0A0A0A] font-mono uppercase mr-2">
-                                            {t(project.category, project.category)}
+                                    {/* Hover: name + view project */}
+                                    <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-8 bg-[#0A0A0A]/65 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <div>
+                                            <h3 className="text-2xl md:text-3xl font-medium font-display tracking-tight text-white">
+                                                {project.client}
+                                            </h3>
+                                            <p className="mt-2 text-sm md:text-base text-white/60 font-body max-w-[420px]">
+                                                {project.title[L]}
+                                            </p>
+                                        </div>
+                                        <span className="inline-flex items-center gap-2 text-sm md:text-base font-semibold font-body text-white">
+                                            {t("View Project", "Zobrazit projekt")}
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1">
+                                                <path d="M9 6l6 6-6 6" />
+                                            </svg>
                                         </span>
-                                        {project.tags.slice(0, 2).map((tag) => (
-                                            <span
-                                                key={tag}
-                                                className="text-[9px] font-bold text-[#0A0A0A] px-2 py-0.5 rounded-full border border-[#0A0A0A]/10 font-mono uppercase tracking-wider"
-                                            >
-                                                {tag}
-                                            </span>
-                                        ))}
                                     </div>
-                                    <h3 className="text-lg md:text-xl font-medium text-[#0A0A0A] font-display mb-1">
-                                        {project.client}
-                                    </h3>
-                                    <p className="text-sm text-[#8A8A8A] font-normal leading-snug font-body">
-                                        {project.title}
-                                    </p>
-                                </div>
+                                </Link>
                             </motion.div>
                         ))}
                     </AnimatePresence>

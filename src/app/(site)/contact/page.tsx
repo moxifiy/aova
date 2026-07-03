@@ -52,8 +52,8 @@ export default function ContactPage() {
                             <h3 className="font-bold text-xs uppercase tracking-wider text-[#0A0A0A]/70 mb-2 font-mono">
                                 {t("Standard Channel", "Hlavní Kanál")}
                             </h3>
-                            <a href="mailto:aovastudio@gmail.com" className="font-semibold text-lg hover:opacity-75 transition-opacity cursor-none underline">
-                                aovastudio@gmail.com
+                            <a href="mailto:hello@aova.studio" className="font-semibold text-lg hover:opacity-75 transition-opacity cursor-none underline">
+                                hello@aova.studio
                             </a>
                         </div>
                         <div>
@@ -61,7 +61,7 @@ export default function ContactPage() {
                                 {t("Office Location", "Kancelář Studia")}
                             </h3>
                             <p className="font-medium text-[#0A0A0A]/80 leading-relaxed">
-                                Aova Studio Europe &bull; Prague, Czech Republic
+                                Aova Studio &bull; {t("Brno, Czech Republic", "Brno, Česká republika")}
                             </p>
                         </div>
                     </div>

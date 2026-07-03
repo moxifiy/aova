@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e \"const L=require\\('lenis'\\); console.log\\('lenis main resolves:', typeof \\(L.default||L\\)\\)\")"
+      "Bash(node -e \"const L=require\\('lenis'\\); console.log\\('lenis main resolves:', typeof \\(L.default||L\\)\\)\")",
+      "Bash(ffmpeg -version)",
+      "Bash(npx wrangler *)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(JSON.stringify\\(p.scripts,null,2\\)\\)\")",
+      "PowerShell(Write-Output \"=== wrangler whoami ===\"; npx wrangler whoami 2>$null | Select-Object -Last 12; Write-Output \"=== ffmpeg ===\"; $f = Get-Command ffmpeg -ErrorAction SilentlyContinue; if \\($f\\) { $f.Source } else { \"NO_FFMPEG\" }; Write-Output \"=== winget ===\"; $w = Get-Command winget -ErrorAction SilentlyContinue; if \\($w\\) { \"winget present\" } else { \"NO_WINGET\" })",
+      "PowerShell(npx opennextjs-cloudflare build 2>&1)",
+      "PowerShell(Get-ChildItem \"C:\\\\AOVASITE2\\\\aova\\\\.open-next\\\\assets\\\\no-outro.mp4\" -ErrorAction SilentlyContinue | Select-Object Name,@{n='MB';e={[math]::Round\\($_.Length/1MB,2\\)}}; Write-Output \"=== any asset over 25MB? ===\"; Get-ChildItem \"C:\\\\AOVASITE2\\\\aova\\\\.open-next\\\\assets\" -Recurse -File | Where-Object { $_.Length -gt 25MB } | Select-Object FullName,@{n='MB';e={[math]::Round\\($_.Length/1MB,2\\)}}; Write-Output \"\\(empty above = all assets within limit\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('wrangler:', \\(p.devDependencies||{}\\).wrangler||\\(p.dependencies||{}\\).wrangler\\); console.log\\('opennext:', \\(p.dependencies||{}\\)['@opennextjs/cloudflare']||\\(p.devDependencies||{}\\)['@opennextjs/cloudflare']\\)\")"
     ]
   }
 }

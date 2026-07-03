@@ -6,17 +6,20 @@ export default function V2Cursor() {
     const cursorRef = useRef<HTMLDivElement>(null);
     const scaleRef = useRef<HTMLDivElement>(null);
     const rotateRef = useRef<HTMLDivElement>(null);
+    const reelRef = useRef<HTMLDivElement>(null);
+    const reelLabelRef = useRef<HTMLSpanElement>(null);
 
     useEffect(() => {
         const cursor = cursorRef.current;
         const scale = scaleRef.current;
         const rotate = rotateRef.current;
-        if (!cursor || !scale || !rotate) return;
+        const reel = reelRef.current;
+        const reelLabel = reelLabelRef.current;
+        if (!cursor || !scale || !rotate || !reel || !reelLabel) return;
 
-        let active = false;
-        let currentRotation = -90; // Default middle rotation (points top-left)
+        let logoActive = false;
+        let reelActive = false;
         let lastTarget: HTMLElement | null = null;
-        let isSlider = false;
 
         const updatePosition = (clientX: number, clientY: number) => {
             // Center the 80x80 cursor on the mouse pointer exactly
@@ -27,79 +30,55 @@ export default function V2Cursor() {
             updatePosition(e.clientX, e.clientY);
 
             const target = e.target as HTMLElement;
-            
-            // Performance Optimization: Skip target.closest() calls if mouse stays over same element
-            if (target === lastTarget) {
-                if (active && isSlider) {
-                    const width = window.innerWidth;
-                    if (e.clientX < width * 0.35) {
-                        if (currentRotation !== -135) {
-                            currentRotation = -135;
-                            rotate.style.transform = "rotate(-135deg) scale(0.85)";
-                        }
-                    } else if (e.clientX > width * 0.65) {
-                        if (currentRotation !== 45) {
-                            currentRotation = 45;
-                            rotate.style.transform = "rotate(45deg) scale(0.85)";
-                        }
-                    } else {
-                        if (currentRotation !== -90) {
-                            currentRotation = -90;
-                            rotate.style.transform = "rotate(-90deg) scale(1.2)";
-                        }
-                    }
-                }
-                return;
-            }
 
+            // Skip closest() lookups while the mouse stays over the same element
+            if (target === lastTarget) return;
             lastTarget = target;
-            
-            // Check if hovering over an element that triggers the V2 cursor
+
             const workZone = target ? target.closest(".cursor-none-v2") : null;
 
             if (workZone) {
-                if (!active) {
-                    active = true;
-                    scale.style.transform = "scale(1)";
-                }
-
-                isSlider = workZone.classList.contains("slider-trigger-zone");
-                if (isSlider) {
-                    const width = window.innerWidth;
-                    if (e.clientX < width * 0.35) {
-                        if (currentRotation !== -135) {
-                            currentRotation = -135;
-                            rotate.style.transform = "rotate(-135deg) scale(0.85)";
-                        }
-                    } else if (e.clientX > width * 0.65) {
-                        if (currentRotation !== 45) {
-                            currentRotation = 45;
-                            rotate.style.transform = "rotate(45deg) scale(0.85)";
-                        }
-                    } else {
-                        if (currentRotation !== -90) {
-                            currentRotation = -90;
-                            rotate.style.transform = "rotate(-90deg) scale(1.2)";
-                        }
+                // Zones with data-cursor-text get the circle cursor with that label
+                const label = workZone.getAttribute("data-cursor-text");
+                if (label) {
+                    if (reelLabel.textContent !== label) reelLabel.textContent = label;
+                    if (!reelActive) {
+                        reelActive = true;
+                        reel.style.transform = "translate(-50%, -50%) scale(1)";
+                    }
+                    if (logoActive) {
+                        logoActive = false;
+                        scale.style.transform = "scale(0)";
                     }
                 } else {
-                    if (currentRotation !== -90 || rotate.style.transform.includes("scale(0.4)")) {
-                        currentRotation = -90;
+                    // Default pink logo cursor
+                    if (!logoActive) {
+                        logoActive = true;
+                        scale.style.transform = "scale(1)";
                         rotate.style.transform = "rotate(-90deg) scale(1.2)";
+                    }
+                    if (reelActive) {
+                        reelActive = false;
+                        reel.style.transform = "translate(-50%, -50%) scale(0)";
                     }
                 }
             } else {
-                if (active) {
-                    active = false;
+                if (logoActive) {
+                    logoActive = false;
                     scale.style.transform = "scale(0)";
-                    isSlider = false;
+                }
+                if (reelActive) {
+                    reelActive = false;
+                    reel.style.transform = "translate(-50%, -50%) scale(0)";
                 }
             }
         };
 
         const onMouseLeave = () => {
-            active = false;
+            logoActive = false;
+            reelActive = false;
             scale.style.transform = "scale(0)";
+            reel.style.transform = "translate(-50%, -50%) scale(0)";
             lastTarget = null;
         };
 
@@ -111,8 +90,9 @@ export default function V2Cursor() {
         document.addEventListener("mouseleave", onMouseLeave);
         document.addEventListener("mouseenter", onMouseEnter);
 
-        // Ensure the cursor starts hidden (scale 0) and out of view
+        // Start hidden and out of view
         scale.style.transform = "scale(0)";
+        reel.style.transform = "translate(-50%, -50%) scale(0)";
         cursor.style.transform = `translate3d(-100px, -100px, 0)`;
 
         return () => {
@@ -128,6 +108,7 @@ export default function V2Cursor() {
             className="pointer-events-none fixed top-0 left-0 z-[99999] hidden md:block"
             style={{ width: 80, height: 80, willChange: "transform" }}
         >
+            {/* Pink AOVA logo cursor (default interactive zones) */}
             <div
                 ref={scaleRef}
                 style={{
@@ -153,7 +134,26 @@ export default function V2Cursor() {
                     </svg>
                 </div>
             </div>
+
+            {/* Circle text cursor (label set from the hovered zone's data-cursor-text).
+                Frosted glass over the video — bold type, see-through, sharp. */}
+            <div
+                ref={reelRef}
+                className="absolute left-1/2 top-1/2 flex items-center justify-center rounded-full bg-white/10 text-white border border-white/30 px-6"
+                style={{
+                    width: 148,
+                    height: 148,
+                    transform: "translate(-50%, -50%) scale(0)",
+                    transformOrigin: "center",
+                    transition: "transform 350ms cubic-bezier(0.16, 1, 0.3, 1)",
+                    backdropFilter: "blur(12px) saturate(1.4)",
+                    WebkitBackdropFilter: "blur(12px) saturate(1.4)",
+                }}
+            >
+                <span ref={reelLabelRef} className="font-host font-extrabold text-[14px] uppercase tracking-[0.16em] text-center leading-[1.35]">
+                    Watch Showreel
+                </span>
+            </div>
         </div>
     );
 }
-

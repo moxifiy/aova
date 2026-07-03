@@ -1,11 +1,21 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export default function SmoothScroll() {
+    const pathname = usePathname();
+
+    // Every page opens at the top — never inherit the previous page's scroll
+    useEffect(() => {
+        const l = (window as unknown as { lenis?: { scrollTo: (t: number, o?: object) => void } }).lenis;
+        if (l) l.scrollTo(0, { immediate: true });
+        window.scrollTo(0, 0);
+    }, [pathname]);
+
     useEffect(() => {
         if (typeof window === "undefined") return;
 

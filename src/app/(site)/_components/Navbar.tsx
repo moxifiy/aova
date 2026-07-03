@@ -38,13 +38,13 @@ export default function Navbar() {
     }, [isMobileMenuOpen]);
 
     const navLinks = [
-        { href: "/v2/work", label: t("Work", "Projekty") },
-        { href: "/v2/about", label: t("About", "O nás") },
-        { href: "/v2/services", label: t("Services", "Služby") },
-        { href: "/v2/contact", label: t("Contact", "Kontakt") }
+        { href: "/work", label: t("Work", "Projekty") },
+        { href: "/about", label: t("About", "O nás") },
+        { href: "/services", label: t("Services", "Služby") },
+        { href: "/contact", label: t("Contact", "Kontakt") }
     ];
     const showCapsule = isScrolled && !isMobileMenuOpen;
-    const isHeroTransparent = pathname === "/v2" && !isScrolled && !isMobileMenuOpen;
+    const isHeroTransparent = pathname === "/" && !isScrolled && !isMobileMenuOpen;
     const hamburgerColor = (isHeroTransparent && !isMobileMenuOpen) ? "bg-white" : "bg-[#0A0A0A]";
     const containerClasses = showCapsule
         ? "mt-4 w-[calc(100%-32px)] md:w-[calc(100%-64px)] max-w-[1100px] rounded-full border border-[#0A0A0A]/10 bg-[#F9F9F8]/65 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.06)] px-6 md:px-8"
@@ -64,7 +64,7 @@ export default function Navbar() {
                     <div className={`${innerWidthClass} w-full mx-auto flex items-center justify-between transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${innerHeightClass}`}>
                         
                         {/* Left Side: Logo */}
-                        <Link href="/v2" className="relative h-[16px] w-[83px] md:h-[20px] md:w-[103px] transition-transform duration-300 hover:scale-[1.02] flex items-center">
+                        <Link href="/" className="relative h-[16px] w-[83px] md:h-[20px] md:w-[103px] transition-transform duration-300 hover:scale-[1.02] flex items-center">
                             <AovaLogo 
                                 showEye={showCapsule}
                                 className={`w-full h-full object-contain object-left transition-all duration-300 ${isHeroTransparent ? "filter invert" : "filter invert-0"}`}
@@ -179,7 +179,7 @@ export default function Navbar() {
                             className="text-xs text-[#8A8A8A] font-mono flex flex-col gap-1 tracking-wider border-t border-[#0A0A0A]/10 pt-6"
                         >
                             <span>AOVA STUDIO Europe</span>
-                            <span>Prague, CZ / Est. 2024</span>
+                            <span>Brno, CZ / Est. 2024</span>
                         </motion.div>
                     </motion.div>
                 )}

@@ -15,7 +15,7 @@ export default function Footer() {
     const footerRef = useRef<HTMLElement>(null);
     const textRef = useRef<HTMLDivElement>(null);
     const circleRef = useRef<HTMLButtonElement>(null);
-    const eyeRef = useRef<SVGGElement>(null);
+    const markRef = useRef<SVGSVGElement>(null);
     const year = new Date().getFullYear();
 
     useEffect(() => {
@@ -52,22 +52,64 @@ export default function Footer() {
         if (circleRef.current) circleRef.current.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
     };
 
-    // The "O"/eye does a couple of quick, physics-like 3D spins on hover (fast → decelerate)
-    const spinningRef = useRef(false);
-    const onEyeSpin = () => {
-        const el = eyeRef.current;
-        if (!el || spinningRef.current) return;
-        spinningRef.current = true;
-        const anim = el.animate(
-            [
-                { transform: "perspective(620px) rotateY(0deg)" },
-                { transform: "perspective(620px) rotateY(720deg)" },
-            ],
-            { duration: 1150, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
-        );
-        anim.onfinish = () => { spinningRef.current = false; };
-        anim.oncancel = () => { spinningRef.current = false; };
-    };
+    // Elastic wordmark: scroll speed stretches the letters taller (slimming them
+    // slightly, like real rubber), and a spring lets them wobble back to rest
+    // when you stop. Anchored at the baseline; runs only while visible.
+    useEffect(() => {
+        const footer = footerRef.current;
+        const mark = markRef.current;
+        if (!footer || !mark) return;
+
+        let raf = 0;
+        let running = false;
+        let cur = 0; // current stretch amount
+        let springVel = 0;
+        let lastY = window.scrollY;
+        let lastT = performance.now();
+
+        const loop = () => {
+            const y = window.scrollY;
+            const t = performance.now();
+            const dt = Math.max(8, t - lastT);
+            const vel = (y - lastY) / dt; // px per ms
+            lastY = y;
+            lastT = t;
+
+            // gravity feel: scrolling down stretches the letters up, scrolling up
+            // squashes them flat — signed velocity, capped both ways
+            const target = Math.max(-0.09, Math.min(0.14, vel * 0.26));
+            // under-damped spring → lively overshoot when settling back
+            springVel += (target - cur) * 0.16;
+            springVel *= 0.8;
+            cur = Math.max(-0.11, Math.min(0.17, cur + springVel));
+
+            const sy = 1 + cur;
+            const sx = 1 - cur * 0.25;
+            mark.style.transform = `scaleY(${sy.toFixed(4)}) scaleX(${sx.toFixed(4)})`;
+            raf = requestAnimationFrame(loop);
+        };
+
+        const io = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting && !running) {
+                running = true;
+                lastY = window.scrollY;
+                lastT = performance.now();
+                raf = requestAnimationFrame(loop);
+            } else if (!entry.isIntersecting && running) {
+                running = false;
+                cancelAnimationFrame(raf);
+                cur = 0;
+                springVel = 0;
+                mark.style.transform = "scaleY(1) scaleX(1)";
+            }
+        });
+        io.observe(footer);
+
+        return () => {
+            io.disconnect();
+            cancelAnimationFrame(raf);
+        };
+    }, []);
 
     return (
         <footer ref={footerRef} className="relative min-h-screen flex flex-col select-none text-white" style={{ backgroundColor: PINK }}>
@@ -79,7 +121,7 @@ export default function Footer() {
                                 {t("Contact", "Kontakt")}
                             </h4>
                             <div className="flex flex-col gap-2 text-sm md:text-base font-medium">
-                                <a href="mailto:aovastudio@gmail.com" className={linkCls}>aovastudio@gmail.com</a>
+                                <a href="mailto:hello@aova.studio" className={linkCls}>hello@aova.studio</a>
                                 <a href="tel:+420739662744" className={linkCls}>+420 739 662 744</a>
                                 <a href="tel:+420777794340" className={linkCls}>+420 777 794 340</a>
                             </div>
@@ -129,13 +171,13 @@ export default function Footer() {
                 className="mt-auto sticky bottom-0 z-20 w-full px-4 md:px-8 pb-4 md:pb-6"
                 style={{ backgroundColor: PINK }}
             >
-                <svg viewBox="0 0 647.07 125.95" className="w-full h-auto block" aria-label="AOVA">
+                <svg ref={markRef} viewBox="0 0 647.07 125.95" className="w-full h-auto block" style={{ overflow: "visible", willChange: "transform", transformOrigin: "center bottom" }} aria-label="AOVA">
                     {/* V */}
                     <path fill={INK} d="M505.06,6.15l-54.65,115.77c-.41.87-1.29,1.43-2.26,1.43h-55.09c-.97,0-1.85-.56-2.26-1.43L336.14,6.15c-.78-1.66.43-3.57,2.26-3.57h37.84c.98,0,1.86.57,2.27,1.46l38.32,83.36c.41.89,1.29,1.46,2.27,1.46h1.76c.98,0,1.86-.57,2.27-1.46L461.46,4.04c.41-.89,1.29-1.46,2.27-1.46h39.07c1.83,0,3.04,1.91,2.26,3.57Z" />
                     {/* A (left) */}
                     <path fill={INK} d="M114.51,4.02l54.65,115.77c.78,1.66-.43,3.57-2.26,3.57h-39.07c-.98,0-1.86-.57-2.27-1.46l-38.32-83.36c-.41-.89-1.29-1.46-2.27-1.46h-1.76c-.98,0-1.86.57-2.27,1.46l-38.32,83.36c-.41.89-1.29,1.46-2.27,1.46H2.5c-1.83,0-3.04-1.91-2.26-3.57L54.9,4.02c.41-.87,1.29-1.43,2.26-1.43h55.09c.97,0,1.85.56,2.26,1.43Z" />
-                    {/* O + eye — tilts in 3D */}
-                    <g ref={eyeRef} onMouseEnter={onEyeSpin} style={{ transformBox: "fill-box", transformOrigin: "center" }}>
+                    {/* O + eye */}
+                    <g>
                         <path fill={INK} d="M252.66,0c-49.58,0-81.81,18.12-81.81,62.97s32.23,62.98,81.81,62.98,81.8-18.12,81.8-62.98S302.24,0,252.66,0ZM234.18,38.09c5.41-1.25,11.61-1.86,18.48-1.86.17,0,.33,0,.49.01v.27c0,6.05-4.9,10.96-10.96,10.96-4.18,0-7.82-2.35-9.66-5.81-.76-1.43.07-3.21,1.65-3.57ZM252.66,89.72c-25.78,0-42.14-8.63-42.14-26.75,0-8.67,3.75-15.17,10.48-19.58,1.69-1.11,3.9.11,3.9,2.13v.05c0,15.33,12.43,27.76,27.75,27.76s27.76-12.43,27.76-27.76v-.12c-.01-1.99,2.16-3.25,3.83-2.17,6.81,4.42,10.56,10.95,10.56,19.69,0,18.12-16.11,26.75-42.14,26.75Z" />
                         <path fill="#fff" d="M253.15,36.24v.27c0,6.05-4.9,10.96-10.96,10.96-4.18,0-7.82-2.35-9.66-5.81-.76-1.43.07-3.21,1.65-3.57,5.41-1.25,11.61-1.86,18.48-1.86.17,0,.33,0,.49.01Z" />
                         <path fill="#fff" d="M294.8,62.97c0,18.12-16.11,26.75-42.14,26.75s-42.14-8.63-42.14-26.75c0-8.67,3.75-15.17,10.48-19.58,1.69-1.11,3.9.11,3.9,2.13v.05c0,15.33,12.43,27.76,27.75,27.76s27.76-12.43,27.76-27.76v-.12c-.01-1.99,2.16-3.25,3.83-2.17,6.81,4.42,10.56,10.95,10.56,19.69Z" />

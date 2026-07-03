@@ -1,7 +1,6 @@
 "use client";
 
 import WhatThisChanges from "./WhatThisChanges";
-import ClientLogos from "./ClientLogos";
 
 export default function ServicesTeaser() {
     return (
@@ -10,9 +9,6 @@ export default function ServicesTeaser() {
 
                 {/* What This Changes — animated geometric marks */}
                 <WhatThisChanges />
-
-                {/* Client logos flowing right beneath the icons */}
-                <ClientLogos />
 
             </div>
         </section>

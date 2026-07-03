@@ -26,7 +26,7 @@ const PROJECTS: ProjectItem[] = [
         hoverImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1000&auto=format&fit=crop",
         category: "Branding / Identity",
         tags: ["Identity", "Design System", "3D Art"],
-        link: "/v2/work/orca"
+        link: "/work/orca"
     },
     {
         id: 2,
@@ -36,7 +36,7 @@ const PROJECTS: ProjectItem[] = [
         hoverImage: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop",
         category: "Web / Front-end",
         tags: ["Interactive UX", "React Redesign", "Lenis Scroll"],
-        link: "/v2/work/vela"
+        link: "/work/vela"
     },
     {
         id: 3,
@@ -46,7 +46,7 @@ const PROJECTS: ProjectItem[] = [
         hoverImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1000&auto=format&fit=crop",
         category: "Visual Identity",
         tags: ["Campaign", "3D Design", "Visual Assets"],
-        link: "/v2/work/vapor"
+        link: "/work/vapor"
     },
     {
         id: 4,
@@ -56,7 +56,7 @@ const PROJECTS: ProjectItem[] = [
         hoverImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop",
         category: "Print / Editorial",
         tags: ["Typography", "Grid Systems", "Book Design"],
-        link: "/v2/work/noire"
+        link: "/work/noire"
     }
 ];
 

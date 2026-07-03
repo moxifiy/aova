@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 
-// A spread of fuchsia shades, light → dark
-const SHADES = ["#E0218A", "#F0509E", "#FF7DBB", "#C71B78", "#A8155F", "#FF9ECB", "#7E1049"];
+// Fuchsia scale, ordered light → dark. The composition is a weave: every row
+// contains all seven shades exactly once, stepping through the scale two at a
+// time and shifting three per row — so horizontal neighbours always contrast,
+// nothing sits above its own colour, and the whole wall reads as one pattern.
+const SHADES = ["#FF9ECB", "#FF7DBB", "#F0509E", "#E0218A", "#C71B78", "#A8155F", "#7E1049"];
+const RHYTHM = [2.6, 1, 1.6, 1, 2.2, 1.3, 1.8];
 
-// Each row: blocks with a base flex-grow (width) + shade index — strong size variation
-const ROWS: { g: number; s: number }[][] = [
-    [{ g: 4, s: 3 }, { g: 1.2, s: 0 }, { g: 2.5, s: 2 }, { g: 1, s: 4 }, { g: 3.2, s: 0 }, { g: 1.3, s: 1 }],
-    [{ g: 1.4, s: 1 }, { g: 1, s: 2 }, { g: 3.6, s: 0 }, { g: 2.4, s: 5 }, { g: 1.1, s: 4 }, { g: 1.6, s: 2 }],
-    [{ g: 2, s: 2 }, { g: 1, s: 6 }, { g: 1, s: 3 }, { g: 4, s: 1 }, { g: 1.2, s: 0 }, { g: 1.6, s: 2 }],
-];
+const rotate = <T,>(arr: T[], n: number): T[] => [...arr.slice(n % arr.length), ...arr.slice(0, n % arr.length)];
+
+const ROWS: { g: number; s: number }[][] = [0, 1, 2].map((row) =>
+    rotate(RHYTHM, row * 2).map((g, i) => ({ g, s: (i * 2 + row * 3) % SHADES.length }))
+);
 
 function Block({ g, color }: { g: number; color: string }) {
     const [h, setH] = useState(false);
@@ -20,11 +23,11 @@ function Block({ g, color }: { g: number; color: string }) {
             onMouseLeave={() => setH(false)}
             className="h-full cursor-pointer"
             style={{
-                flexGrow: h ? g * 2.6 : g,
+                flexGrow: h ? g * 1.9 : g,
                 flexBasis: 0,
                 backgroundColor: color,
-                filter: h ? "brightness(1.14)" : "brightness(1)",
-                transition: "flex-grow 600ms cubic-bezier(0.16,1,0.3,1), filter 400ms ease",
+                filter: h ? "brightness(1.12)" : "brightness(1)",
+                transition: "flex-grow 450ms cubic-bezier(0.22,1,0.36,1), filter 300ms ease",
             }}
         />
     );
@@ -35,12 +38,8 @@ export default function BrandDNA({ active, items }: { active: number | null; ite
     return (
         <div className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden select-none bg-[#7E1049]">
             <div className="relative h-[200px] md:h-[280px]">
-                {/* Mosaic — slides right (a touch less than the box width so it tucks under, no white seam) */}
-                <div
-                    className={`absolute inset-0 flex flex-col transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                        open ? "translate-x-[56%] md:translate-x-[40%]" : "translate-x-0"
-                    }`}
-                >
+                {/* Mosaic — stays full; the descriptor panel overlays only the top row */}
+                <div className="absolute inset-0 flex flex-col">
                     {ROWS.map((row, ri) => (
                         <div key={ri} className="flex flex-1 w-full">
                             {row.map((b, bi) => (
@@ -50,28 +49,28 @@ export default function BrandDNA({ active, items }: { active: number | null; ite
                     ))}
                 </div>
 
-                {/* Black box — slides in from the left, pushing the blocks aside */}
+                {/* The top-right block grows leftward into a dark panel — snappy, like
+                    one of the wall's own blocks expanding. Text is written centered. */}
                 <div
-                    className={`absolute inset-y-0 left-0 w-[58%] md:w-[42%] bg-[#7E1049] transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                        open ? "translate-x-0" : "-translate-x-full"
-                    }`}
-                >
-                    {/* Text — written on the box once it's in place */}
-                    <div className="absolute inset-0 flex items-center px-6 md:px-12">
-                        {items.map((it, i) => (
-                            <p
-                                key={i}
-                                className="absolute left-6 right-6 md:left-12 md:right-10 text-white font-body font-light text-base md:text-xl leading-snug"
-                                style={{
-                                    opacity: active === i ? 1 : 0,
-                                    transform: active === i ? "translateY(0)" : "translateY(4px)",
-                                    transition: "opacity 160ms ease, transform 160ms ease",
-                                }}
-                            >
-                                {it.desc}
-                            </p>
-                        ))}
-                    </div>
+                    className="absolute top-0 right-0 h-1/3 bg-[#7E1049]"
+                    style={{
+                        width: open ? "86%" : "14%",
+                        transition: "width 380ms cubic-bezier(0.22,1,0.36,1)",
+                    }}
+                />
+                <div className="absolute top-0 left-0 right-0 h-1/3 pointer-events-none">
+                    {items.map((it, i) => (
+                        <p
+                            key={i}
+                            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[78%] max-w-[620px] text-center text-white font-body font-light text-sm md:text-xl leading-snug"
+                            style={{
+                                opacity: active === i ? 1 : 0,
+                                transition: active === i ? "opacity 180ms ease 110ms" : "opacity 90ms ease",
+                            }}
+                        >
+                            {it.desc}
+                        </p>
+                    ))}
                 </div>
             </div>
         </div>

@@ -106,12 +106,12 @@ export default function FallingWords() {
                     item.top + item.height / 2,
                     item.width,
                     item.height,
-                    { restitution: 0.3, friction: 0.6, frictionAir: 0.01, density: 0.002, chamfer: { radius: 6 } }
+                    { restitution: 0.25, friction: 0.6, frictionAir: 0.03, density: 0.002, chamfer: { radius: 6 } }
                 );
                 // "gentle" drops start from rest and let gravity ease them down (smooth);
-                // others get a lively little kick as they let go
-                Body.setAngularVelocity(body, item.gentle ? 0 : (Math.random() - 0.5) * 0.18);
-                Body.setVelocity(body, item.gentle ? { x: 0, y: 0 } : { x: (Math.random() - 0.5) * 3, y: Math.random() });
+                // others get a soft little kick as they let go
+                Body.setAngularVelocity(body, item.gentle ? 0 : (Math.random() - 0.5) * 0.1);
+                Body.setVelocity(body, item.gentle ? { x: 0, y: 0 } : { x: (Math.random() - 0.5) * 1.2, y: 0 });
                 Composite.add(engine.world, body);
                 bodiesRef.current.set(id, { body, w: item.width, h: item.height });
                 newActives.push({
@@ -144,7 +144,7 @@ export default function FallingWords() {
             matterRef.current = Matter;
             const { Engine, Bodies, Composite } = Matter;
             const engine = Engine.create();
-            engine.gravity.y = 1.4;
+            engine.gravity.y = 0.6;
             engineRef.current = engine;
 
             const W = window.innerWidth;
