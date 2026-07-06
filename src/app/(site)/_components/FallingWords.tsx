@@ -183,7 +183,7 @@ export default function FallingWords() {
                     ref={(el) => {
                         if (el) elRefs.current.set(a.id, el);
                     }}
-                    className="font-display font-medium tracking-tight uppercase select-none"
+                    className="font-display font-medium tracking-tight select-none"
                     style={{
                         position: "absolute",
                         left: 0,

@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLanguage } from "../../_components/LanguageContext";
-import { CASE_STUDIES, type CaseStudy } from "../projects";
+import Placeholder from "../../_components/Placeholder";
+import { CASE_STUDIES, COVER_TITLE, COVER_DESCRIPTION, type CaseStudy } from "../projects";
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
@@ -27,7 +27,7 @@ export default function CaseStudyClient({ project }: { project: CaseStudy }) {
                 >
                     <Link
                         href="/work"
-                        className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-[#8A8A8A] font-mono hover:text-[#0A0A0A] transition-colors duration-300"
+                        className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.04em] text-[#8A8A8A] font-mono hover:text-[#0A0A0A] transition-colors duration-300"
                     >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
                             <path d="M15 18l-6-6 6-6" />
@@ -44,7 +44,7 @@ export default function CaseStudyClient({ project }: { project: CaseStudy }) {
                     className="mt-8 md:mt-12 text-4xl md:text-6xl lg:text-7xl font-medium font-display tracking-tight leading-[0.98] max-w-[1000px]"
                     style={{ marginLeft: "-0.04em" }}
                 >
-                    {project.client}
+                    {COVER_TITLE}
                 </motion.h1>
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
@@ -52,7 +52,7 @@ export default function CaseStudyClient({ project }: { project: CaseStudy }) {
                     transition={{ duration: 0.9, ease: EASE, delay: 0.15 }}
                     className="mt-5 text-lg md:text-xl text-[#8A8A8A] font-body max-w-[640px] leading-relaxed"
                 >
-                    {project.title[L]}
+                    {COVER_DESCRIPTION}
                 </motion.p>
 
                 {/* Meta row */}
@@ -63,19 +63,19 @@ export default function CaseStudyClient({ project }: { project: CaseStudy }) {
                     className="mt-10 md:mt-12 flex flex-wrap gap-x-16 gap-y-6 border-t border-[#0A0A0A]/10 pt-6"
                 >
                     <div>
-                        <span className="block text-[10px] font-bold uppercase tracking-[0.22em] text-[#8A8A8A] font-mono mb-1.5">
+                        <span className="block text-[11px] font-medium tracking-[0.04em] text-[#8A8A8A] font-mono mb-1.5">
                             {t("Category", "Kategorie")}
                         </span>
                         <span className="text-sm md:text-base font-medium font-body">{project.category}</span>
                     </div>
                     <div>
-                        <span className="block text-[10px] font-bold uppercase tracking-[0.22em] text-[#8A8A8A] font-mono mb-1.5">
+                        <span className="block text-[11px] font-medium tracking-[0.04em] text-[#8A8A8A] font-mono mb-1.5">
                             {t("Year", "Rok")}
                         </span>
                         <span className="text-sm md:text-base font-medium font-body">{project.year}</span>
                     </div>
                     <div>
-                        <span className="block text-[10px] font-bold uppercase tracking-[0.22em] text-[#8A8A8A] font-mono mb-1.5">
+                        <span className="block text-[11px] font-medium tracking-[0.04em] text-[#8A8A8A] font-mono mb-1.5">
                             {t("Services", "Služby")}
                         </span>
                         <span className="text-sm md:text-base font-medium font-body">{project.services[L].join(" · ")}</span>
@@ -88,16 +88,9 @@ export default function CaseStudyClient({ project }: { project: CaseStudy }) {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, ease: EASE, delay: 0.3 }}
-                className="mt-12 md:mt-16 relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-[#0A0A0A]/5"
+                className="mt-12 md:mt-16 relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden"
             >
-                <Image
-                    src={project.hero}
-                    alt={project.client}
-                    fill
-                    priority
-                    sizes="100vw"
-                    className="object-cover"
-                />
+                <Placeholder iconClassName="w-16 h-16 md:w-20 md:h-20" />
             </motion.div>
 
             <div className="max-w-[1440px] mx-auto px-6 md:px-12">
@@ -120,15 +113,9 @@ export default function CaseStudyClient({ project }: { project: CaseStudy }) {
                     transition={{ duration: 0.8, ease: EASE }}
                     className="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
                 >
-                    {project.images.map((img, i) => (
-                        <div key={i} className="relative aspect-[4/3] w-full overflow-hidden bg-[#0A0A0A]/5">
-                            <Image
-                                src={img}
-                                alt={`${project.client} — ${i + 1}`}
-                                fill
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                className="object-cover"
-                            />
+                    {[0, 1].map((i) => (
+                        <div key={i} className="relative aspect-[4/3] w-full overflow-hidden">
+                            <Placeholder />
                         </div>
                     ))}
                 </motion.div>
@@ -152,14 +139,14 @@ export default function CaseStudyClient({ project }: { project: CaseStudy }) {
                     transition={{ duration: 0.8, ease: EASE }}
                     className="mt-24 md:mt-36 border-t border-[#0A0A0A]/10 pt-10 md:pt-14"
                 >
-                    <span className="block text-[11px] font-bold uppercase tracking-[0.24em] text-[#8A8A8A] font-mono mb-4">
+                    <span className="block text-[11px] font-medium tracking-[0.04em] text-[#8A8A8A] font-mono mb-4">
                         {t("Next project", "Další projekt")}
                     </span>
                     <Link
                         href={`/work/${next.slug}`}
                         className="group inline-flex items-center gap-4 text-3xl md:text-5xl font-medium font-display tracking-tight leading-none hover:text-[#E0218A] transition-colors duration-300"
                     >
-                        {next.client}
+                        {COVER_TITLE}
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7 md:w-9 md:h-9 transition-transform duration-300 group-hover:translate-x-2">
                             <path d="M5 12h14M13 6l6 6-6 6" />
                         </svg>

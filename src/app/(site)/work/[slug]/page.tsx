@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         openGraph: {
             title: `${project.client} — Aova Studio`,
             description: project.title.en,
-            images: [{ url: project.hero, width: 1920, height: 1080, alt: project.client }],
+            images: [{ url: "/og.jpg", width: 1200, height: 630, alt: project.client }],
         },
     };
 }

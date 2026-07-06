@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
+import TiltLink from "./TiltLink";
 import { useLanguage } from "./LanguageContext";
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -18,25 +18,25 @@ export default function CTA() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.9, ease: EASE }}
-                    className="text-4xl md:text-6xl lg:text-7xl font-normal tracking-tight font-display mb-12 max-w-[1200px] leading-[1.0] uppercase"
+                    className="text-4xl md:text-6xl lg:text-7xl font-normal tracking-tight font-display mb-12 max-w-[1200px] leading-[1.0]"
                     style={{ letterSpacing: "-0.045em" }}
                 >
                     {t("Have a vision?", "Máte vizi?")}<br />{t("Let’s architect it together.", "Pojďme jí společně dát tvar.")}
                 </motion.h2>
 
-                {/* Primary pill button — matches the studio button (no flowers) */}
+                {/* Primary pill button — tilts in 3D like the footer circle */}
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
                 >
-                    <Link
+                    <TiltLink
                         href="/contact"
-                        className="inline-block font-host font-normal text-sm md:text-[15px] px-8 py-3.5 bg-[#2C2C2C] rounded-full transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.12)] hover:bg-[#1A1A1A]"
+                        className="font-host font-normal text-sm md:text-[15px] px-8 py-3.5 bg-[#2C2C2C] rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
                     >
                         <span className="text-white">{t("CONTACT US", "KONTAKTUJTE NÁS")}</span>
-                    </Link>
+                    </TiltLink>
                 </motion.div>
 
             </div>

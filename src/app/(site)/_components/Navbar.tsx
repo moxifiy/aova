@@ -179,7 +179,7 @@ export default function Navbar() {
                             className="text-xs text-[#8A8A8A] font-mono flex flex-col gap-1 tracking-wider border-t border-[#0A0A0A]/10 pt-6"
                         >
                             <span>AOVA STUDIO Europe</span>
-                            <span>Brno, CZ / Est. 2024</span>
+                            <span>Brno, CZ / Est. 2025</span>
                         </motion.div>
                     </motion.div>
                 )}

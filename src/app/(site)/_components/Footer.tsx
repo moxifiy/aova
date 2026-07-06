@@ -8,7 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 const PINK = "#ff269d";
 const INK = "#0A0A0A";
 const linkCls =
-    "relative w-fit text-white after:absolute after:left-0 after:-bottom-0.5 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-white after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.16,1,0.3,1)] hover:after:scale-x-100";
+    "relative w-fit text-current after:absolute after:left-0 after:-bottom-0.5 after:h-[1.5px] after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.16,1,0.3,1)] hover:after:scale-x-100";
 
 export default function Footer() {
     const { t } = useLanguage();
@@ -52,62 +52,64 @@ export default function Footer() {
         if (circleRef.current) circleRef.current.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
     };
 
-    // Elastic wordmark: scroll speed stretches the letters taller (slimming them
-    // slightly, like real rubber), and a spring lets them wobble back to rest
-    // when you stop. Anchored at the baseline; runs only while visible.
+    // Wordmark travel: as the footer scrolls into view the wordmark holds at the
+    // footer's top edge, then releases and glides down to its resting place at
+    // the bottom — scrubbed to scroll, so scrolling back up reverses it.
     useEffect(() => {
+        gsap.registerPlugin(ScrollTrigger);
         const footer = footerRef.current;
         const mark = markRef.current;
         if (!footer || !mark) return;
 
-        let raf = 0;
-        let running = false;
-        let cur = 0; // current stretch amount
-        let springVel = 0;
-        let lastY = window.scrollY;
-        let lastT = performance.now();
+        const wrap = mark.parentElement as HTMLElement | null;
+        if (!wrap) return;
 
-        const loop = () => {
-            const y = window.scrollY;
-            const t = performance.now();
-            const dt = Math.max(8, t - lastT);
-            const vel = (y - lastY) / dt; // px per ms
-            lastY = y;
-            lastT = t;
-
-            // gravity feel: scrolling down stretches the letters up, scrolling up
-            // squashes them flat — signed velocity, capped both ways
-            const target = Math.max(-0.09, Math.min(0.14, vel * 0.26));
-            // under-damped spring → lively overshoot when settling back
-            springVel += (target - cur) * 0.16;
-            springVel *= 0.8;
-            cur = Math.max(-0.11, Math.min(0.17, cur + springVel));
-
-            const sy = 1 + cur;
-            const sx = 1 - cur * 0.25;
-            mark.style.transform = `scaleY(${sy.toFixed(4)}) scaleX(${sx.toFixed(4)})`;
-            raf = requestAnimationFrame(loop);
-        };
-
-        const io = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting && !running) {
-                running = true;
-                lastY = window.scrollY;
-                lastT = performance.now();
-                raf = requestAnimationFrame(loop);
-            } else if (!entry.isIntersecting && running) {
-                running = false;
-                cancelAnimationFrame(raf);
-                cur = 0;
-                springVel = 0;
-                mark.style.transform = "scaleY(1) scaleX(1)";
+        const tween = gsap.fromTo(
+            wrap,
+            { y: () => -(footer.offsetHeight - wrap.offsetHeight) },
+            {
+                y: 0,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: footer,
+                    start: "top bottom",
+                    end: "bottom bottom",
+                    scrub: true,
+                    invalidateOnRefresh: true,
+                },
+                // While the (black) wordmark passes behind the footer text,
+                // flip the text to white so it stays readable
+                onUpdate: () => {
+                    const text = textRef.current;
+                    if (!text) return;
+                    const tr = text.getBoundingClientRect();
+                    const wr = wrap.getBoundingClientRect();
+                    const overlaps = wr.top < tr.bottom && wr.bottom > tr.top;
+                    text.style.color = overlaps ? "#ffffff" : INK;
+                },
             }
+        );
+
+        // The trigger's start/end are computed from total document height, which
+        // shifts whenever async content settles (hero video, images, fonts) or
+        // layout changes (accordions opening on /services). Stale measurements
+        // are what made the travel glitch until a hard reload — so refresh
+        // whenever the page's real height changes.
+        const refresh = () => ScrollTrigger.refresh();
+        window.addEventListener("load", refresh);
+        let debounce: ReturnType<typeof setTimeout> | null = null;
+        const ro = new ResizeObserver(() => {
+            if (debounce) clearTimeout(debounce);
+            debounce = setTimeout(refresh, 150);
         });
-        io.observe(footer);
+        ro.observe(document.body);
 
         return () => {
-            io.disconnect();
-            cancelAnimationFrame(raf);
+            if (debounce) clearTimeout(debounce);
+            ro.disconnect();
+            window.removeEventListener("load", refresh);
+            tween.scrollTrigger?.kill();
+            tween.kill();
         };
     }, []);
 
@@ -115,9 +117,13 @@ export default function Footer() {
         <footer ref={footerRef} className="relative min-h-screen flex flex-col select-none text-white" style={{ backgroundColor: PINK }}>
             <div className="max-w-[1440px] w-full mx-auto px-6 md:px-12 pt-14 md:pt-20 relative z-10">
                 <div className="flex items-start justify-between gap-8">
-                    <div ref={textRef} className="flex flex-wrap gap-10 md:gap-20 font-body">
+                    <div
+                        ref={textRef}
+                        className="flex flex-wrap gap-10 md:gap-20 font-body"
+                        style={{ color: INK, transition: "color 250ms ease" }}
+                    >
                         <div>
-                            <h4 className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/70 mb-3 font-mono">
+                            <h4 className="text-[11px] font-medium tracking-[0.04em] mb-3 font-mono opacity-70">
                                 {t("Contact", "Kontakt")}
                             </h4>
                             <div className="flex flex-col gap-2 text-sm md:text-base font-medium">
@@ -128,18 +134,18 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <h4 className="text-[11px] font-bold uppercase tracking-[0.22em] text-white/70 mb-3 font-mono">
+                            <h4 className="text-[11px] font-medium tracking-[0.04em] mb-3 font-mono opacity-70">
                                 {t("Socials", "Sítě")}
                             </h4>
                             <div className="flex flex-col gap-2 text-sm md:text-base font-medium">
-                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={linkCls}>Instagram</a>
-                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className={linkCls}>Twitter / X</a>
-                                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className={linkCls}>LinkedIn</a>
+                                <a href="https://www.instagram.com/aova.studio/" target="_blank" rel="noopener noreferrer" className={linkCls}>Instagram</a>
+                                <a href="https://x.com/AovaStudio" target="_blank" rel="noopener noreferrer" className={linkCls}>X</a>
+                                <a href="https://www.linkedin.com/company/aova-studio" target="_blank" rel="noopener noreferrer" className={linkCls}>LinkedIn</a>
                             </div>
                         </div>
 
                         <div>
-                            <p className="text-sm md:text-base font-medium leading-relaxed text-white/90">
+                            <p className="text-sm md:text-base font-medium leading-relaxed">
                                 {t("Aova Studio", "Aova Studio")}<br />
                                 {t("Brno, Czech Republic", "Brno, Česká Republika")}<br />
                                 &copy; {year} {t("Aova Studio. All rights reserved.", "Aova Studio. Všechna práva vyhrazena.")}
@@ -166,12 +172,12 @@ export default function Footer() {
                 </div>
             </div>
 
-            {/* Bottom: full-width AOVA wordmark — sticky; only the "O" tilts in 3D on hover */}
-            <div
-                className="mt-auto sticky bottom-0 z-20 w-full px-4 md:px-8 pb-4 md:pb-6"
-                style={{ backgroundColor: PINK }}
-            >
-                <svg ref={markRef} viewBox="0 0 647.07 125.95" className="w-full h-auto block" style={{ overflow: "visible", willChange: "transform", transformOrigin: "center bottom" }} aria-label="AOVA">
+            {/* Bottom: full-width AOVA wordmark — holds at the footer's top edge as the
+                footer enters, then releases and settles at the bottom (scroll-scrubbed).
+                Backgroundless and behind the text (z-0 vs the content's z-10) so it
+                never covers anything. */}
+            <div className="mt-auto w-full px-4 md:px-8 pb-4 md:pb-6 relative z-0 pointer-events-none" style={{ willChange: "transform" }}>
+                <svg ref={markRef} viewBox="0 0 647.07 125.95" className="w-full h-auto block" style={{ overflow: "visible" }} aria-label="AOVA">
                     {/* V */}
                     <path fill={INK} d="M505.06,6.15l-54.65,115.77c-.41.87-1.29,1.43-2.26,1.43h-55.09c-.97,0-1.85-.56-2.26-1.43L336.14,6.15c-.78-1.66.43-3.57,2.26-3.57h37.84c.98,0,1.86.57,2.27,1.46l38.32,83.36c.41.89,1.29,1.46,2.27,1.46h1.76c.98,0,1.86-.57,2.27-1.46L461.46,4.04c.41-.89,1.29-1.46,2.27-1.46h39.07c1.83,0,3.04,1.91,2.26,3.57Z" />
                     {/* A (left) */}

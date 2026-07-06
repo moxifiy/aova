@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { siBlender, siCinema4d, siFigma, siFramer, siHtml5, siCss, siJavascript } from "simple-icons";
 import { useLanguage } from "../_components/LanguageContext";
+import Placeholder from "../_components/Placeholder";
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
@@ -16,8 +18,34 @@ interface Service {
 }
 
 export default function ServicesPage() {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
+    const L = lang === "EN" ? "en" : "cz";
     const [open, setOpen] = useState<number | null>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Draggable progress bar under the reviews — dragging the handle scrolls
+    // the row, and scrolling the row moves the handle.
+    const trackRef = useRef<HTMLDivElement>(null);
+    const draggingRef = useRef(false);
+    const [scrollRatio, setScrollRatio] = useState(0);
+    const HANDLE_REM = 6; // handle width: 6rem
+
+    const syncRatio = () => {
+        const el = scrollRef.current;
+        if (!el) return;
+        const max = el.scrollWidth - el.clientWidth;
+        setScrollRatio(max > 0 ? el.scrollLeft / max : 0);
+    };
+
+    const dragTo = (clientX: number) => {
+        const track = trackRef.current;
+        const el = scrollRef.current;
+        if (!track || !el) return;
+        const r = track.getBoundingClientRect();
+        const handlePx = HANDLE_REM * 16;
+        const p = Math.min(1, Math.max(0, (clientX - r.left - handlePx / 2) / (r.width - handlePx)));
+        el.scrollLeft = p * (el.scrollWidth - el.clientWidth);
+    };
 
     const SERVICES: Service[] = [
         {
@@ -95,7 +123,7 @@ export default function ServicesPage() {
     ];
 
     return (
-        <main className="bg-white text-[#0A0A0A] pt-32 md:pt-44 pb-24 md:pb-40 px-6 md:px-12 min-h-screen">
+        <main className="bg-white text-[#0A0A0A] pt-32 md:pt-44 pb-0 px-6 md:px-12 min-h-screen overflow-x-clip">
             <div className="max-w-[1440px] mx-auto">
 
                 {/* Page title */}
@@ -121,7 +149,7 @@ export default function ServicesPage() {
                                     aria-expanded={isOpen}
                                     className="w-full flex items-center justify-between gap-6 py-8 md:py-12 text-left group"
                                 >
-                                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-medium font-display tracking-tight leading-none transition-colors duration-300 group-hover:text-[#E0218A]">
+                                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-medium font-display tracking-tight leading-none transition-colors duration-300 group-hover:text-[#8A8A8A]">
                                         {s.title}
                                     </h2>
                                     {/* Plus → cross */}
@@ -166,26 +194,13 @@ export default function ServicesPage() {
 
                                                 {/* References — swap each placeholder for real work samples */}
                                                 <div className="mt-12 md:mt-16">
-                                                    <span className="block text-[11px] font-bold uppercase tracking-[0.24em] text-[#8A8A8A] font-mono mb-4">
+                                                    <span className="block text-[11px] font-medium tracking-[0.04em] text-[#8A8A8A] font-mono mb-4">
                                                         {t("References", "Reference")}
                                                     </span>
                                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                                                         {Array.from({ length: 4 }).map((_, r) => (
-                                                            <div
-                                                                key={r}
-                                                                className="relative aspect-[4/3] w-full overflow-hidden bg-[#0A0A0A]/[0.04] border border-[#0A0A0A]/10 flex items-center justify-center transition-colors duration-300 hover:bg-[#0A0A0A]/[0.06]"
-                                                            >
-                                                                <svg
-                                                                    viewBox="0 0 24 24"
-                                                                    fill="none"
-                                                                    stroke="currentColor"
-                                                                    strokeWidth="1.4"
-                                                                    className="w-7 h-7 md:w-8 md:h-8 text-[#0A0A0A]/15"
-                                                                >
-                                                                    <rect x="3.5" y="5" width="17" height="14" rx="0" />
-                                                                    <circle cx="9" cy="10" r="1.6" />
-                                                                    <path d="M3.5 16.5l4.8-4.2 3.4 3 3.6-3.4 5.2 4.6" strokeLinejoin="round" />
-                                                                </svg>
+                                                            <div key={r} className="group relative aspect-[4/3] w-full">
+                                                                <Placeholder />
                                                             </div>
                                                         ))}
                                                     </div>
@@ -199,7 +214,318 @@ export default function ServicesPage() {
                     })}
                 </div>
 
+                {/* ───────────── TOOLS IN OUR ARSENAL ───────────── */}
+                <section className="mt-32 md:mt-48 text-center">
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7, ease: EASE }}
+                        className="text-4xl md:text-5xl lg:text-6xl font-medium font-display tracking-tight uppercase mb-14 md:mb-20"
+                    >
+                        {t("Tools in our arsenal", "Nástroje v našem arzenálu")}
+                    </motion.h2>
+
+                    {/* 4×3 grid of marks — no tiles, no labels; tooltips carry the names.
+                        select-none + drag guard keep the marks from being copied.
+                        One staggered parent (not per-icon observers) and framer-driven
+                        hover scale so transforms never fight each other. */}
+                    <motion.div
+                        variants={{ hidden: {}, show: { transition: { staggerChildren: 0.045 } } }}
+                        initial="hidden"
+                        whileInView="show"
+                        viewport={{ once: true, margin: "-60px" }}
+                        className="grid grid-cols-3 md:grid-cols-4 gap-y-12 md:gap-y-16 gap-x-6 max-w-[900px] mx-auto select-none"
+                        onContextMenu={(e) => e.preventDefault()}
+                        onDragStart={(e) => e.preventDefault()}
+                    >
+                        {TOOLS.map((tool) => (
+                            <motion.div
+                                key={tool.name}
+                                variants={{
+                                    hidden: { opacity: 0, y: 14 },
+                                    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
+                                }}
+                                className="flex items-center justify-center text-[#0A0A0A]"
+                            >
+                                {/* hover lives on the mark itself, not the whole grid cell */}
+                                <motion.span
+                                    initial={{ opacity: 0.75, scale: 1 }}
+                                    whileHover={{ opacity: 1, scale: 1.1 }}
+                                    transition={{ duration: 0.3, ease: EASE }}
+                                    title={tool.name}
+                                    aria-label={tool.name}
+                                    className="inline-flex"
+                                >
+                                    {tool.icon}
+                                </motion.span>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </section>
+
             </div>
+
+            {/* ───────────── REVIEWS — full-bleed dark band ───────────── */}
+            <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#0A0A0A] text-white mt-32 md:mt-48">
+                <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-20 md:py-28">
+                    <div className="mb-12 md:mb-16">
+                        <h2 className="text-3xl md:text-5xl font-medium font-display tracking-tight leading-[1.05] max-w-[720px]">
+                            {t(
+                                "Why brands choose Aova over other studios",
+                                "Proč si značky vybírají Aovu místo jiných studií"
+                            )}
+                        </h2>
+                    </div>
+
+                    {/* One scrollable row of varied cards — rating tile, photo quotes, a tall
+                        display quote, one fuchsia accent card. Sizes vary on purpose;
+                        quotes are set in the site's display type. */}
+                    <div
+                        ref={scrollRef}
+                        onScroll={syncRatio}
+                        className="flex gap-4 md:gap-5 items-stretch overflow-x-auto select-none [&::-webkit-scrollbar]:hidden"
+                        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                    >
+                        {/* Rating tile */}
+                        <div className="bg-[#161616] w-[240px] md:w-[280px] shrink-0 p-8 md:p-10 py-14 md:py-20 flex flex-col items-center justify-center text-center gap-4 self-start">
+                            <span className="text-7xl md:text-8xl font-medium font-display tracking-tight leading-none">5.0</span>
+                            <div className="flex gap-1 text-[#E0218A]">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <svg key={i} viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                    </svg>
+                                ))}
+                            </div>
+                            <div className="flex flex-col items-center gap-1">
+                                <span className="text-[11px] font-medium tracking-[0.04em] font-mono text-white/40">
+                                    {t("Based on client reviews", "Podle recenzí klientů")}
+                                </span>
+                                <span className="font-host font-bold tracking-wide text-lg">Clutch</span>
+                            </div>
+                        </div>
+
+                        {REVIEWS.map((review, idx) => {
+                            const q = review.quote[L];
+                            const width = review.img
+                                ? "w-[320px] md:w-[380px]"
+                                : review.accent
+                                    ? "w-[280px] md:w-[320px]"
+                                    : review.size === "l"
+                                        ? "w-[340px] md:w-[460px]"
+                                        : "w-[270px] md:w-[320px]";
+                            const surface = review.accent ? "bg-[#E0218A] text-white" : "bg-[#161616]";
+                            return (
+                                <figure key={idx} className={`${surface} ${width} shrink-0 flex flex-col ${review.size === "s" ? "self-start" : ""}`}>
+                                    {review.img && (
+                                        <div className="relative w-full aspect-video overflow-hidden shrink-0">
+                                            <Placeholder dark />
+                                        </div>
+                                    )}
+                                    <div className={`flex flex-col flex-grow gap-8 ${review.size === "l" ? "p-8 md:p-12" : "p-7 md:p-8"}`}>
+                                        {/* editorial index */}
+                                        <span className={`text-[10px] font-mono tracking-[0.25em] ${review.accent ? "text-white/50" : "text-white/25"}`}>
+                                            {String(idx + 1).padStart(2, "0")}
+                                        </span>
+                                        <blockquote
+                                            className={`font-display tracking-tight leading-[1.25] flex-grow ${
+                                                review.accent
+                                                    ? "text-2xl md:text-[28px] font-medium"
+                                                    : review.size === "l"
+                                                        ? "text-2xl md:text-[32px] font-medium text-white/95"
+                                                        : review.img
+                                                            ? "text-lg md:text-xl text-white/90"
+                                                            : "text-xl md:text-2xl text-white/90"
+                                            }`}
+                                        >
+                                            {q.pre}
+                                            {q.hi && <span className={review.accent ? "text-[#0A0A0A]" : "text-[#E0218A]"}>{q.hi}</span>}
+                                            {q.post}
+                                        </blockquote>
+                                        <figcaption className="mt-auto">
+                                            <div className="text-sm font-host font-semibold">{review.name}</div>
+                                            <div className={`text-[11px] font-medium tracking-[0.04em] font-mono mt-1 ${review.accent ? "text-white/60" : "text-white/40"}`}>
+                                                {review.role}
+                                            </div>
+                                        </figcaption>
+                                    </div>
+                                </figure>
+                            );
+                        })}
+                    </div>
+
+                    {/* Draggable progress bar — grab the handle (or tap the track) to move the row */}
+                    <div
+                        ref={trackRef}
+                        onPointerDown={(e) => {
+                            e.currentTarget.setPointerCapture(e.pointerId);
+                            draggingRef.current = true;
+                            dragTo(e.clientX);
+                        }}
+                        onPointerMove={(e) => {
+                            if (draggingRef.current) dragTo(e.clientX);
+                        }}
+                        onPointerUp={() => {
+                            draggingRef.current = false;
+                        }}
+                        onPointerCancel={() => {
+                            draggingRef.current = false;
+                        }}
+                        className="relative mt-10 md:mt-12 h-8 flex items-center cursor-grab active:cursor-grabbing select-none touch-none"
+                        role="scrollbar"
+                        aria-orientation="horizontal"
+                        aria-valuenow={Math.round(scrollRatio * 100)}
+                    >
+                        <div className="w-full h-[3px] bg-white/15 rounded-full" />
+                        <div
+                            className="absolute top-1/2 -translate-y-1/2 h-[5px] w-24 bg-white rounded-full transition-colors hover:bg-[#E0218A]"
+                            style={{ left: `calc(${scrollRatio} * (100% - 6rem))` }}
+                        />
+                    </div>
+                </div>
+            </section>
         </main>
     );
 }
+
+
+// ────────────────────────────────────────────────────────
+// DATA — TOOLS (brand marks) & REVIEWS
+// Adobe removed its marks from icon libraries, so Ps/Ai/Ae/Pr/Lr
+// use the official rounded-square lettermark style, drawn inline.
+// The rest are official paths from simple-icons.
+// ────────────────────────────────────────────────────────
+
+function AdobeMark({ letters }: { letters: string }) {
+    return (
+        <svg viewBox="0 0 24 24" className="h-9 md:h-11 w-auto" role="img" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="21" height="21" rx="4.5" fill="currentColor" />
+            <text x="12" y="16" textAnchor="middle" fontSize="10" fontWeight="700" fontFamily="var(--font-host), system-ui, sans-serif" fill="#fff">
+                {letters}
+            </text>
+        </svg>
+    );
+}
+
+function SiMark({ d }: { d: string }) {
+    return (
+        <svg viewBox="0 0 24 24" className="h-9 md:h-11 w-auto" role="img" aria-hidden="true" fill="currentColor">
+            <path d={d} />
+        </svg>
+    );
+}
+
+const TOOLS: { name: string; icon: React.ReactNode }[] = [
+    { name: "Photoshop", icon: <AdobeMark letters="Ps" /> },
+    { name: "Illustrator", icon: <AdobeMark letters="Ai" /> },
+    { name: "After Effects", icon: <AdobeMark letters="Ae" /> },
+    { name: "Premiere Pro", icon: <AdobeMark letters="Pr" /> },
+    { name: "Lightroom", icon: <AdobeMark letters="Lr" /> },
+    { name: "Blender", icon: <SiMark d={siBlender.path} /> },
+    { name: "Cinema 4D", icon: <SiMark d={siCinema4d.path} /> },
+    { name: "Figma", icon: <SiMark d={siFigma.path} /> },
+    { name: "Framer", icon: <SiMark d={siFramer.path} /> },
+    { name: "HTML", icon: <SiMark d={siHtml5.path} /> },
+    { name: "CSS", icon: <SiMark d={siCss.path} /> },
+    { name: "JavaScript", icon: <SiMark d={siJavascript.path} /> },
+];
+
+// Placeholder reviews — swap for real client quotes (and the real Clutch
+// profile link) once they exist. `hi` is the fuchsia-highlighted phrase.
+interface ReviewQuote {
+    pre: string;
+    hi?: string;
+    post?: string;
+}
+interface Review {
+    img?: boolean;
+    accent?: boolean; // fuchsia card
+    size?: "s" | "l"; // small self-start card / large display quote
+    quote: { en: ReviewQuote; cz: ReviewQuote };
+    name: string;
+    role: string;
+}
+
+const REVIEWS: Review[] = [
+    {
+        img: true,
+        quote: {
+            en: {
+                pre: "We really enjoyed working with Aova. The value, for what we got, ",
+                hi: "was terrific",
+                post: ".",
+            },
+            cz: {
+                pre: "Spolupráce s Aovou nás opravdu bavila. Hodnota, kterou jsme dostali, ",
+                hi: "byla skvělá",
+                post: ".",
+            },
+        },
+        name: "Sarah Jenkins",
+        role: "Marketing Director, FlowState",
+    },
+    {
+        size: "l",
+        quote: {
+            en: {
+                pre: "They turned our research into a brand system our whole team actually uses. ",
+                hi: "The team excels at taking ownership of projects",
+                post: ", and it shows in every delivery.",
+            },
+            cz: {
+                pre: "Z našeho výzkumu udělali brand systém, který celý náš tým opravdu používá. ",
+                hi: "Tenhle tým umí převzít za projekt plnou odpovědnost",
+                post: " — a je to vidět v každém dodání.",
+            },
+        },
+        name: "Tomas Dvorak",
+        role: "Co-Founder, BrnoTech",
+    },
+    {
+        size: "s",
+        quote: {
+            en: {
+                pre: "This work cadence helped us create better projects and products, because we were tightly coupled with the studio the whole way.",
+            },
+            cz: {
+                pre: "Tohle pracovní tempo nám pomohlo dělat lepší projekty i produkty, protože jsme byli se studiem celou dobu v úzkém kontaktu.",
+            },
+        },
+        name: "Matthew Vogel",
+        role: "VP of Product, Sports Media Co.",
+    },
+    {
+        img: true,
+        quote: {
+            en: {
+                pre: "With Aova's help we launched with a premium, high-converting identity. ",
+                hi: "This project was successful",
+                post: ".",
+            },
+            cz: {
+                pre: "S pomocí Aovy jsme odstartovali s prémiovou identitou, která konvertuje. ",
+                hi: "Tenhle projekt byl úspěch",
+                post: ".",
+            },
+        },
+        name: "Alex Mercer",
+        role: "CEO, Sprightful",
+    },
+    {
+        accent: true,
+        quote: {
+            en: {
+                pre: "The founders were in every call and every file. ",
+                hi: "Nothing got lost",
+                post: " between the first conversation and the final delivery.",
+            },
+            cz: {
+                pre: "Zakladatelé byli u každého hovoru a každého souboru. ",
+                hi: "Nic se neztratilo",
+                post: " mezi prvním rozhovorem a finálním dodáním.",
+            },
+        },
+        name: "Marie Novotná",
+        role: "Brand Lead, Studio Sedm",
+    },
+];

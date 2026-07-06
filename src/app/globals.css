@@ -39,6 +39,13 @@
 .aova-vol::-moz-range-track {
 	background: transparent;
 }
+/* Dark thumb variant — for the volume rail sitting in page whitespace (light bg) */
+.aova-vol-dark::-webkit-slider-thumb {
+	background: #0A0A0A;
+}
+.aova-vol-dark::-moz-range-thumb {
+	background: #0A0A0A;
+}
 
 /* ═══════════════════════════════════════════
    DESIGN TOKENS

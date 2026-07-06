@@ -1,6 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Outfit, Inclusive_Sans, Newsreader, Host_Grotesk } from "next/font/google";
 import "./globals.css";
+
+export const viewport: Viewport = {
+	themeColor: "#FFFFFF",
+	width: "device-width",
+	initialScale: 1,
+};
 
 const instrumentSerif = Instrument_Serif({
 	variable: "--font-instrument",
@@ -42,7 +48,22 @@ export const metadata: Metadata = {
 		template: "%s — Aova Studio",
 	},
 	description:
-		"Design studio for brands & creators. Branding, websites, ads, thumbnails, video editing, motion design, and growth strategy.",
+		"Aova is a brand design & motion studio in Brno, Czech Republic, working with brands and creators across Europe and the US. Brand strategy, identity, web design, and motion.",
+	keywords: [
+		"design studio",
+		"brand design studio",
+		"graphic design studio",
+		"motion design studio",
+		"branding agency",
+		"brand identity",
+		"web design",
+		"Brno",
+		"Czech Republic",
+		"Czechia",
+		"United States",
+		"Aova",
+		"Aova Studio",
+	],
 	openGraph: {
 		title: "Aova — Design & Motion Studio",
 		description:
@@ -83,24 +104,46 @@ export default function RootLayout({
 }>) {
 	const jsonLd = {
 		"@context": "https://schema.org",
-		"@type": "Organization",
+		"@type": ["Organization", "ProfessionalService"],
 		name: "Aova Studio",
+		alternateName: "Aova",
 		url: "https://aova.studio",
+		logo: "https://aova.studio/og.jpg",
+		image: "https://aova.studio/og.jpg",
 		email: "hello@aova.studio",
+		telephone: "+420739662744",
+		foundingDate: "2025",
 		address: {
 			"@type": "PostalAddress",
 			addressLocality: "Brno",
 			addressCountry: "CZ",
 		},
+		areaServed: [
+			{ "@type": "Country", name: "Czech Republic" },
+			{ "@type": "Country", name: "United States" },
+		],
 		description:
-			"Design studio for brands & creators. Branding, websites, ads, thumbnails, video editing, motion design, and growth strategy.",
-		sameAs: [],
+			"Brand design & motion studio in Brno, Czech Republic, working with brands and creators across Europe and the US. Brand strategy, identity, web design, and motion.",
+		sameAs: [
+			"https://www.instagram.com/aova.studio/",
+			"https://x.com/AovaStudio",
+			"https://www.linkedin.com/company/aova-studio",
+		],
+		knowsAbout: [
+			"Brand Strategy",
+			"Brand Identity",
+			"Graphic Design",
+			"Web Design",
+			"UI/UX Design",
+			"Motion Design",
+			"Video Editing",
+		],
 		serviceType: [
+			"Brand Strategy",
 			"Brand Identity",
 			"Web Design",
 			"Motion Design",
-			"Video Editing",
-			"Growth Strategy",
+			"Social & Content Systems",
 		],
 	};
 
@@ -109,7 +152,6 @@ export default function RootLayout({
 			<body
 				className={`${instrumentSerif.variable} ${outfit.variable} ${inclusiveSans.variable} ${newsreader.variable} ${hostGrotesk.variable} antialiased`}
 			>
-				<link rel="preconnect" href="https://images.unsplash.com" />
 				<script
 					type="application/ld+json"
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

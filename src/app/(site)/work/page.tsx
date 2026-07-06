@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../_components/LanguageContext";
-import { CASE_STUDIES } from "./projects";
+import Placeholder from "../_components/Placeholder";
+import { CASE_STUDIES, COVER_TITLE, COVER_DESCRIPTION } from "./projects";
 
 export default function WorkPage() {
-    const { t, lang } = useLanguage();
-    const L = lang === "EN" ? "en" : "cz";
+    const { t } = useLanguage();
     const [filter, setFilter] = useState<"All" | "Branding" | "Web" | "UI/UX" | "Editorial">("All");
 
     const filteredProjects = CASE_STUDIES.filter(
@@ -61,22 +60,16 @@ export default function WorkPage() {
                                     href={`/work/${project.slug}`}
                                     className="group relative block aspect-[4/3] w-full overflow-hidden cursor-none-v2"
                                 >
-                                    <Image
-                                        src={project.hero}
-                                        alt={`${project.client} — ${project.title.en}`}
-                                        fill
-                                        sizes="(max-width: 768px) 100vw, 50vw"
-                                        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
-                                    />
+                                    <Placeholder dark iconClassName="w-12 h-12 md:w-14 md:h-14" />
 
                                     {/* Hover: name + view project */}
                                     <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-8 bg-[#0A0A0A]/65 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         <div>
                                             <h3 className="text-2xl md:text-3xl font-medium font-display tracking-tight text-white">
-                                                {project.client}
+                                                {COVER_TITLE}
                                             </h3>
                                             <p className="mt-2 text-sm md:text-base text-white/60 font-body max-w-[420px]">
-                                                {project.title[L]}
+                                                {COVER_DESCRIPTION}
                                             </p>
                                         </div>
                                         <span className="inline-flex items-center gap-2 text-sm md:text-base font-semibold font-body text-white">

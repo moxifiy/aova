@@ -263,7 +263,7 @@ function Column({
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div
                     ref={iconRef}
-                    className="w-48 h-48 md:w-60 md:h-60"
+                    className="w-44 h-44 md:w-56 md:h-56"
                     style={{
                         backgroundColor: GRAY,
                         WebkitMaskImage: `url(${col.src})`,
@@ -333,7 +333,7 @@ export default function WhatThisChanges() {
 
     return (
         <div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight font-display leading-[1.05] max-w-[680px] mb-8 md:mb-12 uppercase">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight font-display leading-[1.05] max-w-[680px] mb-8 md:mb-12">
                 {t("What working with us actually changes.", "Co se s námi doopravdy změní.")}
             </h3>
 

@@ -8,8 +8,6 @@ export interface CaseStudy {
     category: "Branding" | "Web" | "UI/UX" | "Editorial";
     year: string;
     services: { en: string[]; cz: string[] };
-    hero: string;
-    images: string[];
     intro: { en: string; cz: string };
     outcome: { en: string; cz: string };
 }
@@ -28,11 +26,6 @@ export const CASE_STUDIES: CaseStudy[] = [
             en: ["Identity", "Design System", "3D Art"],
             cz: ["Identita", "Design systém", "3D art"],
         },
-        hero: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920&auto=format&fit=crop",
-        images: [
-            "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
-        ],
         intro: {
             en: "Orca builds computing infrastructure for research institutions — serious technology that was being presented with a startup template's face. We rebuilt the identity from strategy up: a wordmark with engineering precision, a design system rigid enough for compliance documents and flexible enough for conference keynotes.",
             cz: "Orca staví výpočetní infrastrukturu pro výzkumné instituce — seriózní technologii, která se prezentovala tváří startupové šablony. Identitu jsme přestavěli od strategie: logotyp s inženýrskou přesností a design systém dost pevný pro compliance dokumenty i dost pružný pro konferenční keynoty.",
@@ -55,11 +48,6 @@ export const CASE_STUDIES: CaseStudy[] = [
             en: ["Interactive UX", "Web Design", "Development"],
             cz: ["Interaktivní UX", "Web design", "Vývoj"],
         },
-        hero: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1920&auto=format&fit=crop",
-        images: [
-            "https://images.unsplash.com/photo-1586075010923-2dd45e9b2d4f?q=80&w=1200&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=1200&auto=format&fit=crop",
-        ],
         intro: {
             en: "Vela designs spaces meant to be walked through slowly — but their portfolio site rushed visitors past the work in a grid of thumbnails. We designed a site that moves like their buildings feel: generous, unhurried, and structural, with scroll pacing that gives each project room to breathe.",
             cz: "Vela navrhuje prostory, kterými se má procházet pomalu — jejich portfolio ale návštěvníky hnalo mřížkou náhledů. Navrhli jsme web, který se pohybuje tak, jak jejich budovy působí: velkoryse, beze spěchu a strukturovaně, s tempem scrollování, které dává každému projektu prostor dýchat.",
@@ -82,11 +70,6 @@ export const CASE_STUDIES: CaseStudy[] = [
             en: ["Campaign", "3D Design", "Visual Assets"],
             cz: ["Kampaň", "3D design", "Vizuální assety"],
         },
-        hero: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1920&auto=format&fit=crop",
-        images: [
-            "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop",
-        ],
         intro: {
             en: "Vapor needed a campaign system that could evolve weekly without falling apart — new drops, new partners, new formats. We built a fluid visual language around a single gradient logic and a 3D asset library, so every new piece feels inevitable rather than improvised.",
             cz: "Vapor potřeboval kampaňový systém, který se může měnit každý týden, aniž by se rozpadl — nové dropy, noví partneři, nové formáty. Postavili jsme tekutý vizuální jazyk na jediné logice gradientů a knihovně 3D assetů, takže každý nový kus působí samozřejmě, ne improvizovaně.",
@@ -109,11 +92,6 @@ export const CASE_STUDIES: CaseStudy[] = [
             en: ["Typography", "Grid Systems", "Book Design"],
             cz: ["Typografie", "Mřížkové systémy", "Knižní design"],
         },
-        hero: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop",
-        images: [
-            "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1200&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200&auto=format&fit=crop",
-        ],
         intro: {
             en: "Noire publishes work by artists who obsess over every frame — the magazine had to meet that standard on paper. We designed a typographic system and grid that lets photography lead, with restraint tight enough that a single pull quote lands like a headline.",
             cz: "Noire publikuje práce umělců, kteří řeší každý snímek — časopis musel tomu standardu stačit i na papíře. Navrhli jsme typografický systém a mřížku, kde vede fotografie, s takovou mírou zdrženlivosti, že jediný citát zasáhne jako titulek.",
@@ -136,11 +114,6 @@ export const CASE_STUDIES: CaseStudy[] = [
             en: ["Vector Art", "Interface Design", "Prototyping"],
             cz: ["Vektorový art", "Design rozhraní", "Prototypování"],
         },
-        hero: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1920&auto=format&fit=crop",
-        images: [
-            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1586075010923-2dd45e9b2d4f?q=80&w=1200&auto=format&fit=crop",
-        ],
         intro: {
             en: "A motion studio's interface should feel like motion even standing still. For Kudy we designed a vector-driven UI language — cursors, transitions, and hover states that carry the same elasticity as their reels, prototyped to the frame.",
             cz: "Rozhraní motion studia má působit jako pohyb, i když stojí. Pro Kudy jsme navrhli vektorový UI jazyk — kurzory, přechody a hover stavy se stejnou pružností, jakou mají jejich reely, prototypované na frame přesně.",
@@ -163,11 +136,6 @@ export const CASE_STUDIES: CaseStudy[] = [
             en: ["Web Design", "Development", "Animations"],
             cz: ["Web design", "Vývoj", "Animace"],
         },
-        hero: "https://images.unsplash.com/photo-1586075010923-2dd45e9b2d4f?q=80&w=1920&auto=format&fit=crop",
-        images: [
-            "https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=1200&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
-        ],
         intro: {
             en: "Amina sits between two worlds — architectural clients who expect taste and corporate stakeholders who expect rigor. We built a site that satisfies both: editorial layouts with measured motion on a foundation of strict components and fast loads.",
             cz: "Amina stojí mezi dvěma světy — architektonickými klienty, kteří čekají vkus, a korporátními stakeholdery, kteří čekají řád. Postavili jsme web, který uspokojí oba: editorialové layouty s odměřeným pohybem na základech přísných komponent a rychlého načítání.",
@@ -178,3 +146,9 @@ export const CASE_STUDIES: CaseStudy[] = [
         },
     },
 ];
+
+// Shared placeholder identity shown on every project cover (Work grid hover)
+// and, to match it exactly, on every case-study page too — swap out once real
+// case studies replace the placeholder content above.
+export const COVER_TITLE = "Kudlanka Smajlo";
+export const COVER_DESCRIPTION = "render je pavouk ktery je hodne maly a nevlastni ani sulina";

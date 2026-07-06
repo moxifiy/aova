@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { useLanguage } from "../_components/LanguageContext";
+import Placeholder from "../_components/Placeholder";
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
@@ -112,17 +112,8 @@ export default function AboutPage() {
                     >
                         {team.map((member) => (
                             <motion.div key={member.name} variants={lineV} className="group">
-                                <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#0A0A0A]/[0.04] border border-[#0A0A0A]/10 flex items-center justify-center transition-colors duration-300 group-hover:bg-[#0A0A0A]/[0.06]">
-                                    <svg
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1.4"
-                                        className="w-9 h-9 md:w-10 md:h-10 text-[#0A0A0A]/15"
-                                    >
-                                        <circle cx="12" cy="9" r="3.2" />
-                                        <path d="M5.5 19c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" strokeLinecap="round" />
-                                    </svg>
+                                <div className="relative aspect-[3/4] w-full overflow-hidden">
+                                    <Placeholder />
                                 </div>
                                 <div className="mt-4">
                                     <h3 className="text-base md:text-lg font-medium font-display tracking-[0.01em] leading-tight">
@@ -181,32 +172,28 @@ export default function AboutPage() {
                     viewport={{ once: true, margin: "-100px" }}
                     className="pt-28 md:pt-44"
                 >
-                    <motion.div variants={lineV}>
-                        <span className="block text-[11px] font-bold uppercase tracking-[0.24em] text-[#8A8A8A] font-mono mb-6">
-                            {t("Our offices", "Naše kanceláře")}
-                        </span>
-                    </motion.div>
                     <motion.h2
+                        variants={lineV}
+                        style={OPTICAL}
+                        className="max-w-[1000px] text-2xl md:text-4xl lg:text-[44px] font-medium font-display tracking-tight leading-[1.12] mb-10 md:mb-14"
+                    >
+                        {t("Our offices", "Naše kanceláře")}
+                    </motion.h2>
+                    <motion.h3
                         variants={lineV}
                         style={OPTICAL}
                         className="text-5xl md:text-7xl lg:text-[80px] font-medium font-display tracking-tight leading-[0.98] mb-10 md:mb-14"
                     >
-                        BRNO
-                    </motion.h2>
+                        {t("Brno", "Brno")}
+                    </motion.h3>
                     <motion.div variants={lineV}>
                         <button
                             onClick={() => setOfficeOpen(true)}
                             aria-label={t("View our Brno office", "Prohlédnout si naši kancelář v Brně")}
                             data-cursor-text={t("View", "Prohlédnout")}
-                            className="cursor-none-v2 group relative block w-full max-w-[1100px] aspect-[16/9] overflow-hidden bg-[#0A0A0A]/5"
+                            className="cursor-none-v2 group relative block w-full max-w-[1100px] aspect-[16/9] overflow-hidden"
                         >
-                            <Image
-                                src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=1600&auto=format&fit=crop"
-                                alt={t("Aova Studio office in Brno", "Kancelář Aova Studia v Brně")}
-                                fill
-                                sizes="(max-width: 768px) 100vw, 1100px"
-                                className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-                            />
+                            <Placeholder iconClassName="w-14 h-14 md:w-16 md:h-16" />
                         </button>
                     </motion.div>
                 </motion.section>
@@ -226,13 +213,7 @@ export default function AboutPage() {
                     >
                         <div className="w-full max-w-[1000px]" onClick={(e) => e.stopPropagation()}>
                             <div className="relative w-full aspect-[16/9] overflow-hidden">
-                                <Image
-                                    src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?q=80&w=1920&auto=format&fit=crop"
-                                    alt={t("Aova Studio office in Brno", "Kancelář Aova Studia v Brně")}
-                                    fill
-                                    sizes="(max-width: 1024px) 100vw, 1000px"
-                                    className="object-cover"
-                                />
+                                <Placeholder dark iconClassName="w-16 h-16 md:w-20 md:h-20" />
                             </div>
                             <div className="mt-6 md:mt-8 flex flex-col md:flex-row md:items-start gap-3 md:gap-12">
                                 <h3 className="text-2xl md:text-3xl font-medium font-display tracking-tight text-white shrink-0">
