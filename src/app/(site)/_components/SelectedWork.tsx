@@ -163,10 +163,10 @@ export default function SelectedWork() {
                                     <Placeholder iconClassName="w-12 h-12 md:w-14 md:h-14" />
                                 </div>
 
-                                {/* Caption — just the project name, bold + uppercase */}
+                                {/* Caption — placeholder project name (same for all for now) */}
                                 <div className="mt-5">
                                     <h3 className="text-xl md:text-2xl font-semibold uppercase tracking-tight text-[#0A0A0A] transition-colors duration-300">
-                                        {project.client}
+                                        Aova Branding
                                     </h3>
                                 </div>
                             </Link>

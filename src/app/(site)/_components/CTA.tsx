@@ -9,8 +9,8 @@ const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 export default function CTA() {
     const { t } = useLanguage();
     return (
-        <section className="bg-white text-[#0A0A0A] py-24 md:py-40 px-6 md:px-12 relative overflow-hidden border-t border-[#0A0A0A]/5">
-            <div className="max-w-[1440px] mx-auto text-center flex flex-col items-center justify-center">
+        <section className="bg-white text-[#0A0A0A] min-h-[70vh] py-24 md:py-32 px-6 md:px-12 relative overflow-hidden flex items-center">
+            <div className="max-w-[1440px] w-full mx-auto text-center flex flex-col items-center justify-center">
 
                 {/* Oversized Statement */}
                 <motion.h2

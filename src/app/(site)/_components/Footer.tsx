@@ -52,64 +52,68 @@ export default function Footer() {
         if (circleRef.current) circleRef.current.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
     };
 
-    // Wordmark travel: as the footer scrolls into view the wordmark holds at the
-    // footer's top edge, then releases and glides down to its resting place at
-    // the bottom — scrubbed to scroll, so scrolling back up reverses it.
+    // Wordmark travel: holds at the footer's top edge as the footer enters, then
+    // glides down to its resting place at the bottom. Recomputed from live layout
+    // every frame (only while the footer is on screen), so it never depends on a
+    // cached measurement — that stale-measurement problem was the whole glitch.
     useEffect(() => {
-        gsap.registerPlugin(ScrollTrigger);
         const footer = footerRef.current;
         const mark = markRef.current;
+        const text = textRef.current;
         if (!footer || !mark) return;
-
         const wrap = mark.parentElement as HTMLElement | null;
         if (!wrap) return;
 
-        const tween = gsap.fromTo(
-            wrap,
-            { y: () => -(footer.offsetHeight - wrap.offsetHeight) },
-            {
-                y: 0,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: footer,
-                    start: "top bottom",
-                    end: "bottom bottom",
-                    scrub: true,
-                    invalidateOnRefresh: true,
-                },
-                // While the (black) wordmark passes behind the footer text,
-                // flip the text to white so it stays readable
-                onUpdate: () => {
-                    const text = textRef.current;
-                    if (!text) return;
-                    const tr = text.getBoundingClientRect();
-                    const wr = wrap.getBoundingClientRect();
-                    const overlaps = wr.top < tr.bottom && wr.bottom > tr.top;
-                    text.style.color = overlaps ? "#ffffff" : INK;
-                },
-            }
-        );
+        let raf = 0;
+        let running = false;
 
-        // The trigger's start/end are computed from total document height, which
-        // shifts whenever async content settles (hero video, images, fonts) or
-        // layout changes (accordions opening on /services). Stale measurements
-        // are what made the travel glitch until a hard reload — so refresh
-        // whenever the page's real height changes.
-        const refresh = () => ScrollTrigger.refresh();
-        window.addEventListener("load", refresh);
-        let debounce: ReturnType<typeof setTimeout> | null = null;
-        const ro = new ResizeObserver(() => {
-            if (debounce) clearTimeout(debounce);
-            debounce = setTimeout(refresh, 150);
+        // Each footer text line inverts on its own, so only the lines the wordmark
+        // is actually passing behind turn white — the rest stay black.
+        const lines = text ? Array.from(text.querySelectorAll<HTMLElement>("[data-fi]")) : [];
+        lines.forEach((el) => {
+            el.style.color = INK;
+            el.style.transition = "color 180ms ease";
         });
-        ro.observe(document.body);
+        const lineState = new WeakMap<HTMLElement, boolean>();
+
+        const update = () => {
+            const vh = window.innerHeight;
+            const fRect = footer.getBoundingClientRect();
+            const travel = footer.offsetHeight - wrap.offsetHeight;
+            const p = Math.min(1, Math.max(0, (vh - fRect.top) / (footer.offsetHeight || 1)));
+            wrap.style.transform = `translate3d(0, ${(-travel * (1 - p)).toFixed(2)}px, 0)`;
+
+            const mr = mark.getBoundingClientRect();
+            lines.forEach((el) => {
+                const r = el.getBoundingClientRect();
+                const over = mr.top < r.bottom && mr.bottom > r.top && mr.left < r.right && mr.right > r.left;
+                if (lineState.get(el) !== over) {
+                    lineState.set(el, over);
+                    el.style.color = over ? "#ffffff" : INK;
+                }
+            });
+        };
+
+        const loop = () => {
+            update();
+            raf = requestAnimationFrame(loop);
+        };
+
+        const io = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting && !running) {
+                running = true;
+                loop();
+            } else if (!entry.isIntersecting && running) {
+                running = false;
+                cancelAnimationFrame(raf);
+            }
+        });
+        io.observe(footer);
+        update(); // paint the initial resting position immediately
 
         return () => {
-            if (debounce) clearTimeout(debounce);
-            ro.disconnect();
-            window.removeEventListener("load", refresh);
-            tween.scrollTrigger?.kill();
-            tween.kill();
+            io.disconnect();
+            cancelAnimationFrame(raf);
         };
     }, []);
 
@@ -117,39 +121,33 @@ export default function Footer() {
         <footer ref={footerRef} className="relative min-h-screen flex flex-col select-none text-white" style={{ backgroundColor: PINK }}>
             <div className="max-w-[1440px] w-full mx-auto px-6 md:px-12 pt-14 md:pt-20 relative z-10">
                 <div className="flex items-start justify-between gap-8">
-                    <div
-                        ref={textRef}
-                        className="flex flex-wrap gap-10 md:gap-20 font-body"
-                        style={{ color: INK, transition: "color 250ms ease" }}
-                    >
+                    <div ref={textRef} className="flex flex-wrap gap-10 md:gap-20 font-body">
                         <div>
-                            <h4 className="text-[11px] font-medium tracking-[0.04em] mb-3 font-mono opacity-70">
+                            <h4 data-fi className="text-[11px] font-medium tracking-[0.04em] mb-3 font-mono opacity-70">
                                 {t("Contact", "Kontakt")}
                             </h4>
                             <div className="flex flex-col gap-2 text-sm md:text-base font-medium">
-                                <a href="mailto:hello@aova.studio" className={linkCls}>hello@aova.studio</a>
-                                <a href="tel:+420739662744" className={linkCls}>+420 739 662 744</a>
-                                <a href="tel:+420777794340" className={linkCls}>+420 777 794 340</a>
+                                <a data-fi href="mailto:hello@aova.studio" className={linkCls}>hello@aova.studio</a>
+                                <a data-fi href="tel:+420739662744" className={linkCls}>+420 739 662 744</a>
+                                <a data-fi href="tel:+420777794340" className={linkCls}>+420 777 794 340</a>
                             </div>
                         </div>
 
                         <div>
-                            <h4 className="text-[11px] font-medium tracking-[0.04em] mb-3 font-mono opacity-70">
+                            <h4 data-fi className="text-[11px] font-medium tracking-[0.04em] mb-3 font-mono opacity-70">
                                 {t("Socials", "Sítě")}
                             </h4>
                             <div className="flex flex-col gap-2 text-sm md:text-base font-medium">
-                                <a href="https://www.instagram.com/aova.studio/" target="_blank" rel="noopener noreferrer" className={linkCls}>Instagram</a>
-                                <a href="https://x.com/AovaStudio" target="_blank" rel="noopener noreferrer" className={linkCls}>X</a>
-                                <a href="https://www.linkedin.com/company/aova-studio" target="_blank" rel="noopener noreferrer" className={linkCls}>LinkedIn</a>
+                                <a data-fi href="https://www.instagram.com/aova.studio/" target="_blank" rel="noopener noreferrer" className={linkCls}>Instagram</a>
+                                <a data-fi href="https://x.com/AovaStudio" target="_blank" rel="noopener noreferrer" className={linkCls}>X</a>
+                                <a data-fi href="https://www.linkedin.com/company/aova-studio" target="_blank" rel="noopener noreferrer" className={linkCls}>LinkedIn</a>
                             </div>
                         </div>
 
-                        <div>
-                            <p className="text-sm md:text-base font-medium leading-relaxed">
-                                {t("Aova Studio", "Aova Studio")}<br />
-                                {t("Brno, Czech Republic", "Brno, Česká Republika")}<br />
-                                &copy; {year} {t("Aova Studio. All rights reserved.", "Aova Studio. Všechna práva vyhrazena.")}
-                            </p>
+                        <div className="text-sm md:text-base font-medium leading-relaxed flex flex-col">
+                            <span data-fi className="w-fit">{t("Aova Studio", "Aova Studio")}</span>
+                            <span data-fi className="w-fit">{t("Brno, Czech Republic", "Brno, Česká Republika")}</span>
+                            <span data-fi className="w-fit">&copy; {year} {t("Aova Studio. All rights reserved.", "Aova Studio. Všechna práva vyhrazena.")}</span>
                         </div>
                     </div>
 

@@ -25,6 +25,20 @@ export default function Statement() {
         useRef<HTMLSpanElement>(null)
     ];
     const [typedCount, setTypedCount] = useState(0);
+    const measureRef = useRef<HTMLSpanElement>(null);
+    const [shift, setShift] = useState(0);
+
+    // On hover, measure the reveal's full width and shift the whole phrase left
+    // by half of it (+ the gap) so the completed line lands centred.
+    const handleThreeEnter = () => {
+        const m = measureRef.current;
+        if (m) {
+            const w = m.getBoundingClientRect().width;
+            const fs = parseFloat(getComputedStyle(m).fontSize) || 16;
+            setShift((w + fs * 0.35) / 2);
+        }
+        setThreeWordsState("visible");
+    };
 
     // Click the typed-out words to drop them into the shared physics layer (they fall on click, not on scroll)
     const dropThree = () => {
@@ -67,58 +81,72 @@ export default function Statement() {
 
     return (
         <>
-            <section className="bg-white text-[#0A0A0A] pt-16 md:pt-28 pb-32 md:pb-52 pl-4 md:pl-8 pr-6 md:pr-12 relative">
+            <section className="bg-white text-[#0A0A0A] pt-16 md:pt-28 pb-32 md:pb-52 px-6 md:px-12 relative overflow-x-clip">
             <div className="max-w-[1440px] mx-auto">
-                
-                {/* Main Headline */}
-                <div className="w-full">
+
+                {/* Main Headline — each sentence stacked and centered */}
+                <div className="w-full text-center">
                     <motion.p
                         initial={{ opacity: 0, y: 100 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
                         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-lg md:text-2xl lg:text-[36px] font-semibold tracking-tight leading-[1.1] font-display"
+                        className="text-lg md:text-2xl lg:text-[36px] font-semibold tracking-tight leading-[1.3] font-display"
                     >
-                        {t(
-                            "A brand without strategy is decoration. Strategy without design is just a document.",
-                            "Značka bez strategie je dekorace. Strategie bez designu je jen dokument."
-                        )}
+                        {t("A brand without strategy is decoration.", "Značka bez strategie je dekorace.")}
                         <br />
-                        {t(
-                            "Design without motion is a moment that passes.",
-                            "Design bez pohybu je okamžik, který pomine."
-                        )}
+                        {t("Strategy without design is just a document.", "Strategie bez designu je jen dokument.")}
+                        <br />
+                        {t("Design without motion is a moment that passes.", "Design bez pohybu je okamžik, který pomine.")}
                         <br />
                         <br />
-                        {t("We do all", "Děláme všechny")}{" "}
-                        <span className="relative inline-block group/three cursor-pointer">
-                            <span 
-                                onMouseEnter={() => { setThreeWordsState("visible"); }}
-                                className="underline decoration-[#9A9A9A] decoration-[3px] underline-offset-[2px] transition-colors duration-300 hover:text-[#E0218A]"
-                            >
-                                {t("three", "tři")}
-                            </span>
-                            {/* Typewriter reveal — types out on hover (space after each comma); click the words to drop them */}
+                        {/* "We do all three" shifts left when hovered so the fully typed-out
+                            line ends up centred, with the reveal on the same line. */}
+                        <span
+                            className="relative inline-block"
+                            style={{
+                                transform: threeWordsState === "visible" ? `translateX(-${shift}px)` : "translateX(0px)",
+                                transition: "transform 450ms cubic-bezier(0.16,1,0.3,1)",
+                            }}
+                        >
+                            {t("We do all", "Děláme všechny")}{" "}
+                            <span className="relative inline-block group/three cursor-pointer">
+                                <span
+                                    onMouseEnter={handleThreeEnter}
+                                    className="underline decoration-[#9A9A9A] decoration-[3px] underline-offset-[2px] transition-colors duration-300 hover:text-[#E0218A]"
+                                >
+                                    {t("three", "tři")}
+                                </span>
+                                {/* Typewriter reveal — types out on hover; click the words to drop them */}
+                                <span
+                                    onClick={dropThree}
+                                    className="v2-clickable absolute left-[calc(100%+0.35em)] top-0 text-[#0A0A0A] font-display font-semibold text-lg md:text-2xl lg:text-[36px] tracking-tight leading-[1.1] select-none whitespace-nowrap z-10"
+                                    style={{ pointerEvents: typedCount >= REVEAL_TOTAL ? "auto" : "none" }}
+                                >
+                                    {REVEAL_WORDS.map((full, i) => {
+                                        const vis = Math.max(0, Math.min(full.length, typedCount - REVEAL_STARTS[i]));
+                                        const active = threeWordsState === "visible" && typedCount >= REVEAL_STARTS[i] && typedCount < REVEAL_STARTS[i] + full.length;
+                                        return (
+                                            <span key={i} ref={wordRefs[i]} className="inline-block whitespace-pre">
+                                                {full.slice(0, vis)}
+                                                {active && <span className="v2-caret inline-block w-[0.07em] h-[0.74em] bg-current align-baseline" />}
+                                            </span>
+                                        );
+                                    })}
+                                    {threeWordsState === "visible" && typedCount >= REVEAL_TOTAL && (
+                                        <span className="v2-caret inline-block w-[0.07em] h-[0.74em] bg-current align-baseline" />
+                                    )}
+                                </span>
+                            </span><span className={`transition-opacity duration-300 ${threeWordsState === "visible" ? 'opacity-0' : 'opacity-1'}`}>,</span>
+                            {/* Hidden measurer — the reveal's full width, to compute the shift */}
                             <span
-                                onClick={dropThree}
-                                className="v2-clickable absolute left-[calc(100%+0.35em)] top-0 text-[#0A0A0A] font-display font-semibold text-lg md:text-2xl lg:text-[36px] tracking-tight leading-[1.1] select-none whitespace-nowrap z-10"
-                                style={{ pointerEvents: typedCount >= REVEAL_TOTAL ? "auto" : "none" }}
+                                ref={measureRef}
+                                aria-hidden
+                                className="invisible pointer-events-none absolute left-0 top-0 font-display font-semibold text-lg md:text-2xl lg:text-[36px] tracking-tight whitespace-nowrap"
                             >
-                                {REVEAL_WORDS.map((full, i) => {
-                                    const vis = Math.max(0, Math.min(full.length, typedCount - REVEAL_STARTS[i]));
-                                    const active = threeWordsState === "visible" && typedCount >= REVEAL_STARTS[i] && typedCount < REVEAL_STARTS[i] + full.length;
-                                    return (
-                                        <span key={i} ref={wordRefs[i]} className="inline-block whitespace-pre">
-                                            {full.slice(0, vis)}
-                                            {active && <span className="v2-caret inline-block w-[0.07em] h-[0.74em] bg-current align-baseline" />}
-                                        </span>
-                                    );
-                                })}
-                                {threeWordsState === "visible" && typedCount >= REVEAL_TOTAL && (
-                                    <span className="v2-caret inline-block w-[0.07em] h-[0.74em] bg-current align-baseline" />
-                                )}
+                                {REVEAL_WORDS.join("")}
                             </span>
-                        </span><span className={`transition-opacity duration-300 ${threeWordsState === "visible" ? 'opacity-0' : 'opacity-1'}`}>,</span>
+                        </span>
                         <br />
                         {t("because your brand deserves more than one.", "protože vaše značka si zaslouží víc než jednu.")}
                     </motion.p>
@@ -134,9 +162,9 @@ export default function Statement() {
                 >
                     <TiltLink
                         href="/about"
-                        className="font-host font-normal text-sm md:text-[15px] text-white px-8 py-3.5 bg-[#2C2C2C] rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
+                        className="font-host font-normal text-sm md:text-[15px] px-8 py-3.5 bg-[#2C2C2C] rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.05)]"
                     >
-                        {t("GET TO KNOW US", "POZNEJTE NÁS")}
+                        <span className="text-white">{t("GET TO KNOW US", "POZNEJTE NÁS")}</span>
                     </TiltLink>
                 </motion.div>
 

@@ -42,14 +42,30 @@ export default function InlineVideo({
 }: InlineVideoProps) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const barRef = useRef<HTMLDivElement>(null);
+    const fillRef = useRef<HTMLDivElement>(null);
     const activeRef = useRef(false);
     const scrubbingRef = useRef(false);
     const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [active, setActive] = useState(false);
     const [controlsVisible, setControlsVisible] = useState(true);
-    const [progress, setProgress] = useState(0);
-    const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(0.5);
+
+    // Drive the scrub fill straight from the video clock every animation frame —
+    // the `timeupdate` event only fires ~4×/sec, which reads as a stuttering bar.
+    useEffect(() => {
+        if (!active) return;
+        let raf = 0;
+        const tick = () => {
+            const v = videoRef.current;
+            const fill = fillRef.current;
+            if (v && fill && v.duration && !scrubbingRef.current) {
+                fill.style.width = `${(v.currentTime / v.duration) * 100}%`;
+            }
+            raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+    }, [active]);
 
     // Only decode/play while on screen
     useEffect(() => {
@@ -120,11 +136,11 @@ export default function InlineVideo({
     const scrubTo = (clientX: number) => {
         const v = videoRef.current;
         const bar = barRef.current;
-        if (!v || !bar || !duration) return;
+        if (!v || !bar || !v.duration) return;
         const r = bar.getBoundingClientRect();
         const p = Math.min(1, Math.max(0, (clientX - r.left) / r.width));
-        v.currentTime = p * duration;
-        setProgress(p * duration);
+        v.currentTime = p * v.duration;
+        if (fillRef.current) fillRef.current.style.width = `${p * 100}%`;
     };
 
     const changeVolume = (val: number) => {
@@ -136,7 +152,6 @@ export default function InlineVideo({
         poke();
     };
 
-    const pct = duration ? (progress / duration) * 100 : 0;
     const controlsCls = `transition-opacity duration-300 ${controlsVisible ? "opacity-100" : "opacity-0 pointer-events-none"}`;
 
     const video = (
@@ -153,10 +168,6 @@ export default function InlineVideo({
                 disablePictureInPicture
                 onClick={active ? togglePlay : undefined}
                 onContextMenu={(e) => e.preventDefault()}
-                onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 0)}
-                onTimeUpdate={(e) => {
-                    if (!scrubbingRef.current) setProgress(e.currentTarget.currentTime);
-                }}
                 onEnded={deactivate}
                 className={`absolute inset-0 w-full h-full object-cover transition-[filter] duration-500 ${
                     dimmed && !active ? "brightness-[0.65] md:brightness-[0.75]" : ""
@@ -209,7 +220,7 @@ export default function InlineVideo({
                         className="group/bar relative h-6 flex items-center cursor-pointer select-none touch-none"
                     >
                         <div className="relative w-full h-[3px] bg-white/25 rounded-full transition-[height] duration-200 group-hover/bar:h-[5px]">
-                            <div className="absolute left-0 top-0 h-full bg-white rounded-full" style={{ width: `${pct}%` }} />
+                            <div ref={fillRef} className="absolute left-0 top-0 h-full bg-white rounded-full" style={{ width: "0%" }} />
                         </div>
                     </div>
                 </div>
@@ -219,16 +230,9 @@ export default function InlineVideo({
 
     // Vertical volume pill — icon + fader in one rounded capsule, outside the
     // frame: floating on the hero, a side column in whitespace on boxed video.
-    const volumeRail = active && (
-        <div
-            className={`${
-                fill
-                    ? "absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20"
-                    : "flex items-center shrink-0"
-            } ${controlsCls}`}
-        >
+    const volumePill = (
             <div
-                className={`flex flex-col items-center gap-2 rounded-full px-2 py-3 border ${
+                className={`flex flex-col items-center gap-2 rounded-full px-2 py-3 border ${controlsCls} ${
                     fill
                         ? "bg-white/10 border-white/25"
                         : "bg-[#0A0A0A]/[0.04] border-[#0A0A0A]/10"
@@ -275,7 +279,6 @@ export default function InlineVideo({
                     />
                 </div>
             </div>
-        </div>
     );
 
     if (fill) {
@@ -285,7 +288,12 @@ export default function InlineVideo({
                 onPointerMove={active ? poke : undefined}
             >
                 {video}
-                {volumeRail}
+                {/* floats over the frame — doesn't affect the video's size */}
+                {active && (
+                    <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20">
+                        {volumePill}
+                    </div>
+                )}
             </div>
         );
     }
@@ -296,7 +304,11 @@ export default function InlineVideo({
             onPointerMove={active ? poke : undefined}
         >
             {video}
-            {volumeRail}
+            {/* Reserved side column — always present so the video never resizes
+                when the pill appears on play */}
+            <div className="flex items-center shrink-0 w-11 md:w-14">
+                {active && volumePill}
+            </div>
         </div>
     );
 }
