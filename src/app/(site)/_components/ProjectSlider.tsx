@@ -7,7 +7,7 @@ export default function ProjectSlider() {
     const { t } = useLanguage();
 
     return (
-        <section className="relative w-full h-screen overflow-hidden bg-[#0A0A0A]">
+        <section className="relative w-full h-dvh overflow-hidden bg-[#0A0A0A]">
             {/* Ambient showreel — clicking plays it right here with sound */}
             <InlineVideo
                 fill

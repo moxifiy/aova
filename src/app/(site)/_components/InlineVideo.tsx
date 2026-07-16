@@ -155,7 +155,7 @@ export default function InlineVideo({
     const controlsCls = `transition-opacity duration-300 ${controlsVisible ? "opacity-100" : "opacity-0 pointer-events-none"}`;
 
     const video = (
-        <div className={`relative overflow-hidden group ${fill ? "w-full h-full" : "flex-1 aspect-video bg-[#0A0A0A]"}`}>
+        <div className={`relative overflow-hidden group ${fill ? "w-full h-full" : "w-full aspect-video bg-[#0A0A0A]"}`}>
             <video
                 ref={videoRef}
                 src={src}
@@ -300,15 +300,16 @@ export default function InlineVideo({
 
     return (
         <div
-            className={`flex items-stretch gap-3 md:gap-4 ${className}`}
+            className={`relative ${className}`}
             onPointerMove={active ? poke : undefined}
         >
             {video}
-            {/* Reserved side column — always present so the video never resizes
-                when the pill appears on play */}
-            <div className="flex items-center shrink-0 w-11 md:w-14">
-                {active && volumePill}
-            </div>
+            {/* floats outside the frame — doesn't affect the video's centering */}
+            {active && (
+                <div className="absolute left-full ml-3 md:ml-4 top-1/2 -translate-y-1/2 z-20">
+                    {volumePill}
+                </div>
+            )}
         </div>
     );
 }

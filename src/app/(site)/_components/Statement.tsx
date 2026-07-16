@@ -86,7 +86,7 @@ export default function Statement() {
 
                 {/* Main Headline — each sentence stacked and centered */}
                 <div className="w-full text-center">
-                    <motion.p
+                    <motion.h1
                         initial={{ opacity: 0, y: 100 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
@@ -120,7 +120,7 @@ export default function Statement() {
                                 {/* Typewriter reveal — types out on hover; click the words to drop them */}
                                 <span
                                     onClick={dropThree}
-                                    className="v2-clickable absolute left-[calc(100%+0.35em)] top-0 text-[#0A0A0A] font-display font-semibold text-lg md:text-2xl lg:text-[36px] tracking-tight leading-[1.1] select-none whitespace-nowrap z-10"
+                                    className="v2-clickable absolute left-[calc(100%+0.35em)] top-0 text-[#0A0A0A] font-display font-semibold text-lg md:text-2xl lg:text-[36px] tracking-tight leading-[1.3] select-none whitespace-nowrap z-10"
                                     style={{ pointerEvents: typedCount >= REVEAL_TOTAL ? "auto" : "none" }}
                                 >
                                     {REVEAL_WORDS.map((full, i) => {
@@ -149,7 +149,7 @@ export default function Statement() {
                         </span>
                         <br />
                         {t("because your brand deserves more than one.", "protože vaše značka si zaslouží víc než jednu.")}
-                    </motion.p>
+                    </motion.h1>
                 </div>
 
                 {/* Call To Action Button — centered, tilts in 3D like the footer circle */}

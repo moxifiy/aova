@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { siBlender, siCinema4d, siFigma, siFramer, siHtml5, siCss, siJavascript } from "simple-icons";
 import { useLanguage } from "../_components/LanguageContext";
@@ -18,34 +18,8 @@ interface Service {
 }
 
 export default function ServicesPage() {
-    const { t, lang } = useLanguage();
-    const L = lang === "EN" ? "en" : "cz";
+    const { t } = useLanguage();
     const [open, setOpen] = useState<number | null>(null);
-    const scrollRef = useRef<HTMLDivElement>(null);
-
-    // Draggable progress bar under the reviews — dragging the handle scrolls
-    // the row, and scrolling the row moves the handle.
-    const trackRef = useRef<HTMLDivElement>(null);
-    const draggingRef = useRef(false);
-    const [scrollRatio, setScrollRatio] = useState(0);
-    const HANDLE_REM = 6; // handle width: 6rem
-
-    const syncRatio = () => {
-        const el = scrollRef.current;
-        if (!el) return;
-        const max = el.scrollWidth - el.clientWidth;
-        setScrollRatio(max > 0 ? el.scrollLeft / max : 0);
-    };
-
-    const dragTo = (clientX: number) => {
-        const track = trackRef.current;
-        const el = scrollRef.current;
-        if (!track || !el) return;
-        const r = track.getBoundingClientRect();
-        const handlePx = HANDLE_REM * 16;
-        const p = Math.min(1, Math.max(0, (clientX - r.left - handlePx / 2) / (r.width - handlePx)));
-        el.scrollLeft = p * (el.scrollWidth - el.clientWidth);
-    };
 
     const SERVICES: Service[] = [
         {
@@ -266,122 +240,26 @@ export default function ServicesPage() {
 
             </div>
 
-            {/* ───────────── REVIEWS — full-bleed dark band ───────────── */}
+            {/* ───────────── CLUTCH — full-bleed dark band ───────────── */}
             <section className="relative left-1/2 w-screen -translate-x-1/2 bg-[#0A0A0A] text-white mt-32 md:mt-48">
-                <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-20 md:py-28">
-                    <div className="mb-12 md:mb-16">
-                        <h2 className="text-3xl md:text-5xl font-medium font-display tracking-tight leading-[1.05] max-w-[720px]">
-                            {t(
-                                "Why brands choose Aova over other studios",
-                                "Proč si značky vybírají Aovu místo jiných studií"
-                            )}
-                        </h2>
-                    </div>
-
-                    {/* One scrollable row of varied cards — rating tile, photo quotes, a tall
-                        display quote, one fuchsia accent card. Sizes vary on purpose;
-                        quotes are set in the site's display type. */}
-                    <div
-                        ref={scrollRef}
-                        onScroll={syncRatio}
-                        className="flex gap-4 md:gap-5 items-stretch overflow-x-auto select-none [&::-webkit-scrollbar]:hidden"
-                        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-20 md:py-28 flex flex-col items-center text-center gap-6">
+                    <h2 className="text-3xl md:text-5xl font-medium font-display tracking-tight leading-[1.05] max-w-[560px]">
+                        {t("Find us on Clutch", "Najdete nás na Clutch")}
+                    </h2>
+                    <p className="text-white/50 text-sm md:text-base max-w-[440px]">
+                        {t(
+                            "Our profile is live and we're just getting started — client reviews will land here soon.",
+                            "Náš profil je živý a teprve začínáme — recenze od klientů zde brzy najdete."
+                        )}
+                    </p>
+                    <a
+                        href="https://clutch.co/profile/aova-studio"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 font-host font-normal text-sm md:text-[15px] px-8 py-3.5 bg-white rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.2)] hover:bg-white/90 transition-colors"
                     >
-                        {/* Rating tile */}
-                        <div className="bg-[#161616] w-[240px] md:w-[280px] shrink-0 p-8 md:p-10 py-14 md:py-20 flex flex-col items-center justify-center text-center gap-4 self-start">
-                            <span className="text-7xl md:text-8xl font-medium font-display tracking-tight leading-none">5.0</span>
-                            <div className="flex gap-1 text-[#E0218A]">
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                    <svg key={i} viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                                    </svg>
-                                ))}
-                            </div>
-                            <div className="flex flex-col items-center gap-1">
-                                <span className="text-[11px] font-medium tracking-[0.04em] font-mono text-white/40">
-                                    {t("Based on client reviews", "Podle recenzí klientů")}
-                                </span>
-                                <span className="font-host font-bold tracking-wide text-lg">Clutch</span>
-                            </div>
-                        </div>
-
-                        {REVIEWS.map((review, idx) => {
-                            const q = review.quote[L];
-                            const width = review.img
-                                ? "w-[320px] md:w-[380px]"
-                                : review.accent
-                                    ? "w-[280px] md:w-[320px]"
-                                    : review.size === "l"
-                                        ? "w-[340px] md:w-[460px]"
-                                        : "w-[270px] md:w-[320px]";
-                            const surface = review.accent ? "bg-[#E0218A] text-white" : "bg-[#161616]";
-                            return (
-                                <figure key={idx} className={`${surface} ${width} shrink-0 flex flex-col ${review.size === "s" ? "self-start" : ""}`}>
-                                    {review.img && (
-                                        <div className="relative w-full aspect-video overflow-hidden shrink-0">
-                                            <Placeholder dark />
-                                        </div>
-                                    )}
-                                    <div className={`flex flex-col flex-grow gap-8 ${review.size === "l" ? "p-8 md:p-12" : "p-7 md:p-8"}`}>
-                                        {/* editorial index */}
-                                        <span className={`text-[10px] font-mono tracking-[0.25em] ${review.accent ? "text-white/50" : "text-white/25"}`}>
-                                            {String(idx + 1).padStart(2, "0")}
-                                        </span>
-                                        <blockquote
-                                            className={`font-display tracking-tight leading-[1.25] flex-grow ${
-                                                review.accent
-                                                    ? "text-2xl md:text-[28px] font-medium"
-                                                    : review.size === "l"
-                                                        ? "text-2xl md:text-[32px] font-medium text-white/95"
-                                                        : review.img
-                                                            ? "text-lg md:text-xl text-white/90"
-                                                            : "text-xl md:text-2xl text-white/90"
-                                            }`}
-                                        >
-                                            {q.pre}
-                                            {q.hi && <span className={review.accent ? "text-[#0A0A0A]" : "text-[#E0218A]"}>{q.hi}</span>}
-                                            {q.post}
-                                        </blockquote>
-                                        <figcaption className="mt-auto">
-                                            <div className="text-sm font-host font-semibold">{review.name}</div>
-                                            <div className={`text-[11px] font-medium tracking-[0.04em] font-mono mt-1 ${review.accent ? "text-white/60" : "text-white/40"}`}>
-                                                {review.role}
-                                            </div>
-                                        </figcaption>
-                                    </div>
-                                </figure>
-                            );
-                        })}
-                    </div>
-
-                    {/* Draggable progress bar — grab the handle (or tap the track) to move the row */}
-                    <div
-                        ref={trackRef}
-                        onPointerDown={(e) => {
-                            e.currentTarget.setPointerCapture(e.pointerId);
-                            draggingRef.current = true;
-                            dragTo(e.clientX);
-                        }}
-                        onPointerMove={(e) => {
-                            if (draggingRef.current) dragTo(e.clientX);
-                        }}
-                        onPointerUp={() => {
-                            draggingRef.current = false;
-                        }}
-                        onPointerCancel={() => {
-                            draggingRef.current = false;
-                        }}
-                        className="relative mt-10 md:mt-12 h-8 flex items-center cursor-grab active:cursor-grabbing select-none touch-none"
-                        role="scrollbar"
-                        aria-orientation="horizontal"
-                        aria-valuenow={Math.round(scrollRatio * 100)}
-                    >
-                        <div className="w-full h-[3px] bg-white/15 rounded-full" />
-                        <div
-                            className="absolute top-1/2 -translate-y-1/2 h-[5px] w-24 bg-white rounded-full transition-colors hover:bg-[#E0218A]"
-                            style={{ left: `calc(${scrollRatio} * (100% - 6rem))` }}
-                        />
-                    </div>
+                        <span className="text-[#0A0A0A]">{t("View our Clutch profile", "Zobrazit profil na Clutch")}</span>
+                    </a>
                 </div>
             </section>
         </main>
@@ -430,102 +308,3 @@ const TOOLS: { name: string; icon: React.ReactNode }[] = [
     { name: "JavaScript", icon: <SiMark d={siJavascript.path} /> },
 ];
 
-// Placeholder reviews — swap for real client quotes (and the real Clutch
-// profile link) once they exist. `hi` is the fuchsia-highlighted phrase.
-interface ReviewQuote {
-    pre: string;
-    hi?: string;
-    post?: string;
-}
-interface Review {
-    img?: boolean;
-    accent?: boolean; // fuchsia card
-    size?: "s" | "l"; // small self-start card / large display quote
-    quote: { en: ReviewQuote; cz: ReviewQuote };
-    name: string;
-    role: string;
-}
-
-const REVIEWS: Review[] = [
-    {
-        img: true,
-        quote: {
-            en: {
-                pre: "We really enjoyed working with Aova. The value, for what we got, ",
-                hi: "was terrific",
-                post: ".",
-            },
-            cz: {
-                pre: "Spolupráce s Aovou nás opravdu bavila. Hodnota, kterou jsme dostali, ",
-                hi: "byla skvělá",
-                post: ".",
-            },
-        },
-        name: "Sarah Jenkins",
-        role: "Marketing Director, FlowState",
-    },
-    {
-        size: "l",
-        quote: {
-            en: {
-                pre: "They turned our research into a brand system our whole team actually uses. ",
-                hi: "The team excels at taking ownership of projects",
-                post: ", and it shows in every delivery.",
-            },
-            cz: {
-                pre: "Z našeho výzkumu udělali brand systém, který celý náš tým opravdu používá. ",
-                hi: "Tenhle tým umí převzít za projekt plnou odpovědnost",
-                post: " — a je to vidět v každém dodání.",
-            },
-        },
-        name: "Tomas Dvorak",
-        role: "Co-Founder, BrnoTech",
-    },
-    {
-        size: "s",
-        quote: {
-            en: {
-                pre: "This work cadence helped us create better projects and products, because we were tightly coupled with the studio the whole way.",
-            },
-            cz: {
-                pre: "Tohle pracovní tempo nám pomohlo dělat lepší projekty i produkty, protože jsme byli se studiem celou dobu v úzkém kontaktu.",
-            },
-        },
-        name: "Matthew Vogel",
-        role: "VP of Product, Sports Media Co.",
-    },
-    {
-        img: true,
-        quote: {
-            en: {
-                pre: "With Aova's help we launched with a premium, high-converting identity. ",
-                hi: "This project was successful",
-                post: ".",
-            },
-            cz: {
-                pre: "S pomocí Aovy jsme odstartovali s prémiovou identitou, která konvertuje. ",
-                hi: "Tenhle projekt byl úspěch",
-                post: ".",
-            },
-        },
-        name: "Alex Mercer",
-        role: "CEO, Sprightful",
-    },
-    {
-        accent: true,
-        quote: {
-            en: {
-                pre: "The founders were in every call and every file. ",
-                hi: "Nothing got lost",
-                post: " between the first conversation and the final delivery.",
-            },
-            cz: {
-                pre: "Zakladatelé byli u každého hovoru a každého souboru. ",
-                hi: "Nic se neztratilo",
-                post: " mezi prvním rozhovorem a finálním dodáním.",
-            },
-        },
-        name: "Marie Novotná",
-        role: "Brand Lead, Studio Sedm",
-    },
-];
